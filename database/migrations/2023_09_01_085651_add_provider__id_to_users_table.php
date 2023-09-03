@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('full_name');
-            $table->string('email')->unique();
-            $table->bigInteger('phone_number')->unique();
-            $table->string('password');
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('utility_provider_id')->constrained()->onDelete('cascade');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

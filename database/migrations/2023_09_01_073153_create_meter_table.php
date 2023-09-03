@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('meters', function (Blueprint $table) {
             $table->id();
-            $table->string('full_name');
-            $table->string('email')->unique();
-            $table->bigInteger('phone_number')->unique();
-            $table->string('password');
+            $table->bigInteger('meterNumber')->unique();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->integer('debt');
         });
     }
 
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('meter');
     }
 };

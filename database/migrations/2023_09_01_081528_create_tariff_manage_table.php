@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('tariffs', function (Blueprint $table) {
             $table->id();
-            $table->string('full_name');
-            $table->string('email')->unique();
-            $table->bigInteger('phone_number')->unique();
-            $table->string('password');
+            $table->string('name');
+            $table->string('code');
+            $table->integer('percentageAmount');
+            $table->integer('value');
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('tariff_manage');
     }
 };
