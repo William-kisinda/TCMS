@@ -14,8 +14,8 @@ class ProviderCategorySeeder extends Seeder
     public function run(): void
     {
         ProviderCategory::create([
-            'name' => "TANESCO",
-            'code' => 'UU7786895'
+            'name' => "DUWASA",
+            'code' => 'UX7664795'
         ]);
     }
 }

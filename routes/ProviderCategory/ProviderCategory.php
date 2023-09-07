@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'ProviderCategory\Api', 'prefix' => 'provider_category'], function () {
     //CREATE/INSERT
-    Route::get('/', 'ProviderCategoryApi@providerCategories');
+    Route::get('/', 'ProviderCategoryApi@getProviderCategories');
+    Route::get('/{providerCategoryId}', 'ProviderCategoryApi@getProviderCategoryById');
+    Route::post('/', 'ProviderCategoryApi@createProviderCategory');
     //     //GET — Read
     //     Route::get('/{identityTypeId}', 'IdentityTypeApi@getIdentityTypeByIdentityTypeId');
     // //    UPDATE
