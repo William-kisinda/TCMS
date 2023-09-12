@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::group(['namespace' => 'ProviderCategory\Api', 'prefix' => 'provider_category'], function () {
+Route::group(['namespace' => 'ProviderCategory\Api', 'prefix' => 'providerCategories'], function () {
     //CREATE/INSERT
     Route::get('/', 'ProviderCategoryApi@getProviderCategories');
     Route::get('/{providerCategoryId}', 'ProviderCategoryApi@getProviderCategoryById');

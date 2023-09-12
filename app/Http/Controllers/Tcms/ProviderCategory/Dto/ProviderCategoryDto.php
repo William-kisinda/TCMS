@@ -23,14 +23,14 @@ class ProviderCategoryDto
     /**
      * @return mixed
      */
-    public function getProviderCategoryDto($id, $code, $name)
-    {
-        $this->attributes = [];
-        $this->attributes['prov_categ_id'] = $id;
-        $this->attributes['prov_categ_code'] = $code;
-        $this->attributes['prov_categ_name'] = $name;
-        return $this->attributes;
-    }
+      public function getProviderCategoryDto($id, $code, $name)
+     {
+         $this->attributes = [];
+         $this->attributes['prov_categ_id'] = $id;
+         $this->attributes['prov_categ_code'] = $code;
+         $this->attributes['prov_categ_name'] = $name;
+         return $this->attributes;
+     }
 
     /**
      * @return mixed

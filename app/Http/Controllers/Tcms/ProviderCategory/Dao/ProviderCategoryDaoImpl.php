@@ -77,17 +77,18 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
      * @author Daniel MM
      */
 
-    public function getProviderCategoryByNameOrCode($providerCategoryName, $providerCategoryCode)
+   /*  old code that return error of fail to create new category provider
+   public function getProviderCategoryByNameOrCode($providerCategoryName, $providerCategoryCode)
     {
         $providerCategory = null;
         try {
 
             $providerCategory = new ProviderCategory();
 
-            $sql = "SELECT * FROM \"provider_categories\" WHERE \"code\"='" . $providerCategoryCode . "' OR \"name\"='" . $providerCategoryName . "'";
-            $expression = DB::raw($sql);
-            $stringSQL = $expression->getValue(DB::connection()->getQueryGrammar());
-            $providerCategoryExistInfo = DB::select($stringSQL);
+           $sql = "SELECT * FROM \"provider_categories\" WHERE \"code\"='" . $providerCategoryCode . "' OR \"name\"='" . $providerCategoryName . "'";
+           $expression = DB::raw($sql);
+           $stringSQL = $expression->getValue(DB::connection()->getQueryGrammar());
+            $providerCategoryExistInfo =  DB::select($stringSQL);
             if (!blank($providerCategoryExistInfo)) {
                 $providerCategoryInfoArray = json_decode(json_encode($providerCategoryExistInfo), true);
                 $providerCategory->setAttributes($providerCategoryInfoArray);
@@ -96,7 +97,29 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
             Log::error('ProductCategoryException:' . $exception->getMessage());
         }
         return $providerCategory;
+    }*/
+    public function getProviderCategoryByNameOrCode($providerCategoryName, $providerCategoryCode)
+{
+    $providerCategory = null;
+
+    try {
+        $providerCategoryExistInfo = DB::table('provider_categories')
+            ->where('code', $providerCategoryCode)
+            ->orWhere('name', $providerCategoryName)
+            ->first(); // Use first() to get a single result
+
+        if (!is_null($providerCategoryExistInfo)) {
+            // Data exists, you can access it directly
+            $providerCategory = new ProviderCategory();
+            $providerCategory->setAttributes((array) $providerCategoryExistInfo);
+        }
+    } catch (\Exception $exception) {
+        Log::error('ProductCategoryException:' . $exception->getMessage());
     }
+
+    return $providerCategory;
+}
+
 
     /**
      * @param ProviderCategoryDto $providerCategoryDto
