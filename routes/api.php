@@ -50,4 +50,4 @@ Route::get('lists/{providerCategoryId}', [ProviderCategoryApi::class,'getProvide
 Route::post('utilityProviders', [ProviderApi::class, 'getAllProviders']);
 
 //Get utility provider by code
-Route::post('utilityProvider', [ProviderApi::class, 'getProviderByCode']);
+Route::post('utilityProvider', [ProviderApi::class, 'getProviderByCode'])->middleware('apiFilter');
