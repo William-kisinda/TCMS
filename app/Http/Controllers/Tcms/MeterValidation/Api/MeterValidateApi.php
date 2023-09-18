@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tcms\MeterValidation\Api;
 
 
+use App\Models\Provider;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -10,8 +11,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Tcms\MeterValidation\Dao\MeterDaoImp;
 use App\Http\Controllers\Tcms\MeterValidation\Dto\ValidMeterDto;
 use App\Http\Controllers\Tcms\MeterValidation\Dao\CustomerDaoImpl;
-
-
+//use App\Http\Controllers\Tcms\MeterValidation\Api\MeterValidateApi;
+use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDao;
 
 class MeterValidateApi extends Controller
 {
@@ -24,9 +25,13 @@ class MeterValidateApi extends Controller
         $this->customerDao = $customerDao;
     }
 
-    public function getValidMeter($meter_num)
+    public function getValidMeter(Request $request)
     {
         try {
+
+            // Retrieve the meter number from the request payload
+            $meter_num = $request->input('meter_num');
+
             // Checking if the meter exists in the database.
             $meterExists = $this->meterDao->getMeterById($meter_num);
 
@@ -48,7 +53,7 @@ class MeterValidateApi extends Controller
                 $validMeterDto->setAttributes($validMeterArray);
 
                 return response()->json(["error" => false, "Meter Information" => $validMeterDto->getAttributes()], Response::HTTP_OK);
-            }
+        }
 
             return response()->json(["error" => true, "message" => "Invalid Meter Number"], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {

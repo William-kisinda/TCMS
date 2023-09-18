@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('utility_providers', function (Blueprint $table) {
             $table->id();
-            $table->string('providerName');
-            $table->string('providerCode');
-            $table->string('providerStatus');
-            $table->foreignId('provider_category_id')->constrained()->onDelete('cascade');
+            $table->string('provider_name');
+            $table->string('provider_code');
+            $table->string('provider_status');
+            $table->foreignId('provider_categories_code')->constrained()->onDelete('cascade');
         });
     }
 

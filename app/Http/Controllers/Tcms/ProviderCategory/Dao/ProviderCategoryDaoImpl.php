@@ -77,27 +77,6 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
      * @author Daniel MM
      */
 
-   /*  old code that return error of fail to create new category provider
-   public function getProviderCategoryByNameOrCode($providerCategoryName, $providerCategoryCode)
-    {
-        $providerCategory = null;
-        try {
-
-            $providerCategory = new ProviderCategory();
-
-           $sql = "SELECT * FROM \"provider_categories\" WHERE \"code\"='" . $providerCategoryCode . "' OR \"name\"='" . $providerCategoryName . "'";
-           $expression = DB::raw($sql);
-           $stringSQL = $expression->getValue(DB::connection()->getQueryGrammar());
-            $providerCategoryExistInfo =  DB::select($stringSQL);
-            if (!blank($providerCategoryExistInfo)) {
-                $providerCategoryInfoArray = json_decode(json_encode($providerCategoryExistInfo), true);
-                $providerCategory->setAttributes($providerCategoryInfoArray);
-            }
-        } catch (\Exception $exception) {
-            Log::error('ProductCategoryException:' . $exception->getMessage());
-        }
-        return $providerCategory;
-    }*/
     public function getProviderCategoryByNameOrCode($providerCategoryName, $providerCategoryCode)
 {
     $providerCategory = null;

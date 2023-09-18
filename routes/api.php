@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Tcms\MeterValidation\Api\MeterValidateApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
+use App\Http\Controllers\Tcms\Utility_provider\Api\ProviderApi;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,11 +23,31 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 //meter number validation
-Route::get('/meter/{meter_num}', [MeterValidateApi::class ,'getValidMeter']);
+Route::post('/meter', [MeterValidateApi::class ,'getValidMeter']); //tanesco api
 
-//utility service provider
-Route::post('registerProvider', [ProviderCategoryApi::class , 'createProviderCategory']);
+/**
+ * Below are are the route for the utility rpovider categories
+ * @author Julius.
+ *
+ */
+//register provider category
+Route::post('registerProviderCategories', [ProviderCategoryApi::class , 'createProviderCategory']);
 
-Route::get('lists', [ProviderCategoryApi::class , 'getProviderCategories']);
+//list all register provider categories
+Route::get('listsProviderCategories', [ProviderCategoryApi::class , 'getProviderCategories']);
 
+//get provider categories by their Id
 Route::get('lists/{providerCategoryId}', [ProviderCategoryApi::class,'getProviderCategoryById']);
+
+
+
+/**
+ * Below are the route for the crude api for the utility providers
+ * @author Julius.
+ *
+ */
+// get all utility providers
+Route::post('utilityProviders', [ProviderApi::class, 'getAllProviders']);
+
+//Get utility provider by code
+Route::post('utilityProvider', [ProviderApi::class, 'getProviderByCode']);
