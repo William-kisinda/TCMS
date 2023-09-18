@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tcms\Utility_provider\Api;
 
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -91,21 +92,19 @@ class ProviderApi extends Controller
  /**
  * Now after validating the existance of utility provider , then we use that specific utility providers api to look for their customer information
  *
- * @param null
- * @return \Illuminate\Http\JsonResponse
+ *
  */
-                //Instantiate meter validation api
-                 $meterDao = new MeterDaoImp();
-                 $customerDao = new CustomerDaoImpl();
 
-                $meterInfoApi = new MeterValidateApi($meterDao, $customerDao);
-                $response = $meterInfoApi->getValidMeter(
-                    new Request([
-                        'meter_num' => $meterNumber,
-                    ])
-                );
+                    $client = new Client();
 
-                return Response()->json(["error" => false, "Meter information" => $response], Response::HTTP_OK);
+                    $response = $client->request('POST', 'http://127.0.0.1:8000/api/meter', [
+                        'query' => [
+                            'meter_num' => $meterNumber,
+                        ],
+                    ]);
+                    $data = json_decode($response->getBody(), true);
+
+                return Response()->json(["error" => false, "Meter information" => $data], Response::HTTP_OK);
             }
             return Response()->json(["error" => false, "Utility Providers" => ['Invalid Provider code']], Response::HTTP_NOT_FOUND);
         } catch (\Exception $exception) {
