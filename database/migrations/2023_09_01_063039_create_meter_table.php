@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('meters', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('meterNumber')->unique();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->integer('debt');
+            $table->bigInteger('meter_number')->unique();
+            $table->foreignId('customers_id')->constrained()->onDelete('cascade');
+            $table->decimal('debt',24,7);
+            $table->string('status');
         });
     }
 

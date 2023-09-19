@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('utility_providers', function (Blueprint $table) {
+        Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->string('provider_name');
-            $table->string('provider_code');
-            $table->string('provider_status');
-            $table->foreignId('provider_categories_code')->constrained()->onDelete('cascade');
+            $table->string('full_name');
+            $table->text('phone');
+            $table->text('address');
         });
     }
 
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('utility_provider');
+        Schema::dropIfExists('customers');
     }
 };

@@ -97,7 +97,7 @@ class ProviderCategoryApi extends Controller
             $providerCategoryDto->setAttributes($request->all());
 
             //Validate whether such a category already esists using the name and code.
-            $providerCategoryExists = $this->providerCategoryDao->getProviderCategoryByNameOrCode($providerCategoryDto->getProv_categ_code(), $providerCategoryDto->getProv_categ_name());
+            $providerCategoryExists = $this->providerCategoryDao->getProviderCategoryByNameOrCode($providerCategoryDto->getProv_categ_name(), $providerCategoryDto->getProv_categ_code());
             Log::info("Log Message:" . json_encode($request->all()));
             if (blank($providerCategoryExists)) {
                 $providerCategory = $this->providerCategoryDao->createProviderCategory($providerCategoryDto);
