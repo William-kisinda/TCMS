@@ -2,10 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Tcms\MeterValidation\Api\MeterValidateApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
-use App\Http\Controllers\Client\UtilityProvider\ManageUtilityProviderController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +22,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-//meter number validation
-Route::post('/meter', [MeterValidateApi::class, 'getValidMeter']); //tanesco api
 
 /**
  * Below are are the route for the utility provider categories
@@ -47,11 +44,18 @@ Route::get('lists/{providerCategoryId}', [ProviderCategoryApi::class, 'getProvid
  * @author Daniel.
  *
  */
-// get all utility providers
-Route::get('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
 
-//Create a utility provider
-Route::post('utilityProvider', [UtilityProviderApi::class, 'createUtilityProvider']);
 
-//Get utility provider by code
-Route::get('utilityProviders/{providerCode}', [UtilityProviderApi::class, 'getProviderByCode']);
+Route::middleware(['throttle:5,1'])->group(function () {
+        // This route allows up to 5 requests per minute (adjust as needed).
+
+            // get all utility providers
+    Route::post('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
+
+            //Create a utility provider
+    Route::post('utilityProvider', [UtilityProviderApi::class, 'createUtilityProvider']);
+
+            //Get utility provider by code
+    Route::post('providerByCode', [UtilityProviderApi::class, 'getProviderByCode']);
+
+});
