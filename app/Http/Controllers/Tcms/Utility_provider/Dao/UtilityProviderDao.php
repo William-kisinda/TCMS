@@ -12,10 +12,9 @@ use App\Http\Controllers\Tcms\Utility_provider\Dto\UtilityProviderDto;
 
 interface UtilityProviderDao
 {
-    public function getAllProviders();
-    public function getProviderByCode($providerCode);
-    public function createProvider(UtilityProviderDto $providerDto);
-    //public function deleteProvider();
+    public function getAllUtilityProviders();
+    public function getUtilityProviderByCode($providerCode);
+    public function createUtilityProvider(UtilityProviderDto $providerDto);
     //public function updateProvider();
     //public function getMeterByIdOrName();
 }

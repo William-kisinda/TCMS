@@ -35,11 +35,6 @@ class ProviderCategoryApi extends Controller
             //Checking if the object has data
             if (!blank($providerCategories)) {
                 Log::info("Exceptional Message::" . json_encode($providerCategories));
-                // foreach ($providerCategories as $providerCategory) {
-                //     $providerCategory = json_encode($providerCategory, true);
-                //     $providerCategoriesArray = $providerCategoriesDto->getProviderCategoryDto($providerCategory['id'], $providerCategory['code'], $providerCategory['name']);
-                //     $providerCategoriesDto->setAttributes($providerCategoriesArray);
-                // }
                 return Response()->json(["error" => false, "providerCategories" => $providerCategories], Response::HTTP_OK);
             }
             return Response()->json(["error" => false, "providerCategories" => $providerCategoriesDto->getAttributes()], Response::HTTP_BAD_REQUEST);

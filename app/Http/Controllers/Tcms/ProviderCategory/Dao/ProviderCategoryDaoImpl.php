@@ -33,16 +33,12 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
 
                 $providerCategoriesInfoArray = json_decode(json_encode($providerCategoriesInfo), true);
 
-                // foreach ($providerCategoriesInfoArray as $prodCategInfo) {
-                # code...
                 $providerCategory = new ProviderCategory();
-                $providerCategory->setAttributes($providerCategoriesInfoArray);
 
-                // array_push($providerCategoryArray, $providerCategory);
-                // }
+                $providerCategory->setAttributes($providerCategoriesInfoArray);
             }
         } catch (\Exception $exception) {
-            Log::error("ProductCategoryException", $exception->getMessage());
+            Log::error("ProviderCategoryException", $exception->getMessage());
         }
         return $providerCategory;
     }
@@ -66,7 +62,7 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
             }
             //throw $th;
         } catch (\Exception $e) {
-            Log::error("ProductCategoryException", $e->getMessage());
+            Log::error("ProviderCategoryException", $e->getMessage());
         }
         return $providerCategory;
     }
@@ -78,26 +74,26 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
      */
 
     public function getProviderCategoryByNameOrCode($providerCategoryName, $providerCategoryCode)
-{
-    $providerCategory = null;
+    {
+        $providerCategory = null;
 
-    try {
-        $providerCategoryExistInfo = DB::table('provider_categories')
-            ->where('code', $providerCategoryCode)
-            ->orWhere('name', $providerCategoryName)
-            ->first(); // Use first() to get a single result
+        try {
+            $providerCategoryExistInfo = DB::table('provider_categories')
+                ->where('code', $providerCategoryCode)
+                ->orWhere('name', $providerCategoryName)
+                ->first(); // Use first() to get a single result
 
-        if (!is_null($providerCategoryExistInfo)) {
-            // Data exists, you can access it directly
-            $providerCategory = new ProviderCategory();
-            $providerCategory->setAttributes((array) $providerCategoryExistInfo);
+            if (!is_null($providerCategoryExistInfo)) {
+                // Data exists, you can access it directly
+                $providerCategory = new ProviderCategory();
+                $providerCategory->setAttributes((array) $providerCategoryExistInfo);
+            }
+        } catch (\Exception $exception) {
+            Log::error('ProviderCategoryException:' . $exception->getMessage());
         }
-    } catch (\Exception $exception) {
-        Log::error('ProductCategoryException:' . $exception->getMessage());
-    }
 
-    return $providerCategory;
-}
+        return $providerCategory;
+    }
 
 
     /**
@@ -117,7 +113,7 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
 
             $providerCategoryModel->save();
         } catch (\Exception $e) {
-            Log::error("ProductCategoryException", $e->getMessage());
+            Log::error("ProviderCategoryException", $e->getMessage());
         }
         return $providerCategoryModel;
     }

@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 /**
  * Validation API controller
  */
-class ValidateApi extends Controller
+class ValidationApi extends Controller
 {
     /**
      * ValidationController constructor.

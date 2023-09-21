@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('provider_name');
             $table->string('provider_code');
             $table->string('provider_status');
-            $table->foreignId('provider_categories_code')->constrained()->onDelete('cascade');
+            $table->foreignId('provider_categories_id')->constrained()->onDelete('cascade');
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('utility_provider');
+        Schema::dropIfExists('utility_providers');
     }
 };

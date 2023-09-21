@@ -13,13 +13,13 @@ use App\Http\Controllers\Tcms\MeterValidation\Api\MeterValidateApi;
 use App\Http\Controllers\Tcms\Utility_provider\Dto\UtilityProviderDto;
 use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
 
-class ProviderApi extends Controller
+class UtilityProviderApi extends Controller
 {
     private $utilityProviderDao = null;
 
     public function __construct()
     {
-       $this->utilityProviderDao = new UtilityProviderDaoImpl();
+        $this->utilityProviderDao = new UtilityProviderDaoImpl();
     }
 
     /**
@@ -33,12 +33,12 @@ class ProviderApi extends Controller
     {
         //Validate roles and request information like headers and auth tokens.
         try {
-            $providers = $this->utilityProviderDao->getAllProviders();
+            $providers = $this->utilityProviderDao->getAllUtilityProviders();
 
             $providersDto = new UtilityProviderDto();
             //Checking if the object has data
             if (!blank($providers)) {
-                Log::info("Exceptional Message::" . json_encode($providers));
+                Log::info("Message::" . json_encode($providers));
                 // foreach ($providerCategories as $providerCategory) {
                 //     $providerCategory = json_encode($providerCategory, true);
                 //     $providerCategoriesArray = $providerCategoriesDto->getProviderCategoryDto($providerCategory['id'], $providerCategory['code'], $providerCategory['name']);
@@ -60,53 +60,47 @@ class ProviderApi extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function getProviderByCode(Request $request)
+    public function getProviderByCode(Request $request, $providerCode)
     {
         try {
-            //retrieve utility provider code from input
-            $providerCode = $request->input('code');
-            $meterNumber = $request-> input('meter_number');
 
-            //Checking if provider category exists.
-            $providerExists = $this->utilityProviderDao->getProviderByCode($providerCode);
+            //Checking if utility provider exists.
+            $providerExists = $this->utilityProviderDao->getUtilityProviderByCode($providerCode);
 
             $utilityProviderDto = new UtilityProviderDto();
             //Checking if the object has data
             Log::info("OriginMessage:" . gettype($providerExists));
             if (!blank($providerExists)) {
-                 Log::info("Exceptional Message::" . json_encode($providerExists));
-
-/*                //Using the DTO to get and set object data properties.
-                $providerArray = $utilityProviderDto->setProviderDto(
-                    $providerExists->getProviderId(),
-                    $providerExists->getProviderCode(),
-                    $providerExists->getProviderName(),
-                    $providerExists->getProviderStatus(),
-                    $providerExists->getProviderCategoriesCode(),
+                //Using the DTO to get and set object data properties.
+                $utilityProviderArray = $utilityProviderDto->setProviderDto(
+                    $providerExists->getUtilityProviderId(),
+                    $providerExists->getUtilityProviderCode(),
+                    $providerExists->getUtilityProviderName(),
+                    $providerExists->getUtilityProviderStatus(),
+                    $providerExists->getUtilityProviderCategory(),
                 );
 
                 //Now setting the provider categories array attributes.
-                $utilityProviderDto->setAttributes($providerArray);
-*/
+                $utilityProviderDto->setAttributes($utilityProviderArray);
 
- /**
- * Now after validating the existance of utility provider , then we use that specific utility providers api to look for their customer information
- *
- *
- */
+                /**
+                 * Now after validating the existance of utility provider , then we use that specific utility providers api to look for their customer information
+                 *
+                 *
+                 */
 
-                    $client = new Client();
+                // $client = new Client();
 
-                    $response = $client->request('POST', 'http://127.0.0.1:8000/api/meter', [
-                        'query' => [
-                            'meter_num' => $meterNumber,
-                        ],
-                    ]);
-                    $data = json_decode($response->getBody(), true);
+                // $response = $client->request('POST', 'http://127.0.0.1:8000/api/meter', [
+                //     'query' => [
+                //         'meter_num' => $meterNumber,
+                //     ],
+                // ]);
+                // $data = json_decode($response->getBody(), true);
 
-                return Response()->json(["error" => false, "Meter information" => $data], Response::HTTP_OK);
+                return Response()->json(["error" => false, "Utility Provider" => $utilityProviderDto->getAttributes()], Response::HTTP_OK);
             }
-            return Response()->json(["error" => false, "Utility Providers" => ['Invalid Provider code']], Response::HTTP_NOT_FOUND);
+            return Response()->json(["error" => false, "Utility Provider" => ['Invalid Utility Provider Code']], Response::HTTP_NOT_FOUND);
         } catch (\Exception $exception) {
             Log::info("Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -119,17 +113,17 @@ class ProviderApi extends Controller
      * @param null
      * @return \Illuminate\Http\JsonResponse
     */
-   /* public function createProvider(Request $request)
+    public function createUtilityProvider(Request $request)
     {
         try {
-          //  $providerDto = new UtilityProviderDto();
-          //  $providerDto->setAttributes($request->all());
+            $utilityProviderDto = new UtilityProviderDto();
+            $utilityProviderDto->setAttributes($request->all());
 
-            //Validate whether such a category already esists using the name and code.
-         //   $providerExists = $this->Dao->getProviderCategoryByNameOrCode($providerDto->getProv_categ_name(), $providerDto->getProv_categ_code());
+            // Validate whether such a provider already esists using the name and code.
+            $providerExists = $this->utilityProviderDao->getUtilityProviderByCode($utilityProviderDto->getProvider_code());
             Log::info("Log Message:" . json_encode($request->all()));
             if (blank($providerExists)) {
-                $provider = $this->Dao->createProvider($providerDto);
+                $provider = $this->utilityProviderDao->createutilityProvider($utilityProviderDto);
                 if (!blank($provider)) {
                     return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
                 }
@@ -140,5 +134,5 @@ class ProviderApi extends Controller
             Log::info("Exceptional Message::" . $e->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }*/
+    }
 }

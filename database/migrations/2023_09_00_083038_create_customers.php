@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('full_name');
             $table->text('phone');
             $table->text('address');
+            $table->text('residents');
         });
     }
 

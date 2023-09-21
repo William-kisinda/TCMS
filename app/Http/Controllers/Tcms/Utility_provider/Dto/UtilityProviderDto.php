@@ -22,16 +22,16 @@ class UtilityProviderDto
     /**
      * @return mixed
      */
-      public function setProviderDto($id, $provider_code, $provider_name, $provider_status, $provider_categories_code)
-     {
-         $this->attributes = [];
-         $this->attributes['id'] = $id;
-         $this->attributes['provider_code'] = $provider_code;
-         $this->attributes['provider_name'] = $provider_name;
-         $this->attributes['provider_status'] = $provider_status;
-         $this->attributes['provider_categories_code'] = $provider_categories_code;
-         return $this->attributes;
-     }
+    public function setProviderDto($id, $provider_code, $provider_name, $provider_status, $provider_categories_id)
+    {
+        $this->attributes = [];
+        $this->attributes['id'] = $id;
+        $this->attributes['provider_code'] = $provider_code;
+        $this->attributes['provider_name'] = $provider_name;
+        $this->attributes['provider_status'] = $provider_status;
+        $this->attributes['provider_categories_id'] = $provider_categories_id;
+        return $this->attributes;
+    }
 
     /**
      * @return mixed
@@ -81,20 +81,32 @@ class UtilityProviderDto
         $this->attributes['provider_code'] = $provider_code;
     }
 
-     /**
-     * @param mixed $provider_categories_code
+
+    // public function setProvider_categories_code($provider_categories_code)
+    // {
+    //     $this->attributes['provider_categories_code'] = $provider_categories_code;
+    // }
+
+
+    // public function getProvider_categories_code()
+    // {
+    //     return $this->attributes['provider_categories_code'];
+    // }
+
+    /**
+     * @param mixed $provider_categories_id
      */
-    public function setProvider_categories_code($provider_categories_code)
+    public function setProvider_categories_id($provider_categories_id)
     {
-        $this->attributes['provider_categories_code'] = $provider_categories_code;
+        $this->attributes['provider_categories_id'] = $provider_categories_id;
     }
 
     /**
      * @return mixed
      */
-    public function getProvider_categories_code()
+    public function getProvider_categories_id()
     {
-        return $this->attributes['provider_categories_code'];
+        return $this->attributes['provider_categories_id'];
     }
 
     /**
