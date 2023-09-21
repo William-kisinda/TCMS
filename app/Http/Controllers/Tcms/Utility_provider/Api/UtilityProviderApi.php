@@ -66,40 +66,31 @@ class UtilityProviderApi extends Controller
 
             $providerCode = $request->input('providerCode');
             //Checking if utility provider exists.
+            $providerCode = $request->input('code');
             $providerExists = $this->utilityProviderDao->getUtilityProviderByCode($providerCode);
 
-            $utilityProviderDto = new UtilityProviderDto();
+
             //Checking if the object has data
             Log::info("OriginMessage:" . $providerExists);
             if (!blank($providerExists)) {
-                //Using the DTO to get and set object data properties.
-                $utilityProviderArray = $utilityProviderDto->setProviderDto(
-                    $providerExists->getUtilityProviderId(),
-                    $providerExists->getUtilityProviderCode(),
-                    $providerExists->getUtilityProviderName(),
-                    $providerExists->getUtilityProviderStatus(),
-                    $providerExists->getUtilityProviderCategory(),
-                );
 
-                //Now setting the provider categories array attributes.
-                $utilityProviderDto->setAttributes($utilityProviderArray);
-
+                    $meterNumber = $request->input('meter_number');
                 /**
                  * Now after validating the existance of utility provider , then we use that specific utility providers api to look for their customer information
                  *
                  *
                  */
 
-                // $client = new Client();
+                 $client = new Client();
 
-                // $response = $client->request('POST', 'http://127.0.0.1:8000/api/meter', [
-                //     'query' => [
-                //         'meter_num' => $meterNumber,
-                //     ],
-                // ]);
-                // $data = json_decode($response->getBody(), true);
+                 $response = $client->request('POST', 'http://127.0.0.1:8000/api/meter', [
+                     'query' => [
+                         'meter_num' => $meterNumber,
+                     ],
+                 ]);
+                 $data = json_decode($response->getBody(), true);
 
-                return Response()->json(["error" => false, "Utility Provider" => $utilityProviderDto->getAttributes()], Response::HTTP_OK);
+                return Response()->json(["error" => false, "Utility Provider" => $data], Response::HTTP_OK);
             }
             return Response()->json(["error" => false, "Utility Provider" => ['Invalid Utility Provider Code']], Response::HTTP_NOT_FOUND);
         } catch (\Exception $exception) {
