@@ -67,7 +67,7 @@ class UtilityProviderApi extends Controller
             //Checking if utility provider exists.
             $providerCode = $request->input('code');
             $providerExists = $this->utilityProviderDao->getUtilityProviderByCode($providerCode);
-
+            $requestId = generateRequestId();
 
             //Checking if the object has data
             Log::info("OriginMessage:" . gettype($providerExists));
@@ -85,12 +85,19 @@ class UtilityProviderApi extends Controller
                  $response = $client->request('POST', 'http://127.0.0.1:8000/api/meter', [
                      'query' => [
                          'meter_num' => $meterNumber,
+                         'requestId' => $requestId
                      ],
                  ]);
                  $data = json_decode($response->getBody(), true);
 
+                        //logging
+                        Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+
                 return Response()->json(["error" => false, "Utility Provider" => $data], Response::HTTP_OK);
             }
+                     //Logging
+                     Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is Failed to be  processed due to Invalid Utitlity provider Code');
+
             return Response()->json(["error" => false, "Utility Provider" => ['Invalid Utility Provider Code']], Response::HTTP_NOT_FOUND);
         } catch (\Exception $exception) {
             Log::info("Exceptional Message::" . $exception->getMessage());
