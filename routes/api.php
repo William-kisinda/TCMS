@@ -32,10 +32,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('registerProviderCategories', [ProviderCategoryApi::class, 'createProviderCategory']);
 
 //list all register provider categories
-Route::get('listsProviderCategories', [ProviderCategoryApi::class, 'getProviderCategories']);
+Route::post('listsProviderCategories', [ProviderCategoryApi::class, 'getProviderCategories']);
 
 //get provider categories by their Id
-Route::get('lists/{providerCategoryId}', [ProviderCategoryApi::class, 'getProviderCategoryById']);
+Route::post('lists/', [ProviderCategoryApi::class, 'getProviderCategoryById']);
 
 
 

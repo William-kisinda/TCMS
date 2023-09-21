@@ -25,7 +25,7 @@ class ProviderCategoryApi extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function getProviderCategories()
+    public function getProviderCategories(Request $request)
     {
         //Validate roles and request information like headers and auth tokens.
         try {
@@ -51,10 +51,12 @@ class ProviderCategoryApi extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function getProviderCategoryById(Request $request, $providerCategoryId)
+    public function getProviderCategoryById(Request $request)
     {
         try {
 
+            $providerCategoryId = $request->input('providerCategoryId');
+            
             //Checking if provider category exists.
             $providerCategoryExists = $this->providerCategoryDao->getProviderCategoryById($providerCategoryId);
 

@@ -42,7 +42,7 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
             }
         } catch (\Exception $e) {
             // Log the exception for debugging purposes.
-            Log::error("UtilityProviderException: " . $e->getMessage());
+            Log::info("UtilityProviderException: " . $e->getMessage());
         }
 
         return $provider;
@@ -68,7 +68,7 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
                 $utilityProviders->setAttributes($utilityProvidersInfoArray);
             }
         } catch (\Exception $exception) {
-            Log::error("UtilityProviderException:", $exception->getMessage());
+            Log::info("UtilityProviderException:" . $exception->getMessage());
         }
         return $utilityProviders;
     }
@@ -91,7 +91,7 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
 
             $utilityProvider->save();
         } catch (\Exception $e) {
-            Log::error("UtilityProviderException:", $e->getMessage());
+            Log::info("UtilityProviderException:". $e->getMessage());
         }
         return $utilityProvider;
     }
