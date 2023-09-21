@@ -35,10 +35,10 @@ Route::post('/meter', [MeterValidateApi::class, 'getValidMeter']); //tanesco api
 Route::post('registerProviderCategories', [ProviderCategoryApi::class, 'createProviderCategory']);
 
 //list all register provider categories
-Route::get('listsProviderCategories', [ProviderCategoryApi::class, 'getProviderCategories']);
+Route::post('listsProviderCategories', [ProviderCategoryApi::class, 'getProviderCategories']);
 
 //get provider categories by their Id
-Route::get('lists/{providerCategoryId}', [ProviderCategoryApi::class, 'getProviderCategoryById']);
+Route::post('lists/', [ProviderCategoryApi::class, 'getProviderCategoryById']);
 
 
 
@@ -48,10 +48,10 @@ Route::get('lists/{providerCategoryId}', [ProviderCategoryApi::class, 'getProvid
  *
  */
 // get all utility providers
-Route::get('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
+Route::post('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
 
 //Create a utility provider
 Route::post('utilityProvider', [UtilityProviderApi::class, 'createUtilityProvider']);
 
 //Get utility provider by code
-Route::get('utilityProviders/{providerCode}', [UtilityProviderApi::class, 'getProviderByCode']);
+Route::post('utilityProvider', [UtilityProviderApi::class, 'getProviderByCode']);

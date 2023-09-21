@@ -29,7 +29,7 @@ class UtilityProviderApi extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function getAllProviders()
+    public function getAllProviders(Request $request)
     {
         //Validate roles and request information like headers and auth tokens.
         try {
@@ -60,16 +60,17 @@ class UtilityProviderApi extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function getProviderByCode(Request $request, $providerCode)
+    public function getProviderByCode(Request $request)
     {
         try {
 
+            $providerCode = $request->input('providerCode');
             //Checking if utility provider exists.
             $providerExists = $this->utilityProviderDao->getUtilityProviderByCode($providerCode);
 
             $utilityProviderDto = new UtilityProviderDto();
             //Checking if the object has data
-            Log::info("OriginMessage:" . gettype($providerExists));
+            Log::info("OriginMessage:" . $providerExists);
             if (!blank($providerExists)) {
                 //Using the DTO to get and set object data properties.
                 $utilityProviderArray = $utilityProviderDto->setProviderDto(
@@ -116,12 +117,13 @@ class UtilityProviderApi extends Controller
     public function createUtilityProvider(Request $request)
     {
         try {
+            Log::info("Log Message:" . json_encode($request->all()));
             $utilityProviderDto = new UtilityProviderDto();
             $utilityProviderDto->setAttributes($request->all());
 
             // Validate whether such a provider already esists using the name and code.
             $providerExists = $this->utilityProviderDao->getUtilityProviderByCode($utilityProviderDto->getProvider_code());
-            Log::info("Log Message:" . json_encode($request->all()));
+            Log::info("Provider Exists:" . json_encode($providerExists));
             if (blank($providerExists)) {
                 $provider = $this->utilityProviderDao->createutilityProvider($utilityProviderDto);
                 if (!blank($provider)) {
