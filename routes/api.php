@@ -35,7 +35,7 @@ Route::post('registerProviderCategories', [ProviderCategoryApi::class, 'createPr
 Route::post('listsProviderCategories', [ProviderCategoryApi::class, 'getProviderCategories']);
 
 //get provider categories by their Id
-Route::post('lists/', [ProviderCategoryApi::class, 'getProviderCategoryById']);
+Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
 
 
 
