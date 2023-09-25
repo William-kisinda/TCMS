@@ -81,18 +81,6 @@ class UtilityProviderDto
         $this->attributes['provider_code'] = $provider_code;
     }
 
-
-    // public function setProvider_categories_code($provider_categories_code)
-    // {
-    //     $this->attributes['provider_categories_code'] = $provider_categories_code;
-    // }
-
-
-    // public function getProvider_categories_code()
-    // {
-    //     return $this->attributes['provider_categories_code'];
-    // }
-
     /**
      * @param mixed $provider_categories_id
      */

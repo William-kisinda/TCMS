@@ -84,9 +84,7 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
         $utilityProvider = null;
         try {
             $utilityProvider = new UtilityProviderModel();
-
-            // $provider->setProviderCode($providerCategoryDto->getProv_categ_code());
-            // $provider->setProviderName($providerCategoryDto->getProv_categ_name());
+            
             $utilityProvider->setAttributes($providerDto->getAttributes());
 
             $utilityProvider->save();

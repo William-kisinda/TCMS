@@ -1,7 +1,8 @@
 <?php
 
-if (!function_exists('generateRequestId')) {
+namespace App;
 
+class Helpers {
     //request and response ID generator
     function generateRequestId()
     {

@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Http\Controllers\Tcms\Utility_provider\Api;
 
+use App\Helpers;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -66,38 +66,44 @@ class UtilityProviderApi extends Controller
 
             $providerCode = $request->input('providerCode');
             //Checking if utility provider exists.
-            $providerCode = $request->input('code');
+            // $providerCode = $request->input('code');
             $providerExists = $this->utilityProviderDao->getUtilityProviderByCode($providerCode);
-            $requestId = generateRequestId();
+            $helpers = new Helpers();
+            $requestId = $helpers->generateRequestId();
 
             //Checking if the object has data
             Log::info("OriginMessage:" . $providerExists);
             if (!blank($providerExists)) {
 
-                    $meterNumber = $request->input('meter_number');
-                /**
-                 * Now after validating the existance of utility provider , then we use that specific utility providers api to look for their customer information
-                 *
-                 *
-                 */
+                $utilityProviderDto = new UtilityProviderDto();
 
-                 $client = new Client();
+                // $utilityProviderDto->getProiv
+                $utilityProviderDto->setAttributes($providerExists);
+                // $meterNumber = $request->input('meter_number');
+                // /**
+                //  * Now after validating the existance of utility provider , then we use that specific utility providers api to look for their customer information
+                //  *
+                //  *
+                //  */
 
-                 $response = $client->request('POST', 'http://127.0.0.1:8000/api/meter', [
-                     'query' => [
-                         'meter_num' => $meterNumber,
-                         'requestId' => $requestId
-                     ],
-                 ]);
-                 $data = json_decode($response->getBody(), true);
+                //  $client = new Client();
 
-                        //logging
-                        Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+                //  $response = $client->request('POST', 'http://127.0.0.1:8000/api/meter', [
+                //      'query' => [
+                //          'meter_num' => $meterNumber,
+                //          'requestId' => $requestId
+                //      ],
+                //  ]);
+                //  $data = json_decode($response->getBody(), true);
 
-                return Response()->json(["error" => false, "Utility Provider" => $data], Response::HTTP_OK);
+                //logging
+                Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+
+                return Response()->json(["error" => false, "Utility Provider" => $utilityProviderDto->getAttributes()], Response::HTTP_OK);
             }
-                     //Logging
-                     Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is Failed to be  processed due to Invalid Utitlity provider Code');
+            
+            //Logging
+            Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is Failed to be  processed due to Invalid Utitlity provider Code');
 
             return Response()->json(["error" => false, "Utility Provider" => ['Invalid Utility Provider Code']], Response::HTTP_NOT_FOUND);
         } catch (\Exception $exception) {
