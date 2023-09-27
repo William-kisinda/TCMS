@@ -2,9 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Tcms\Auth\Api\AuthController;
+use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
-use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,24 @@ Route::post('listsProviderCategories', [ProviderCategoryApi::class, 'getProvider
 //get provider categories by their Id
 Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
 
+/**
+ *  Route to handle user authentication.
+ * @author Daniel.
+ *
+ */
+
+// Route::middleware([])->group(function () {
+// This route allows up to 5 requests per minute (adjust as needed).
+
+// get all utility providers
+Route::post('user/create', [AuthController::class, 'createUPUser']);
+
+//Create a utility provider
+Route::post('users', [AuthController::class, 'getUPUsers']);
+
+//Get utility provider by code
+Route::post('providerByCode', [UtilityProviderApi::class, 'getProviderByCode']);
+// });
 
 
 /**
@@ -44,18 +63,17 @@ Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
  *
  */
 
-
 // Route::middleware([])->group(function () {
-        // This route allows up to 5 requests per minute (adjust as needed).
+// This route allows up to 5 requests per minute (adjust as needed).
 
-        // get all utility providers
-        Route::post('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
+// get all utility providers
+Route::post('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
 
-        //Create a utility provider
-        Route::post('utilityProvider', [UtilityProviderApi::class, 'createUtilityProvider']);
+//Create a utility provider
+Route::post('utilityProvider', [UtilityProviderApi::class, 'createUtilityProvider']);
 
-        //Get utility provider by code
-        Route::post('providerByCode', [UtilityProviderApi::class, 'getProviderByCode']);
+//Get utility provider by code
+Route::post('providerByCode', [UtilityProviderApi::class, 'getProviderByCode']);
 // });
 
 /**
@@ -63,7 +81,6 @@ Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
  * @author Daniel.
  *
  */
-
 
 Route::middleware([])->group(function () {
         // This route allows up to 5 requests per minute (adjust as needed).
