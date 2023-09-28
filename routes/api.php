@@ -29,13 +29,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
  *
  */
 //register provider category
-Route::post('registerProviderCategories', [ProviderCategoryApi::class, 'createProviderCategory']);
+Route::post('registerProviderCategory', [ProviderCategoryApi::class, 'createProviderCategory']);
 
-//list all register provider categories
-Route::post('listsProviderCategories', [ProviderCategoryApi::class, 'getProviderCategories']);
+//list all provider categories
+Route::post('listProviderCategories', [ProviderCategoryApi::class, 'getProviderCategories']);
 
 //get provider categories by their Id
-Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
+Route::post('listProviderCategory', [ProviderCategoryApi::class, 'getProviderCategoryById']);
 
 /**
  *  Route to handle user authentication.
@@ -46,14 +46,18 @@ Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
 // Route::middleware([])->group(function () {
 // This route allows up to 5 requests per minute (adjust as needed).
 
-// get all utility providers
+//Create a user
 Route::post('user/create', [AuthController::class, 'createUPUser']);
 
-//Create a utility provider
+// get all users
 Route::post('users', [AuthController::class, 'getUPUsers']);
 
-//Get utility provider by code
-Route::post('providerByCode', [UtilityProviderApi::class, 'getProviderByCode']);
+// get all users
+Route::post('user/show', [AuthController::class, 'getUPUserById']);
+
+// get all users
+Route::post('user/update', [AuthController::class, 'updateUPUser']);
+
 // });
 
 

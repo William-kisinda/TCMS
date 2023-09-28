@@ -5,7 +5,6 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use Laravel\Passport\HasApiTokens;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -26,7 +25,6 @@ class User extends Authenticatable
         'email',
         'phone_number',
         'password',
-        'utility_provider_id'
     ];
 
     /**

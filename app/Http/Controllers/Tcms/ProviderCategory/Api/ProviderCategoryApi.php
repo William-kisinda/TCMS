@@ -72,9 +72,9 @@ class ProviderCategoryApi extends Controller
                 //Now setting the provider categories array attributes.
                 $providerCategoryDto->setAttributes($providerCategoryArray);
 
-                return Response()->json(["error" => false, "providerCategories" => $providerCategoryDto->getAttributes()], Response::HTTP_OK);
+                return Response()->json(["error" => false, "providerCategory" => $providerCategoryDto->getAttributes()], Response::HTTP_OK);
             }
-            return Response()->json(["error" => false, "providerCategory" => ['No Data Found']], Response::HTTP_BAD_REQUEST);
+            return Response()->json(["error" => false, "providerCategory" => $providerCategoryDto->getAttributes()], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {
             Log::info("Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
