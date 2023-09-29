@@ -104,17 +104,17 @@ class CustomerDaoImpl implements CustomerDao
 
              $customer->setAttributes($customerDto->getAttributes());
  
-            //  $customer->save();
+             $customer->save();
 
              //Get the id of newly stored customer.
-            //  $customerId = $customer->id;
-            $customerId = 5;
+             $customerId = $customer->id;
 
              //Create new meter for this customer having with us the id of the customer.
              $meterDao = new MeterDaoImpl();
+             
              $meter = $meterDao->createMeter($customerId);
          } catch (\Exception $e) {
-             Log::info("Customer Exception:". $e->getMessage());
+             Log::info("Customer Create Exception:". $e->getMessage());
          }
          return $meter;
     }

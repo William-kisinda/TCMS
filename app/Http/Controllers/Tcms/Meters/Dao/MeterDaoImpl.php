@@ -102,16 +102,18 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
 
             //Generate Meter Number
             $helper = new Helpers();
+
             $meter_number = $helper->generateMeterNumber();
 
             //Check if by any chance the meterNumber has ever been used already.
             while (true) {
-                $meter = $this->checkIfMeterExists($meter_number);
-                if (is_null($meter)) break;
+                $meterCheck = $this->checkIfMeterExists($meter_number);
+                if (is_null($meterCheck)) break;
                 $meter_number = $helper->generateMeterNumber();
             }
             
             $meterDto = new MeterDto();
+
             $meterDto->setAttributes([
                 "meter_number" => $meter_number,
                 "customers_id" => $customerId,
@@ -119,8 +121,8 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
             ]);
 
             Log::info("Meter Attributes:". json_encode($meterDto->getAttributes()));
-            $meter->setAttributes($meterDto->getAttributes());
 
+            $meter->setAttributes($meterDto->getAttributes());
             $meter->save();
 
           } catch (\Exception $e) {
