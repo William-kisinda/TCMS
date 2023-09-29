@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Tcms\Auth\Api\AuthController;
+use App\Http\Controllers\Tcms\Customers\Api\CustomersController;
 use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
@@ -106,4 +107,18 @@ Route::middleware([])->group(function () {
 
         //Get Tariff By Name Or Code
         Route::post('tariffByNameOrCode', [TariffsApi::class, 'getTariffByNameOrCode']);
+});
+
+Route::middleware([])->group(function () {
+        // This route allows up to 5 requests per minute (adjust as needed).
+
+        // get all customers
+        Route::post('customers', [CustomersController::class, 'getAllCustomers']);
+
+        // get all customers
+        Route::post('customerById', [CustomersController::class, 'getCustomerById']);
+
+        // get all customers
+        Route::post('customer/create', [CustomersController::class, 'createCustomer']);
+
 });
