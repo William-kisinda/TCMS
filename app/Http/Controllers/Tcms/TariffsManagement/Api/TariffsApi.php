@@ -2,7 +2,6 @@
 namespace App\Http\Controllers\Tcms\TariffsManagement\Api;
 
 use App\Helpers;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -71,7 +70,6 @@ class TariffsApi extends Controller
 
                 $tariffDto = new TariffsDto();
 
-                // $utilityProviderDto->getProiv
                 $tariffDto->setAttributes($tariffExists);
 
                 //logging
@@ -220,7 +218,7 @@ class TariffsApi extends Controller
      
 
     /*
-     * Create a Utility Provider.
+     * Create a Tariff.
      *
      * @param null
      * @return \Illuminate\Http\JsonResponse

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Database\Seeders\ProviderCategorySeeder;
@@ -21,6 +20,6 @@ class DatabaseSeeder extends Seeder
         //     'code' => 'UU7786895'
         // ]);
 
-        $this->call(ProviderCategorySeeder::class);
+        $this->call(CreateAdminUserSeeder::class);
     }
 }

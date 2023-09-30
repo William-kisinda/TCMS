@@ -2,11 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Tcms\TokenGeneration\Api\ApiEngine;
-use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
-use App\Http\Controllers\Tcms\TokenGeneration\Api\TokenGenerateController;
+use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,14 +28,36 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
  *
  */
 //register provider category
-Route::post('registerProviderCategories', [ProviderCategoryApi::class, 'createProviderCategory']);
+Route::post('registerProviderCategory', [ProviderCategoryApi::class, 'createProviderCategory']);
 
-//list all register provider categories
-Route::post('listsProviderCategories', [ProviderCategoryApi::class, 'getProviderCategories']);
+//list all provider categories
+Route::post('listProviderCategories', [ProviderCategoryApi::class, 'getProviderCategories']);
 
 //get provider categories by their Id
-Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
+Route::post('listProviderCategory', [ProviderCategoryApi::class, 'getProviderCategoryById']);
 
+/**
+ *  Route to handle user authentication.
+ * @author Daniel.
+ *
+ */
+
+// Route::middleware([])->group(function () {
+// This route allows up to 5 requests per minute (adjust as needed).
+
+//Create a user
+Route::post('user/create', [AuthController::class, 'createUPUser']);
+
+// get all users
+Route::post('users', [AuthController::class, 'getUPUsers']);
+
+// get all users
+Route::post('user/show', [AuthController::class, 'getUPUserById']);
+
+// get all users
+Route::post('user/update', [AuthController::class, 'updateUPUser']);
+
+// });
 
 
 /**
@@ -46,18 +66,17 @@ Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
  *
  */
 
-
 // Route::middleware([])->group(function () {
-        // This route allows up to 5 requests per minute (adjust as needed).
+// This route allows up to 5 requests per minute (adjust as needed).
 
-        // get all utility providers
-        Route::post('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
+// get all utility providers
+Route::post('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
 
-        //Create a utility provider
-        Route::post('utilityProvider', [UtilityProviderApi::class, 'createUtilityProvider']);
+//Create a utility provider
+Route::post('utilityProvider', [UtilityProviderApi::class, 'createUtilityProvider']);
 
-        //Get utility provider by code
-        Route::post('providerByCode', [UtilityProviderApi::class, 'getProviderByCode']);
+//Get utility provider by code
+Route::post('providerByCode', [UtilityProviderApi::class, 'getProviderByCode']);
 // });
 
 /**
@@ -65,7 +84,6 @@ Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
  * @author Daniel.
  *
  */
-
 
 Route::middleware([])->group(function () {
         // This route allows up to 5 requests per minute (adjust as needed).
@@ -88,15 +106,3 @@ Route::middleware([])->group(function () {
         //Get Tariff By Name Or Code
         Route::post('tariffByNameOrCode', [TariffsApi::class, 'getTariffByNameOrCode']);
 });
-
-/**
- * Below its just a list of APIs for token genaration and management
- * @author Julius.
- *
- */
-//Token Receiver
-Route::post('tokenReceiver', [ApiEngine::class, 'tokenReceiver']);
-
-//Token Generation
-Route::post('/generate-token', [TokenGenerateController::class, 'generateToken']);
-
