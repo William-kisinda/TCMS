@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
 use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
+use App\Http\Controllers\Tcms\TokenGeneration\Api\ApiEngine;
+use App\Http\Controllers\Tcms\TokenGeneration\Api\TokenGenerateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -106,3 +108,14 @@ Route::middleware([])->group(function () {
         //Get Tariff By Name Or Code
         Route::post('tariffByNameOrCode', [TariffsApi::class, 'getTariffByNameOrCode']);
 });
+
+/**
+ * API Routes for Token Management
+ * @author Julius.
+ *
+ */
+//token Generator
+Route::post('token-generator', [TokenGenerateController::class, 'generateToken']);
+
+//token receiver , API that might be exposed by the client systems
+Route::post('token-receiver', [ApiEngine::class,'tokenReceiver']);

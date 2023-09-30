@@ -62,7 +62,7 @@ class GenerateToken implements ShouldQueue
                 //send Notification
                 $client = new Client();
 
-        $response = $client->request('POST', 'http://127.0.0.1:8000/api/tokenReceiver', [
+        $response = $client->request('POST', 'http://127.0.0.1:8000/api/token-receiver', [
             'query' => [
                 'token' => $token,
              // Add other data you want to include in the notification here
