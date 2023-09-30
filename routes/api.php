@@ -2,9 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Tcms\TokenGeneration\Api\ApiEngine;
+use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
-use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
+use App\Http\Controllers\Tcms\TokenGeneration\Api\TokenGenerateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +41,7 @@ Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
 
 
 /**
- *  
+ *
  * @author Daniel.
  *
  */
@@ -59,7 +61,7 @@ Route::post('lists', [ProviderCategoryApi::class, 'getProviderCategoryById']);
 // });
 
 /**
- *  
+ *
  * @author Daniel.
  *
  */
@@ -86,3 +88,15 @@ Route::middleware([])->group(function () {
         //Get Tariff By Name Or Code
         Route::post('tariffByNameOrCode', [TariffsApi::class, 'getTariffByNameOrCode']);
 });
+
+/**
+ * Below its just a list of APIs for token genaration and management
+ * @author Julius.
+ *
+ */
+//Token Receiver
+Route::post('tokenReceiver', [ApiEngine::class, 'tokenReceiver']);
+
+//Token Generation
+Route::post('/generate-token', [TokenGenerateController::class, 'generateToken']);
+

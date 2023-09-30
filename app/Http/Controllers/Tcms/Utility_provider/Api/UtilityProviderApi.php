@@ -7,9 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Tcms\MeterValidation\Dao\MeterDaoImp;
-use App\Http\Controllers\Tcms\MeterValidation\Dao\CustomerDaoImpl;
-use App\Http\Controllers\Tcms\MeterValidation\Api\MeterValidateApi;
 use App\Http\Controllers\Tcms\Utility_provider\Dto\UtilityProviderDto;
 use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
 
@@ -101,7 +98,7 @@ class UtilityProviderApi extends Controller
 
                 return Response()->json(["error" => false, "Utility Provider" => $utilityProviderDto->getAttributes()], Response::HTTP_OK);
             }
-            
+
             //Logging
             Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is Failed to be  processed due to Invalid Utitlity provider Code');
 
