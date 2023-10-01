@@ -24,7 +24,7 @@ class validationDto {
     public function getAttributesToValidate($id) {
         $this->attributes = [];
         $this->attributes['id']  = $id;
-        return $attributes;
+        return $this->attributes;
     }
 
     public function getUserToValidate() {
