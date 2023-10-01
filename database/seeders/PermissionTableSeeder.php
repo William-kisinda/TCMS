@@ -23,7 +23,7 @@ class PermissionTableSeeder extends Seeder
             'provider-edit',
             'provider-delete'
          ];
-         
+
          foreach ($permissions as $permission) {
               Permission::create(['name' => $permission]);
          }

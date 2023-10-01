@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Meters;
+use App\Models\Meter;
 use Illuminate\Http\Request;
 
 class MeterValidationController extends Controller

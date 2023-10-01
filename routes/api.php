@@ -2,11 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\tcmsDebt\Api\DebtManageApi;
 use App\Http\Controllers\Tcms\Auth\Api\AuthController;
-use App\Http\Controllers\Tcms\Customers\Api\CustomersController;
 use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
+use App\Http\Controllers\Tcms\TokenGeneration\Api\ApiEngine;
+use App\Http\Controllers\Tcms\TokenGeneration\Api\TokenGenerateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,13 +65,11 @@ Route::post('user/update', [AuthController::class, 'updateUPUser']);
 
 
 /**
- *  
+ *
  * @author Daniel.
  *
  */
 
-// Route::middleware([])->group(function () {
-// This route allows up to 5 requests per minute (adjust as needed).
 
 // get all utility providers
 Route::post('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
@@ -82,7 +82,7 @@ Route::post('providerByCode', [UtilityProviderApi::class, 'getProviderByCode']);
 // });
 
 /**
- *  
+ *
  * @author Daniel.
  *
  */
@@ -108,17 +108,27 @@ Route::middleware([])->group(function () {
         //Get Tariff By Name Or Code
         Route::post('tariffByNameOrCode', [TariffsApi::class, 'getTariffByNameOrCode']);
 });
+/**
+ * API Routes for Token Management
+ * @author Julius.
+ *
+ */
+//token Generator
+Route::post('token-generator', [TokenGenerateController::class, 'generateToken']);
 
-Route::middleware([])->group(function () {
-        // This route allows up to 5 requests per minute (adjust as needed).
+//token receiver , API that might be exposed by the client systems
+Route::post('token-receiver', [ApiEngine::class,'tokenReceiver']);
 
-        // get all customers
-        Route::post('customers', [CustomersController::class, 'getAllCustomers']);
+/**
+ *
+ * @author Hamphrey Urio.
+ *
+ */
 
-        // get all customers
-        Route::post('customerById', [CustomersController::class, 'getCustomerById']);
 
-        // get all customers
-        Route::post('customer/create', [CustomersController::class, 'createCustomer']);
+ Route::middleware([])->group(function () {
 
+
+    Route::post('/debtresolve', [DebtManageApi::class, 'resolve']);
+    Route::post('/meterdebt', [DebtManageApi::class, 'getDebtByMeterId']);
 });
