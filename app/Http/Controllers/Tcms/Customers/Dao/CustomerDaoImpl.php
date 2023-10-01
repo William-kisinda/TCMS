@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Tcms\Customers\Dao;
 use App\Models\Customer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
 use App\Http\Controllers\Tcms\Customers\Dao\CustomerDao;
 use App\Http\Controllers\Tcms\Customers\Dto\CustomerDto;
 use App\Http\Controllers\Tcms\Meters\Dao\MeterDaoImpl;
@@ -91,6 +90,31 @@ class CustomerDaoImpl implements CustomerDao
     }
 
     /**
+     * @param $customerName, $customerPhone
+     * @return Customer|null
+     * @author Daniel MM
+     */
+    public function checkIfCustomerExists($customerName, $customerPhone)
+    {
+        $customer = null;
+
+        try {
+            $customerInfo = DB::table('customers')->where('full_name', $customerName)->orWhere('phone', $customerPhone)->first();
+
+            if (!empty($customerInfo)) {
+                // If the customer info is found, you can directly create a Customer object..
+                $customer = new Customer();
+                $customer->setAttributes((array) $customerInfo);
+            }
+        } catch (\Exception $e) {
+            // Log the exception for debugging purposes.
+            Log::info("Tariff Exception: " . $e->getMessage());
+        }
+
+        return $customer;
+    }
+
+    /**
      * @param CustomerDto $customerDto
      * @return Customer|null
      * @author Daniel MM
@@ -101,13 +125,22 @@ class CustomerDaoImpl implements CustomerDao
         $meter = null;
          try {
              $customer = new Customer();
+             $customerId = null;
 
              $customer->setAttributes($customerDto->getAttributes());
- 
-             $customer->save();
 
-             //Get the id of newly stored customer.
-             $customerId = $customer->id;
+             $customerExists = $this->checkIfCustomerExists($customerDto->getCustomer_name(), $customerDto->getCustomer_phone());
+             if (is_null($customerExists)){
+
+                $customer->save();
+
+                //Get the id of newly stored customer.
+                $customerId = $customer->id;
+             } else {
+                
+                //Get the id of newly stored customer.
+                $customerId = $customerExists->id;
+             }
 
              //Create new meter for this customer having with us the id of the customer.
              $meterDao = new MeterDaoImpl();
