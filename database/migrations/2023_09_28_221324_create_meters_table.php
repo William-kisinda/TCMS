@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('token_manage', function (Blueprint $table) {
+        Schema::create('meters', function (Blueprint $table) {
             $table->id();
-            // $table->foreignId('meters_id')->constrained()->onDelete('cascade');
-            $table->string('token');
-            $table->timestamp('generation_date');
-            $table->foreignId('tariff_id')->constrained()->onDelete('cascade');
+            $table->string('meterNumber')->unique();
+            $table->enum('status', ['Active', 'Inactive']);
+            $table->timestamps();
         });
     }
 
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('token_manage');
+        Schema::dropIfExists('meters');
     }
 };

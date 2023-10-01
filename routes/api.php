@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\tcmsDebt\Api\DebtManageApi;
 use App\Http\Controllers\Tcms\Auth\Api\AuthController;
 use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
@@ -62,13 +63,11 @@ Route::post('user/update', [AuthController::class, 'updateUPUser']);
 
 
 /**
- *  
+ *
  * @author Daniel.
  *
  */
 
-// Route::middleware([])->group(function () {
-// This route allows up to 5 requests per minute (adjust as needed).
 
 // get all utility providers
 Route::post('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
@@ -81,7 +80,7 @@ Route::post('providerByCode', [UtilityProviderApi::class, 'getProviderByCode']);
 // });
 
 /**
- *  
+ *
  * @author Daniel.
  *
  */
@@ -106,4 +105,18 @@ Route::middleware([])->group(function () {
 
         //Get Tariff By Name Or Code
         Route::post('tariffByNameOrCode', [TariffsApi::class, 'getTariffByNameOrCode']);
+});
+
+/**
+ *
+ * @author Hamphrey Urio.
+ *
+ */
+
+
+Route::middleware([])->group(function () {
+
+
+    Route::post('/debtresolve', [DebtManageApi::class, 'resolve']);
+    Route::post('/meterdebt', [DebtManageApi::class, 'getDebtByMeterId']);
 });

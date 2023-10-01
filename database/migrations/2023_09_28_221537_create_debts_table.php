@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('token_manage', function (Blueprint $table) {
+        Schema::create('debts', function (Blueprint $table) {
             $table->id();
-            // $table->foreignId('meters_id')->constrained()->onDelete('cascade');
-            $table->string('token');
-            $table->timestamp('generation_date');
-            $table->foreignId('tariff_id')->constrained()->onDelete('cascade');
+            $table->decimal('reductionRate', 5, 2);
+            $table->decimal('debtAmount', 10, 2);
+            $table->text('description')->nullable();
+            $table->foreignId('meters_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('token_manage');
+        Schema::dropIfExists('debts');
     }
 };

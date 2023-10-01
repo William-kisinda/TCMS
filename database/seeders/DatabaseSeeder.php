@@ -1,25 +1,19 @@
 <?php
-
 namespace Database\Seeders;
 
+
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Database\Seeders\ProviderCategorySeeder;
+use App\Models\Meter;
+use App\Models\Debt;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        // Seed data for the 'meter' table
+        Meter::factory(100)->create();
 
-        // \App\Models\ProviderCategory::factory()->create([
-        //     'name' => "TANESCO",
-        //     'code' => 'UU7786895'
-        // ]);
-
-        $this->call(CreateAdminUserSeeder::class);
+        // Seed data for the 'debt' table
+        Debt::factory(100)->create();
     }
 }
