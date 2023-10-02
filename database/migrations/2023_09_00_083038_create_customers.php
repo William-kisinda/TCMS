@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['utility_provider_id']);
-            $table->dropColumn('utility_provider_id');
+        Schema::create('customers', function (Blueprint $table) {
+            $table->id();
+            $table->string('full_name');
+            $table->text('phone');
+            $table->text('address');
         });
     }
 
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('customers');
     }
 };
