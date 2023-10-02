@@ -25,12 +25,12 @@ class DebtManageApi extends Controller
 
 
 
-public function resolve(Request $request)
+public function resolve($meterNumber, $amount)
 {
     try {
-        $meterNumber = $request->input('meterNumber');
-        $amount = $request->input('amount');
-       ;
+      //  $meterNumber = $request->input('meterNumber');
+       // $amount = $request->input('amount');
+
         // Call the resolveDebt function from DebtDaoImpl
         $resolve = $this->debtDao->resolveDebt($meterNumber, $amount,);
 
@@ -65,10 +65,10 @@ public function resolve(Request $request)
 }
 
 
-public function getDebtByMeterId(Request $request)
+public function getDebtByMeterId($meterId)
 {
     try {
-        $meterId = $request->input('meterId');
+      //  $meterId = $request->input('meterId');
 
         // Call the getDebtByMeterId function from your Dao or Repository
         $debt = $this->debtDao->getDebtByMeterId($meterId);

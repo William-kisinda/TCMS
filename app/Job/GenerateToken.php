@@ -37,8 +37,12 @@ class GenerateToken implements ShouldQueue
     {
     try{
         $amount = $this->amount;
+
+                // operations for debt will be handled here
+        //check if the meter have debt
+        
+
         // operations for tariff will be handled
-        // operations for debt will be handled here
 
         // Generate a unique token, we may add manipulation so as to generate unique token for each specific meter
         $token = $amount + 9 ;
