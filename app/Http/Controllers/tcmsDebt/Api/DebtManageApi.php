@@ -15,24 +15,59 @@ class DebtManageApi extends Controller
     public function __construct() {
         $this->debtDao = new DebtDaoImpl();
     }
+/**
+ *
+ * @author Hamphrey Urio.
+ *
+ */
 
 
 
-    public function showPaymentForm()
-    {
-        return view('payment-form');
-    }
+        public function assignDebt(Request $request)
+        {
+            try {
+                $AssigneDebtAmount= $request->input('AssigneDebtAmount');
+                $AssignedReductionRate = $request->input('AssignedReductionRate');
+                $meterId=$request->input('meterId');
+                $description=$request->input('description');
+
+                // Call the assignDebtByMeterId function with provided parameters
+                $response = $this->debtDao->assignDebtByMeterId($meterId, $AssigneDebtAmount, $AssignedReductionRate,$description);
+
+                // Check if the response contains 'meterExists' (indicating success)
+                if (isset($response['meterExists']) && $response['meterExists']) {
+                    return response()->json([
+                        "error" => false,
+                        "message" => "Debt assigned successfully!",
+                        "debtAmount" => $response['debtAmount'],
+                        "debtReduction" => $response['debtReduction'],
+                        "description" => $response['description'],
+                    ], HttpResponse::HTTP_OK);
+                } else {
+                    return response()->json([
+                        "error" => true,
+                        "message" => "Failed to assign debt!",
+                    ], HttpResponse::HTTP_BAD_REQUEST);
+                }
+            } catch (\Exception $e) {
+                Log::error("Assign Debt Exception: " . $e->getMessage());
+                return response()->json([
+                    "error" => true,
+                    "message" => "Something went wrong while assigning debt!",
+                ], HttpResponse::HTTP_BAD_REQUEST);
+            }
+        }
 
 
 
-public function resolve($meterNumber, $amount)
+public function resolve(Request $request)
 {
     try {
-      //  $meterNumber = $request->input('meterNumber');
-       // $amount = $request->input('amount');
+       $meterId = $request->input('meterId');
+       $amount = $request->input('amount');
 
         // Call the resolveDebt function from DebtDaoImpl
-        $resolve = $this->debtDao->resolveDebt($meterNumber, $amount,);
+        $resolve = $this->debtDao->resolveDebt($meterId, $amount,);
 
         // Check if the response contains "remainingAmount" and "debtReduction"
         if (array_key_exists('remainingAmount', $resolve)  && array_key_exists('remainingdebt', $resolve)&& array_key_exists('debtReduction', $resolve) && $resolve['meterExists']) {
@@ -52,7 +87,7 @@ public function resolve($meterNumber, $amount)
         return response()->json([
             "error" => true,
             "message" => "Could not fetch debts!",
-            "possible reasons : " => "Empty values or meter : " . $meterNumber . " number does not exists"
+            "possible reasons : " => "Empty values or meter : " . $meterId . " number does not exists"
         ], HttpResponse::HTTP_OK);
     } catch (\Exception $e) {
         Log::info("Debts Exception: " . $e->getMessage());

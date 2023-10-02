@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->decimal('reductionRate', 5, 2);
             $table->decimal('debtAmount', 10, 2);
-            $table->text('description')->nullable();
+            $table->text('description');
             $table->foreignId('meters_id')->constrained()->onDelete('cascade');
             $table->timestamps();
 
