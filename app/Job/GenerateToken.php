@@ -27,6 +27,7 @@ class GenerateToken implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $amount = null;
+    protected $meterId = null;
 
     public function __construct($amount)
     {
@@ -40,7 +41,7 @@ class GenerateToken implements ShouldQueue
 
                 // operations for debt will be handled here
         //check if the meter have debt
-        
+
 
         // operations for tariff will be handled
 
