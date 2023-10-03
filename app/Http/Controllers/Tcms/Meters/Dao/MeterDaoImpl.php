@@ -57,10 +57,35 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
  
               if (!empty($metersInfo)) {
                 $meters = $metersInfo;
+
+                $metersData = [];
+                //Resolve meter with their debts
+                $debt = 0;
+                foreach($meters as $meter) {
+                    $debtInfo = DB::table('debt')->where('meters_id', $meter->id)->first();
+                    if (!empty($debtInfo)) {
+                        $newMeterInfo = [
+                            'id' => $meter->id,
+                            'meter_number' => $meter->meter_number,
+                            'status' => $meter->status,
+                            'debt' => $debtInfo->amount,
+                        ];
+                        array_push($metersData, $newMeterInfo);
+                    } else {
+                        $newMeterInfo = [
+                            'id' => $meter->id,
+                            'meter_number' => $meter->meter_number,
+                            'status' => $meter->status,
+                            'debt' => $debt,
+                        ];
+                        array_push($metersData, $newMeterInfo);
+                    }
+                }
+                $meters = $metersData;
               }
           } catch (\Exception $e) {
               // Log the exception for debugging purposes.
-              Log::error("Customer Meters Fetch Exception: " . $e->getMessage());
+              Log::error("Customer Meters Debts Fetch Exception: " . $e->getMessage());
           }
  
           return $meters;
@@ -72,7 +97,7 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
       * @author Daniel MM
       */
      public function checkIfMeterExists($meterNumber)
-     {
+     { 
          $meter = null;
          try {
              $meterInfo = DB::table('meters')->where('meter_number', $meterNumber)->first();
