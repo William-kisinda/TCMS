@@ -53,6 +53,7 @@ class GenerateToken implements ShouldQueue
         $requestId = 0;
         //tariff codes
         $tariffCode = 'TN21';
+        $tariffId = 1;
 
         //Handle Debt Operations
         $debtDao = new DebtDaoImpl();
@@ -68,7 +69,7 @@ class GenerateToken implements ShouldQueue
 
         //store token ManageInfo
         $tokenDto = new TokenManageDto();
-        $tokenDto->setCreateInfo($token,$meterId, $helpers->generateRequestId(),$tariffCode);
+        $tokenDto->setCreateInfo($token,$meterId, date('Ymd'), $tariffId);
 
         $tokenManageDao = new TokenManageDaoImp();
         $tokenManageDao->createManageInfo($tokenDto);

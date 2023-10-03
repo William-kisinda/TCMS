@@ -10,7 +10,7 @@ class debt extends Model
     use HasFactory;
 
     public $table = 'debts';
-    public $timestamps='false';
+    public $timestamps=false;
 
 
      protected $fillable = [
@@ -48,7 +48,7 @@ class debt extends Model
        }
 
 
-      
+
 
 
           public function getAttributes(){
