@@ -47,19 +47,12 @@ class DebtDaoImpl implements DebtDao
         return $debt;
     }
 
-=======
     public function assignDebtByMeterId($meterId, $AssigneDebtAmount, $AssignedReductionRate,$description)
->>>>>>> 98d4e51455174801085483dc395ddcd7416548ad:app/Http/Controllers/tcmsDebt/Dao/DebtDaoImpl.php
     {
         $description=(string) $description;
 
-<<<<<<< HEAD:app/Http/Controllers/Tcms/Debts/Dao/DebtDaoImpl.php
-        // Retrieve the meter based on the provided meterNumber
-        $meter = Meter::where('meter_number', $meterNumber)->first();
-=======
             // Check if there is already an existing debt for the meter
             $existingDebt = Debt::where('meters_id', $meterId)->first();
->>>>>>> 98d4e51455174801085483dc395ddcd7416548ad:app/Http/Controllers/tcmsDebt/Dao/DebtDaoImpl.php
 
             if ($existingDebt) {
 
