@@ -11,6 +11,14 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Response as HttpResponse;
 use App\Http\controllers\tcmsDebt\Dao\DebtDao;
 
+/**
+ *
+ * @author Hamphrey Urio.
+ *
+ */
+
+
+
 class DebtDaoImpl implements DebtDao
 {
 
@@ -22,65 +30,75 @@ class DebtDaoImpl implements DebtDao
         $remainingAmount = 0.0;
         $debtReduction = 0.0;
 
-        // // Retrieve the meter based on the provided meterNumber
-        // $meter = Meter::where('meterNumber', $meterNumber)->first();
+        // Retrieve the meter based on the provided meterNumber
+        $meter = Meter::where('meters_id', $meterId)->first();
 
-        // // Check if the meter exists
-        // if (!$meter) {
-        //     return [
-        //         'meterExists' => false,
-        //         'remainingAmount' => $amount,
-        //         'debtReduction' => $debtReduction,
-        //         'remainingdebt' => 0
-        //     ];
-
-        // }
-
-        // Retrieve the debt for the meter using the meter_id
-        $debt = Debt::where('meters_id', $meterId)->first();
-
-        // Check if there is a debt record for the meter
-        if ($debt->debtAmount == 0) {
-
+        // Check if the meter exists
+        if (!$meter) {
             return [
-                'meterExists' => true,
+                'meterExists' => false,
                 'remainingAmount' => $amount,
                 'debtReduction' => $debtReduction,
                 'remainingdebt' => 0
             ];
 
         }
-        else {
-            // Calculate the debt reduction based on the reduction rate
-            $reductionRate = $debt->reductionRate; // Convert percentage to decimal
-            $debtReduction = $amount * ($reductionRate / 100);
 
-            if ($debtReduction > $debt->debtAmount) {
-                $remainingAmount = $amount - $debt->debtAmount;
+        // Retrieve the debt for the meter using the meter_id
+        $debt = Debt::where('meters_id', $meter->id)->first();
 
-                $debt->debtAmount = 0;
-                $debt->update();
-
-                return [
-                    'meterExists' => true,
-                    'remainingAmount' => $remainingAmount,
-                    'debtReduction' => $debtReduction,
-                    'remainingdebt' => 0
-                ];
-            }
-            // Calculate the remaining amount after paying the debt
-            $remainingAmount = $amount - $debtReduction;
-            $remainingdebt = $debt->debtAmount - $debtReduction;
-            $debt->debtAmount = $remainingdebt;
-            $debt->update();
-            return [
-                'meterExists' => true,
-                'remainingAmount' => $remainingAmount,
-                'debtReduction' => $debtReduction,
-                'remainingdebt' => $remainingdebt,
-            ];
-        }
+    // Check if there is a debt record for the meter
+    if (!$debt) {
+        return [
+            'meterExists' => true,
+            'remainingAmount' => $amount,
+            'debtReduction' => Null,
+            'remainingdebt' => null
+        ];
     }
+   else
+   {
+
+    $reductionRate = $debt->reductionRate; // Convert percentage to decimal
+    $debtReduction = $amount * ($reductionRate / 100);
+
+    if ($debtReduction >= $debt->debtAmount) {
+        $remainingAmount = $amount - $debt->debtAmount;
+
+        Debt::where('meters_id', $meterId)->delete();
+        $debt->update();
+
+        return [
+            'meterExists' => true,
+            'remainingAmount' => $remainingAmount,
+            'debtReduction' => $debtReduction,
+            'remainingdebt' => 0
+        ];
+    }
+     else
+     {
+    // Calculate the remaining amount after paying the debt
+    $remainingAmount = $amount - $debtReduction;
+    $remainingdebt = $debt->debtAmount - $debtReduction;
+    if ($remainingdebt == 0) {
+        // Delete the row with specific meters_id if remainingdebt is 0
+
+        Debt::where('meters_id', $meterId)->delete();
+    } else {
+        $debt->debtAmount = $remainingdebt;
+        $debt->update();
+    }
+
+
+
+    return [
+        'meterExists' => true,
+        'remainingAmount' => $remainingAmount,
+        'debtReduction' => $debtReduction,
+        'remainingdebt' => $remainingdebt,
+    ];
+}}
+}
 
 
 

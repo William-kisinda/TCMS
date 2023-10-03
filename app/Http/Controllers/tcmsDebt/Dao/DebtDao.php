@@ -7,9 +7,10 @@ Interface DebtDao{
 
 
 
- 
 
-   public function resolveDebt($meterNumber, $amount);
+
+   public function resolveDebt($meterId, $amount);
 
    public function getDebtByMeterId($meterId);
+  //public function assignDebtByMeterId($meterId, $AssigneDebtAmount, $AssignedReductionRate,$description);
 }
