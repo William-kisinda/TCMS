@@ -185,7 +185,7 @@ class TariffsDaoImpl implements TariffsDao
                 $tariff = new Tariffs();
                 $tariff->setAttributes((array) $tariffInfo);
                 $tariffAmount = $tariff->getTariffAmount();
-                $finalAmount = $amount - (($amount*$tariffAmount)/100);
+                $finalAmount = (($amount*$tariffAmount)/100);
             }
         } catch (\Exception $e) {
             // Log the exception for debugging purposes.
