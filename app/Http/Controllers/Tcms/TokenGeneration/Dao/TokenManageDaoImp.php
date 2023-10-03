@@ -134,7 +134,7 @@ class TokenManageDaoImp implements TokenManageDao
      {
          $tokenInfo = null;
          try {
-             $tokenInfo = new Tariffs();
+             $tokenInfo = new Token_manage();
 
              $tokenInfo->setAttributes($tokenManageInfo->getAttributes());
 

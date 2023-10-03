@@ -47,66 +47,30 @@ class DebtDaoImpl implements DebtDao
         return $debt;
     }
 
-    public function assignDebtByMeterId($meterId, $AssigneDebtAmount, $AssignedReductionRate,$description)
-    {
-        $description=(string) $description;
-
-            // Check if there is already an existing debt for the meter
-            $existingDebt = Debt::where('meters_id', $meterId)->first();
-
-            if ($existingDebt) {
-
-                  $CurentdebtAmount=$existingDebt->debtAmount + $AssigneDebtAmount;
-                // Example: Update the existing debt with new values
-                $existingDebt->debtAmount = $CurentdebtAmount;
-                $existingDebt->reductionRate = $AssignedReductionRate;
-                $existingDebt->description=$description;
-                $existingDebt->save();
-
-                return [
-                    'meterExists' => true,
-                    'debtAmount' => $CurentdebtAmount,
-                    'debtReduction' => $AssignedReductionRate,
-                    'description'=> $description,
-
-                ];
-            }
-
-            else {
-                // If there is no existing debt, create a new debt record
-                $newDebt = new Debt();
-                $newDebt->meters_id = $meterId;
-                $newDebt->debtAmount = $AssigneDebtAmount;
-                $newDebt->reductionRate =$AssignedReductionRate ;
-                $newDebt->description=$description;
-
-                $newDebt->save();
-
-                return [
-                    'meterExists' => true,
-                    'debtAmount' => $AssigneDebtAmount,
-                    'debtReduction' => $AssignedReductionRate,
-                    'description'=> $description,
-                ];
-            }
-        }
-
-
-
 
     public function resolveDebt($meterId, $amount)
-{
-    // Validate the input data
-    $amount = (float) $amount;
-    $remainingAmount = 0.0;
-    $debtReduction = 0.0;
+    {
+        // Validate the input data
+        $amount = (float) $amount;
+        $remainingAmount = 0.0;
+        $debtReduction = 0.0;
 
-    // Retrieve the meter based on the provided meterId
-    $meter = Meter::find($meterId);
+        // Retrieve the meter based on the provided meterNumber
+        $meter = Meter::where('meters_id', $meterId)->first();
 
+        // Check if the meter exists
+        if (!$meter) {
+            return [
+                'meterExists' => false,
+                'remainingAmount' => $amount,
+                'debtReduction' => $debtReduction,
+                'remainingdebt' => 0
+            ];
 
-    // Retrieve the debt for the meter using the meter_id
-    $debt = Debt::where('meters_id', $meterId)->first();
+        }
+
+        // Retrieve the debt for the meter using the meter_id
+        $debt = Debt::where('meters_id', $meter->id)->first();
 
     // Check if there is a debt record for the meter
     if (!$debt) {

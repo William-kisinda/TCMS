@@ -160,11 +160,37 @@ class TariffsDaoImpl implements TariffsDao
              $tariff = new Tariffs();
 
              $tariff->setAttributes($tariffDto->getAttributes());
- 
+
              $tariff->save();
          } catch (\Exception $e) {
              Log::info("Tariff Exception:". $e->getMessage());
          }
          return $tariff;
      }
+
+      /**
+     * @param $tariffCode
+     * @return $finalAmount
+     * @author Julius
+     */
+    public function deductTariffByCode($tariffCode,$amount){
+        $tariff = null;
+        $finalAmount = null;
+
+        try {
+            $tariffInfo = DB::table('tariffs')->where('code', $tariffCode)->first();
+
+            if (!empty($tariffInfo)) {
+                // If the tariff info is found, you can directly create a Tariff object.
+                $tariff = new Tariffs();
+                $tariff->setAttributes((array) $tariffInfo);
+                $tariffAmount = $tariff->getTariffAmount();
+                $finalAmount = $amount - (($amount*$tariffAmount)/100);
+            }
+        } catch (\Exception $e) {
+            // Log the exception for debugging purposes.
+            Log::info("Tariff Exception: " . $e->getMessage());
+        }
+        return $finalAmount;
+    }
 }

@@ -77,22 +77,6 @@ class Tariffs extends Model
         $this->attributes['percentageAmount'] = $percentageAmount;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTariffValue()
-    {
-        return $this->attributes['value'];
-    }
-
-    /**
-     * @param mixed $category
-     */
-    public function setUtilityProviderCategory($value): void
-    {
-        $this->attributes['value'] = $value;
-    }
-
 
 
     /**

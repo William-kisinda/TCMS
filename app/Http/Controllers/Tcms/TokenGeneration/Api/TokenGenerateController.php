@@ -24,7 +24,7 @@ class TokenGenerateController extends Controller
         try{
             // Must be called after the meter number is validated
             // Dispatch the token generation job to the RabbitMQ queue
-            Queue::connection('rabbitmq')->push(new GenerateToken($request->input('amount')));
+            Queue::connection('rabbitmq')->push(new GenerateToken($request->input('amount'), $request->input('meterId')));
 
             // Return a response to the user indicating that the request has been received
             return response()->json(['message' => 'Request Accepted you will receive, token Shortly']);
