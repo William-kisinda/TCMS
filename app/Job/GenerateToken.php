@@ -2,6 +2,7 @@
 
 namespace App\Job;
 
+use App\Helpers;
 use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -14,6 +15,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use App\Http\Controllers\Tcms\Client\NotificationController;
+use App\Http\Controllers\Tcms\TariffsManagement\Dao\TariffsDaoImpl;
+use App\Http\Controllers\Tcms\TokenGeneration\Dao\TokenManageDaoImp;
+use App\Http\Controllers\Tcms\TokenGeneration\Dto\TokenManageDto;
+use App\Http\Controllers\tcmsDebt\Dao\DebtDaoImpl;
+use App\Http\controllers\tcmsDebt\Dto\DebtDto;
 
 /**
  *
@@ -29,33 +35,43 @@ class GenerateToken implements ShouldQueue
     protected $amount = null;
     protected $meterId = null;
 
-    public function __construct($amount)
+    public function __construct($amount, $meterId)
     {
         $this->amount = $amount;
+        $this->meterId = $meterId;
     }
 
     public function handle()
     {
     try{
+        $helpers = new Helpers();
         $amount = $this->amount;
+        $meterId = $this->meterId;
 
-                // operations for debt will be handled here
-        //check if the meter have debt
+        //parameters below will be fetched after meter validation including tariffs code
+        $meterNumber = 0;
+        $requestId = 0;
+        //tariff codes
+        $tariffCode = 'TN21';
 
+        //Handle Debt Operations
+        $debtDao = new DebtDaoImpl();
+        $remaingAmount = $debtDao-> resolveDebt($meterId,$amount);
+        $newAmount = $remaingAmount['remainingAmount'];
 
         // operations for tariff will be handled
+        $tariffDao = new TariffsDaoImpl();
+        $finalAmount = $tariffDao-> deductTariffByCode($tariffCode,$newAmount);
 
-        // Generate a unique token, we may add manipulation so as to generate unique token for each specific meter
-        $token = $amount + 9 ;
+        // Generate a unique token for each specific meter
+        $token = intval($finalAmount, 10) + $meterNumber + $requestId;
 
-        // Store token information in the 'tokens' table
-        // Token::create([
-        //     'token' => $token,
-        //     'meter_id' => $user->meter,
-        //     'generation_date' => now(), // You can customize the date format
-        //     'amount' => $this->amount,
-        //     'tariff_id' => $tariff->id,
-        // ]);
+        //store token ManageInfo
+        $tokenDto = new TokenManageDto();
+        $tokenDto->setCreateInfo($token,$meterId, $helpers->generateRequestId(),$tariffCode);
+
+        $tokenManageDao = new TokenManageDaoImp();
+        $tokenManageDao->createManageInfo($tokenDto);
 
         // Update the user's available units
         // $user->update([

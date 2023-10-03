@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('token');
             $table->timestamp('generation_date');
             $table->foreignId('tariff_id')->constrained()->onDelete('cascade');
+            $table->foreignId('meters_id')->constrained()->onDelete('cascade');
         });
     }
 

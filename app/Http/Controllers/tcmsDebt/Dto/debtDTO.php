@@ -16,12 +16,13 @@ Class DebtDto{
         $this->attributes['debtAmount']=$debtAmount;
 
         $this->attributes['description']=$description;
-    
+
 
         return $this->attributes;
 
 
     }
+
 
     public function getMeterNumber(){
         return  $this ->attributes['MeterNumber'];

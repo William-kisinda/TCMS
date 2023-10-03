@@ -25,14 +25,14 @@ class DebtManageApi extends Controller
 
 
 
-public function resolve($meterNumber, $amount)
+public function resolve($meterId, $amount)
 {
     try {
       //  $meterNumber = $request->input('meterNumber');
        // $amount = $request->input('amount');
 
         // Call the resolveDebt function from DebtDaoImpl
-        $resolve = $this->debtDao->resolveDebt($meterNumber, $amount,);
+        $resolve = $this->debtDao->resolveDebt($meterId, $amount,);
 
         // Check if the response contains "remainingAmount" and "debtReduction"
         if (array_key_exists('remainingAmount', $resolve)  && array_key_exists('remainingdebt', $resolve)&& array_key_exists('debtReduction', $resolve) && $resolve['meterExists']) {
@@ -52,7 +52,7 @@ public function resolve($meterNumber, $amount)
         return response()->json([
             "error" => true,
             "message" => "Could not fetch debts!",
-            "possible reasons : " => "Empty values or meter : " . $meterNumber . " number does not exists"
+            "possible reasons : " => "Empty values or meter : " . $meterId . " number does not exists"
         ], HttpResponse::HTTP_OK);
     } catch (\Exception $e) {
         Log::info("Debts Exception: " . $e->getMessage());

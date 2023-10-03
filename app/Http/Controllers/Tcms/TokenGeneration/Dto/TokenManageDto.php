@@ -33,6 +33,16 @@ class TokenManageDto
         return $this->attributes;
     }
 
+    public function setCreateInfo( $token, $meterId, $generationDate, $tariffId)
+    {
+        $this->attributes = [];
+        $this->attributes['token'] = $token;
+        $this->attributes['meter_id'] = $meterId;
+        $this->attributes['generation_date'] = $generationDate;
+        $this->attributes['tariff_id'] = $tariffId;
+        return $this->attributes;
+    }
+
     /**
      * @return mixed
      */

@@ -15,29 +15,29 @@ class DebtDaoImpl implements DebtDao
 {
 
 
-    public function resolveDebt($meterNumber, $amount)
+    public function resolveDebt($meterId, $amount)
     {
         // Validate the input data
         $amount = (float) $amount;
         $remainingAmount = 0.0;
         $debtReduction = 0.0;
 
-        // Retrieve the meter based on the provided meterNumber
-        $meter = Meter::where('meterNumber', $meterNumber)->first();
+        // // Retrieve the meter based on the provided meterNumber
+        // $meter = Meter::where('meterNumber', $meterNumber)->first();
 
-        // Check if the meter exists
-        if (!$meter) {
-            return [
-                'meterExists' => false,
-                'remainingAmount' => $amount,
-                'debtReduction' => $debtReduction,
-                'remainingdebt' => 0
-            ];
-           
-        }
+        // // Check if the meter exists
+        // if (!$meter) {
+        //     return [
+        //         'meterExists' => false,
+        //         'remainingAmount' => $amount,
+        //         'debtReduction' => $debtReduction,
+        //         'remainingdebt' => 0
+        //     ];
+
+        // }
 
         // Retrieve the debt for the meter using the meter_id
-        $debt = Debt::where('meters_id', $meter->id)->first();
+        $debt = Debt::where('meters_id', $meterId)->first();
 
         // Check if there is a debt record for the meter
         if ($debt->debtAmount == 0) {
