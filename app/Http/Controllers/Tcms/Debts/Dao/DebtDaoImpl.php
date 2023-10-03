@@ -1,19 +1,43 @@
 <?php
 
-namespace App\Http\Controllers\tcmsDebt\Dao;
+namespace App\Http\Controllers\Tcms\Debts\Dao;
 
 use App\Models\Debt;
 use App\Models\Meter;
-
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Response as HttpResponse;
-use App\Http\controllers\tcmsDebt\Dao\DebtDao;
+use App\Http\Controllers\Tcms\Debts\Dao\DebtDao;
+use App\Http\Controllers\Tcms\Debts\Dto\DebtDto;
 
 class DebtDaoImpl implements DebtDao
 {
+    public function assignDebt(DebtDto $debtDto, $update = false) {
+        $debt = null;
+        try {
+            $debt = new Debt();
 
+            if(!$update) {
+                $debt->setAttributes($debtDto->getAttributes());
+                $debt->save();
+            } else {
+                $debtInfo = Debt::where('meters_id', $debtDto->getDebt_meters_id())->first();
+                Log::info("Debt Info:". json_encode($debtDto->getAttributes()));
+                $prevDebtAmount = $debtInfo->amount;
+                $newDebtAmount = $debtDto->getDebt_amount();
+                $totalDebtAmount = $prevDebtAmount + $newDebtAmount;
+                Log::info("Debt Total:". $totalDebtAmount);
+                $debtDto->setDebt_amount($totalDebtAmount);
+                $debt->setAttributes($debtDto->getAttributes());
+                Log::info("Debt Update Info:". json_encode($debt->getAttributes()));
+                $debtInfo->amount = $totalDebtAmount;
+                $debtInfo->update();
+            }
+        } catch (\Exception $e) {
+            $debt = null;
+            Log::info("Debt assign Exception:". $e->getMessage());
+        }
+        return $debt;
+    }
 
     public function resolveDebt($meterNumber, $amount)
     {
@@ -23,7 +47,7 @@ class DebtDaoImpl implements DebtDao
         $debtReduction = 0.0;
 
         // Retrieve the meter based on the provided meterNumber
-        $meter = Meter::where('meterNumber', $meterNumber)->first();
+        $meter = Meter::where('meter_number', $meterNumber)->first();
 
         // Check if the meter exists
         if (!$meter) {
@@ -82,15 +106,12 @@ class DebtDaoImpl implements DebtDao
         }
     }
 
-
-
-
     public function getDebtByMeterId($meterId)
     {
         try {
             // Retrieve the debt for the meter using the meter_id
 
-            $debt = Debt::select('debtAmount', 'reductionRate')
+            $debt = Debt::select('amount', 'reductionRate')
                 ->where('meters_id', $meterId)
                 ->first();
 

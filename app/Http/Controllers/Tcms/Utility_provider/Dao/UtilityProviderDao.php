@@ -15,6 +15,4 @@ interface UtilityProviderDao
     public function getAllUtilityProviders();
     public function getUtilityProviderByCode($providerCode);
     public function createUtilityProvider(UtilityProviderDto $providerDto);
-    //public function updateProvider();
-    //public function getMeterByIdOrName();
 }

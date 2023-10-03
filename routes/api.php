@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\tcmsDebt\Api\DebtManageApi;
 use App\Http\Controllers\Tcms\Auth\Api\AuthController;
+use App\Http\Controllers\Tcms\Debts\Api\DebtManageApi;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\ApiEngine;
 use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 use App\Http\Controllers\Tcms\Customers\Api\CustomersController;
@@ -129,7 +129,6 @@ Route::middleware([])->group(function () {
  */
 //token Generator
 Route::post('token-generator', [TokenGenerateController::class, 'generateToken']);
-
 //token receiver , API that might be exposed by the client systems
 Route::post('token-receiver', [ApiEngine::class,'tokenReceiver']);
 
@@ -138,11 +137,8 @@ Route::post('token-receiver', [ApiEngine::class,'tokenReceiver']);
  * @author Hamphrey Urio.
  *
  */
-
-
  Route::middleware([])->group(function () {
-
-
-    Route::post('/debtresolve', [DebtManageApi::class, 'resolve']);
-    Route::post('/meterdebt', [DebtManageApi::class, 'getDebtByMeterId']);
+        Route::post('/assignDebt', [DebtManageApi::class, 'assignDebt']);
+        Route::post('/debtresolve', [DebtManageApi::class, 'resolve']);
+        Route::post('/meterdebt', [DebtManageApi::class, 'getDebtByMeterId']);
 });
