@@ -11,7 +11,7 @@ class Debt extends Model
 
     public $table = 'debts';
     public $timestamps='false';
-
+    public $primaryKey = 'id';
 
      protected $fillable = [
         'description',
