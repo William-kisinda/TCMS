@@ -22,7 +22,7 @@ class TokenGenerateController extends Controller
     public function generateToken(Request $request)
     {
         try{
-            // Validate meter number (you can call your existing validation API)
+            // Must be called after the meter number is validated
             // Dispatch the token generation job to the RabbitMQ queue
             Queue::connection('rabbitmq')->push(new GenerateToken($request->input('amount')));
 

@@ -142,3 +142,10 @@ Route::post('token-receiver', [ApiEngine::class,'tokenReceiver']);
         Route::post('/debtresolve', [DebtManageApi::class, 'resolve']);
         Route::post('/meterdebt', [DebtManageApi::class, 'getDebtByMeterId']);
 });
+
+/**
+ * API Routes for Meter validation
+ * @author Julius.
+ *
+ */
+Route::post('/meter', [MeterValidateApi::class, 'getValidMeter']);
