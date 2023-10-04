@@ -2,27 +2,20 @@
 
 namespace App\Job;
 
-use App\Helpers;
-use GuzzleHttp\Client;
-use Illuminate\Support\Str;
+
+
+
+use App\Job\TokenManage;
+use App\Job\SendNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Http\controllers\tcmsDebt\Dto\DebtDto;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use App\Http\Controllers\tcmsDebt\Dao\DebtDaoImpl;
-use App\Http\Controllers\Tcms\Client\NotificationController;
-use App\Http\Controllers\Tcms\MeterValidation\Dto\ValidMeterDto;
+use App\Http\Controllers\Tcms\Meters\Dao\MeterDaoImpl;
 use App\Http\Controllers\Tcms\TokenGeneration\Dto\TokenManageDto;
 use App\Http\Controllers\Tcms\TariffsManagement\Dao\TariffsDaoImpl;
-use App\Http\Controllers\Tcms\TokenGeneration\Dao\TokenManageDaoImp;
-use App\Http\Controllers\Tcms\Debts\Dao\DebtDaoImpl as DaoDebtDaoImpl;
-use App\Http\Controllers\Tcms\Meters\Dao\MeterDaoImpl;
 
 /**
  *
@@ -61,47 +54,49 @@ class GenerateToken implements ShouldQueue
         //tariff codes for a moment until solution for tariff is obtained
         $tariffId = 1;
 
-        //Handle Debt Operations
+            //Handle Debt Operations
         // $debtDao = new DaoDebtDaoImpl();
         // $remaingAmount = $debtDao-> resolveDebt($this->meterNumber,$this->amount);
         // $newAmount = $remaingAmount['remainingAmount'];
 
-        // operations for tariff will be handled
+
+
+            // Deduct Tariff
         $tariffDao = new TariffsDaoImpl();
         $amount = $this->amount;
-        foreach ($this->tariffs as $tariff) {
+        $tariffs = ['TN21','EW342'];
+        foreach ($tariffs as $tariff) {
             $amount1 = $tariffDao-> deductTariffByCode($tariff,$this->amount);
             $amount = $amount - floatval($amount1);
         }
 
 
-        // Generate a unique token for each specific meter
+
+
+            // Generate a unique token for each specific meter
         $token = intval($amount, 10) + $this->meterNumber + $this->requestId;
 
-        //store token ManageInfo
+
+
+            // Dispatch the send notification job to the RabbitMQ queue
+        $endUrl = 'http://127.0.0.1:8000/api/token-receiver';
+        SendNotification::dispatch($token,$endUrl)->onQueue('notification');
+
+
+
+                //store token ManageInfo
         $tokenDto = new TokenManageDto();
         $tokenDto->setCreateInfo($token,$this->meterNumber, date('Ymd'), $tariffId);
 
-        $tokenManageDao = new TokenManageDaoImp();
-        $tokenManageDao->createManageInfo($tokenDto);
-        
+            // Dispatch the job for saving info to database to the RabbitMQ queue
+        TokenManage::dispatch($tokenDto)->onQueue('dbSave');
 
-                //send Notification
-                $client = new Client();
 
-        $response = $client->request('POST', 'http://127.0.0.1:8000/api/token-receiver', [
-            'query' => [
-                'token' => $token,
-             // Add other data you want to include in the notification here
-         ],
-        ]);
-        Log::info( $response->getStatusCode());
+
+            // Check if the notification was sent successfully
         Log::info("reach here");
         Log::info($token,[' paid Amount after Tariffs: ', $amount]);
-    // Check if the notification was sent successfully
 
-            // Dispatch a notification job to RabbitMQ queue
-      //  Queue::connection('rabbitmq')->push(new SendNotification(NotificationController::class, 'sendNotification', [$token]));
     } else{
         Log::info("Your Meter Number is Invalid", [" The request with Id: ", $this->requestId]);
     }
