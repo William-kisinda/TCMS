@@ -30,9 +30,9 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
          try {
              $meterInfo = DB::table('meters')->where('id', $meterId)->first();
              if (!blank($meterInfo)) {
- 
+
                  $meterInfoArray = json_decode(json_encode($meterInfo), true);
- 
+
                  $meter = new Meter();
                  $meter->setAttributes($meterInfoArray);
              }
@@ -41,20 +41,20 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
          }
          return $meter;
      }
- 
+
      /**
       * @param $meterId
       * @return array|null
       * @author Daniel MM
       */
- 
+
       public function getMeterByCustomerId($customerId)
       {
           $meters = null;
- 
+
           try {
               $metersInfo = DB::table('meters')->where('customers_id', $customerId)->get(['id', 'meter_number', 'status'], false);
- 
+
               if (!empty($metersInfo)) {
                 $meters = $metersInfo;
 
@@ -87,7 +87,7 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
               // Log the exception for debugging purposes.
               Log::error("Customer Meters Debts Fetch Exception: " . $e->getMessage());
           }
- 
+
           return $meters;
       }
 
@@ -97,23 +97,23 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
       * @author Daniel MM
       */
      public function checkIfMeterExists($meterNumber)
-     { 
+     {
          $meter = null;
          try {
-             $meterInfo = DB::table('meters')->where('meter_number', $meterNumber)->first();
+             $meterInfo = DB::table('meters')->where('meterNumber', $meterNumber)->first();
              if (!blank($meterInfo)) {
- 
+
                  $meterInfoArray = json_decode(json_encode($meterInfo), true);
- 
+
                  $meter = new Meter();
                  $meter->setAttributes($meterInfoArray);
              }
          } catch (\Exception $exception) {
-             Log::info("Meter Number Check Exception".$exception->getMessage());
+             Log::error("Meter Number Check Exception", [$exception->getMessage()]);
          }
          return $meter;
      }
- 
+
      /**
       * @param $customerId
       * @return Meter|null
@@ -136,7 +136,7 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
                 if (is_null($meterCheck)) break;
                 $meter_number = $helper->generateMeterNumber();
             }
-            
+
             $meterDto = new MeterDto();
 
             $meterDto->setAttributes([

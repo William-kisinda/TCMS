@@ -34,7 +34,7 @@ class Token_manage extends Model
      */
     public function getMeterId()
     {
-        return $this->attributes['meter_id'];
+        return $this->attributes['meters_id'];
     }
 
     /**
@@ -42,7 +42,7 @@ class Token_manage extends Model
      */
     public function setMeterId($meterId): void
     {
-        $this->attributes['meter_id'] = $meterId;
+        $this->attributes['meters_id'] = $meterId;
     }
 
     /**

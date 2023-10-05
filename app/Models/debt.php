@@ -9,10 +9,9 @@ class Debt extends Model
 {
     use HasFactory;
 
-    public $table = 'debt';
-    public $timestamps = false;
+    public $table = 'debts';
+    public $timestamps='false';
     public $primaryKey = 'id';
-
 
      protected $fillable = [
         'description',
@@ -82,32 +81,15 @@ class Debt extends Model
         $this ->attributes['reductionRate']=$reductionRate;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDebtMetersId(){
-        return  $this ->attributes['meters_id'];
-    }
 
-    /**
-     * @param mixed $reductionRate
-     */
-    public function setDebtMetersId($metersId){
-        $this ->attributes['meters_id'] = $metersId;
-    }
 
-    /**
-     * @return array
-     */
-    public function getAttributes(){
-        return  $this ->attributes;
-    }
 
-    /**
-     * @param array $attributes
-     */
-    public function setAttributes($attributes){
-        $this ->attributes = $attributes;
+
+          public function getAttributes(){
+            return  $this ->attributes;
+         }
+         public function setAttributes($attributes){
+              $this ->attributes=$attributes;
 
     }
 

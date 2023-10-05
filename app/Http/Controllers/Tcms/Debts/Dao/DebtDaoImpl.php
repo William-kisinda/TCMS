@@ -53,7 +53,7 @@ class DebtDaoImpl implements DebtDao
         $debtReduction = 0.0;
 
         // Retrieve the meter based on the provided meterNumber
-        $meter = Meter::where('meters_id', $meterId)->first();
+        $meter = Meter::where('id', $meterId)->first();
 
         // Check if the meter exists
         if (!$meter) {
