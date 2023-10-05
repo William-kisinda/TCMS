@@ -5,19 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class debt extends Model
+class Debt extends Model
 {
     use HasFactory;
 
     public $table = 'debts';
     public $timestamps='false';
-
+    public $primaryKey = 'id';
 
      protected $fillable = [
-         'reductionRate',
-         'debtAmount',
-         'description',
-
+        'description',
+        'reductionRate',
+        'debtAmount',
      ];
 
      public function getReductionRateAttribute($value)
@@ -26,34 +25,66 @@ class debt extends Model
          return $value * 100;
      }
 
+    /**
+     * @return mixed
+     */
      public function getDebtId(){
          return  $this ->attributes['id'];
        }
 
-       public function setDebtId($id){
-           $this ->attributes['id']=$id;
-       }
+    /**
+     * @param mixed $id
+     */
+    public function setDebtId($id){
+        $this ->attributes['id']=$id;
+    }
 
-       public function getDebtAmout(){
-         return  $this ->attributes['debtmount'];
-       }
-       public function setDebtAmount($debtAmount){
-           $this ->attributes['debtAmount']=$debtAmount;
-       }
-       public function getDebtReductionRate(){
-         return  $this ->attributes['reductionRate'];
-       }
-       public function setDebtReductionRate($reductionRate){
-           $this ->attributes['reductionRate']=$reductionRate;
-       }
+    /**
+     * @return mixed
+     */
+    public function getDebtDescription(){
+        return  $this ->attributes['description'];
+    }
 
-       public function getDebtremainingDebtAmount(){
-         return  $this ->attributes['remainingDebtAmount'];
-       }
+    /**
+     * @param mixed $description
+     */
+    public function setDebtDescription($description){
+        $this ->attributes['description']=$description;
+    }
 
-       public function setDebtremainingDebtAmount($remainingDebtAmount){
-           $this ->attributes['remainingDebtAmount']=$remainingDebtAmount;
-       }
+    /**
+     * @return mixed
+     */
+    public function getDebtAmount(){
+        return  $this ->attributes['amount'];
+    }
+
+    /**
+     * @param mixed $debtAmount
+     */
+    public function setDebtAmount($debtAmount){
+        $this ->attributes['amount']=$debtAmount;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDebtReductionRate(){
+        return  $this ->attributes['reductionRate'];
+    }
+
+    /**
+     * @param mixed $reductionRate
+     */
+    public function setDebtReductionRate($reductionRate){
+        $this ->attributes['reductionRate']=$reductionRate;
+    }
+
+
+
+
+
           public function getAttributes(){
             return  $this ->attributes;
          }

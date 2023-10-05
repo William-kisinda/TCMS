@@ -23,6 +23,7 @@ Class DebtDto{
 
     }
 
+
     public function getMeterNumber(){
         return  $this ->attributes['MeterNumber'];
       }

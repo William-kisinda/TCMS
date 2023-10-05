@@ -15,7 +15,7 @@ class DebtSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 2; $i++) {
             // Generate a random debt amount within the range of 100 to 1,000
             $debtAmount = rand(100, 1000);
             $remainingDebtAmount = rand(100, 1000);

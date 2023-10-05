@@ -11,7 +11,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 class MeterSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seed for meters table.
+     * @author Julius
      */
 
      public function run()
@@ -24,7 +25,7 @@ class MeterSeeder extends Seeder
              DB::table('meters')->insert([
                  'meterNumber' => $meterNumber,
                  'status' => ($i % 2 === 0) ? 'Active' : 'Inactive',
-                 
+
              ]);
          }
      }

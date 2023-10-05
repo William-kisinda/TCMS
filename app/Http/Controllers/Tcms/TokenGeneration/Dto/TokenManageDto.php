@@ -27,7 +27,17 @@ class TokenManageDto
         $this->attributes = [];
         $this->attributes['id'] = $tokenId;
         $this->attributes['token'] = $token;
-        $this->attributes['meter_id'] = $meterId;
+        $this->attributes['meters_id'] = $meterId;
+        $this->attributes['generation_date'] = $generationDate;
+        $this->attributes['tariff_id'] = $tariffId;
+        return $this->attributes;
+    }
+
+    public function setCreateInfo( $token, $meterId, $generationDate, $tariffId)
+    {
+        $this->attributes = [];
+        $this->attributes['token'] = $token;
+        $this->attributes['meters_id'] = $meterId;
         $this->attributes['generation_date'] = $generationDate;
         $this->attributes['tariff_id'] = $tariffId;
         return $this->attributes;
@@ -70,7 +80,7 @@ class TokenManageDto
      */
     public function getMeterId()
     {
-        return $this->attributes['meter_id'];
+        return $this->attributes['meters_id'];
     }
 
     /**
@@ -78,7 +88,7 @@ class TokenManageDto
      */
     public function setMeterId($meterId)
     {
-        $this->attributes['meter_id'] = $meterId;
+        $this->attributes['meters_id'] = $meterId;
     }
 
     /**

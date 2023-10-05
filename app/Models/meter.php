@@ -34,7 +34,7 @@ class Meter extends Model
      */
     public function getMeterNumber()
     {
-        return $this->attributes['meter_number'];
+        return $this->attributes['meterNumber'];
     }
 
     /**
@@ -42,7 +42,7 @@ class Meter extends Model
      */
     public function setMeterNumber($meterNumber): void
     {
-        $this->attributes['meter_number'] = $meterNumber;
+        $this->attributes['meterNumber'] = $meterNumber;
     }
 
 

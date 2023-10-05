@@ -15,48 +15,13 @@ class DebtManageApi extends Controller
     public function __construct() {
         $this->debtDao = new DebtDaoImpl();
     }
-/**
- *
- * @author Hamphrey Urio.
- *
- */
 
 
 
-        public function assignDebt(Request $request)
-        {
-            try {
-                $AssigneDebtAmount= $request->input('AssigneDebtAmount');
-                $AssignedReductionRate = $request->input('AssignedReductionRate');
-                $meterId=$request->input('meterId');
-                $description=$request->input('description');
-
-                // Call the assignDebtByMeterId function with provided parameters
-                $response = $this->debtDao->assignDebtByMeterId($meterId, $AssigneDebtAmount, $AssignedReductionRate,$description);
-
-                // Check if the response contains 'meterExists' (indicating success)
-                if (isset($response['meterExists']) && $response['meterExists']) {
-                    return response()->json([
-                        "error" => false,
-                        "message" => "Debt assigned successfully!",
-                        "debtAmount" => $response['debtAmount'],
-                        "debtReduction" => $response['debtReduction'],
-                        "description" => $response['description'],
-                    ], HttpResponse::HTTP_OK);
-                } else {
-                    return response()->json([
-                        "error" => true,
-                        "message" => "Failed to assign debt!",
-                    ], HttpResponse::HTTP_BAD_REQUEST);
-                }
-            } catch (\Exception $e) {
-                Log::error("Assign Debt Exception: " . $e->getMessage());
-                return response()->json([
-                    "error" => true,
-                    "message" => "Something went wrong while assigning debt!",
-                ], HttpResponse::HTTP_BAD_REQUEST);
-            }
-        }
+    public function showPaymentForm()
+    {
+        return view('payment-form');
+    }
 
 
 

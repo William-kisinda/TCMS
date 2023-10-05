@@ -18,7 +18,6 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('remainingDebtAmount', 10, 2);
             $table->foreignId('meters_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
 
         });
     }
