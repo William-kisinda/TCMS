@@ -29,14 +29,11 @@ class DebtDaoImpl implements DebtDao
                 $debt->save();
             } else {
                 $debtInfo = Debt::where('meters_id', $debtDto->getDebt_meters_id())->first();
-                Log::info("Debt Info:". json_encode($debtDto->getAttributes()));
                 $prevDebtAmount = $debtInfo->amount;
                 $newDebtAmount = $debtDto->getDebt_amount();
                 $totalDebtAmount = $prevDebtAmount + $newDebtAmount;
-                Log::info("Debt Total:". $totalDebtAmount);
                 $debtDto->setDebt_amount($totalDebtAmount);
                 $debt->setAttributes($debtDto->getAttributes());
-                Log::info("Debt Update Info:". json_encode($debt->getAttributes()));
                 $debtInfo->amount = $totalDebtAmount;
                 $debtInfo->update();
             }

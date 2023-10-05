@@ -193,4 +193,26 @@ class TariffsDaoImpl implements TariffsDao
         }
         return $finalAmount;
     }
+
+    /**
+     * @param TariffsDto $tariffDto
+     * @return Tariffs|null
+     * @author Daniel MM
+     */
+    public function updateTariff(TariffsDto $tariffDto){
+        $tariff = null;
+         try {
+            $tariff = new Tariffs();
+            $tariffInfo = Tariffs::where('id', $tariffDto->getTariff_id())->first();
+            $tariffInfo->name = $tariffDto->getTariff_name();
+            $tariffInfo->code = $tariffDto->getTariff_code();
+            $tariffInfo->percentageAmount = $tariffDto->getTariff_percentageAmount();
+            $tariffInfo->value = $tariffDto->getTariff_value();
+            $tariff->setAttributes($tariffDto->getAttributes());
+            $tariffInfo->update();
+         } catch (\Exception $e) {
+             Log::info("Tariff Exception:". $e->getMessage());
+         }
+         return $tariff;
+    }
 }

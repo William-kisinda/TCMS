@@ -37,7 +37,7 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
                  $meter->setAttributes($meterInfoArray);
              }
          } catch (\Exception $exception) {
-             Log::error("MeterId Get Exception", $exception->getMessage());
+             Log::error("MeterId Get Exception", [$exception->getMessage()]);
          }
          return $meter;
      }
@@ -109,7 +109,7 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
                  $meter->setAttributes($meterInfoArray);
              }
          } catch (\Exception $exception) {
-             Log::error("Meter Number Check Exception", $exception->getMessage());
+             Log::info("Meter Number Check Exception".$exception->getMessage());
          }
          return $meter;
      }

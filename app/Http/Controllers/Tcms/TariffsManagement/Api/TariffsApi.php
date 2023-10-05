@@ -226,13 +226,20 @@ class TariffsApi extends Controller
     public function createTariff(Request $request)
     {
         try {
-            Log::info("Log Message:" . json_encode($request->all()));
+            //take all the inputs and store them.
+            $inputs = $request->all();
+
+            //generate code as per the context name
+            $helper = new Helpers();
+            $code = $helper->generateCode($inputs['name']);
+            $inputs = array_merge($inputs, ['code' => $code]);
+
+            //Transfer into DTO
             $tariffDto = new TariffsDto();
-            $tariffDto->setAttributes($request->all());
+            $tariffDto->setAttributes($inputs);
 
             // Validate whether such a provider already esists using the name and code.
             $tariffExists = $this->tariffsDao->getTariffByNameOrCode($tariffDto->getTariff_name(), $tariffDto->getTariff_code());
-            Log::info("Tariff Exists:" . json_encode($tariffExists));
             if (blank($tariffExists)) {
                 $tariff = $this->tariffsDao->createTariff($tariffDto);
                 if (!blank($tariff)) {
@@ -242,7 +249,36 @@ class TariffsApi extends Controller
             }
             return Response()->json(["error" => false, 'message' => ['Tariff already exists!']], Response::HTTP_OK);
         } catch (\Exception $e) {
-            Log::info("Exceptional Message::" . $e->getMessage());
+            Log::info("Exceptional Create Tariff Message::" . $e->getMessage());
+            return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /*
+     * Update a Tariff.
+     *
+     * @param null
+     * @return \Illuminate\Http\JsonResponse
+    */
+    public function updateTariff(Request $request)
+    {
+        try {
+            //take all the inputs and store them.
+            $inputs = $request->all();
+
+            Log::info("Update Tariff Request::" . json_encode($inputs));
+            //Transfer into DTO
+            $tariffDto = new TariffsDto();
+            $tariffDto->setAttributes($inputs);
+
+            $tariff = $this->tariffsDao->updateTariff($tariffDto);
+            Log::info("Update Tariff Response Display::" . json_encode($inputs));
+            if (!blank($tariff)) {
+                return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
+            }
+            return Response()->json(["error" => false, 'message' => ['Failed to create tariff']], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            Log::info("Exceptional Update Tariff Message::" . $e->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

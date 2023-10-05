@@ -36,11 +36,6 @@ class UtilityProviderApi extends Controller
             //Checking if the object has data
             if (!blank($providers)) {
                 Log::info("Message::" . json_encode($providers));
-                // foreach ($providerCategories as $providerCategory) {
-                //     $providerCategory = json_encode($providerCategory, true);
-                //     $providerCategoriesArray = $providerCategoriesDto->getProviderCategoryDto($providerCategory['id'], $providerCategory['code'], $providerCategory['name']);
-                //     $providerCategoriesDto->setAttributes($providerCategoriesArray);
-                // }
                 return Response()->json(["error" => false, "providers" => $providers], Response::HTTP_OK);
             }
             return Response()->json(["error" => false, "providers" => $providersDto->getAttributes()], Response::HTTP_BAD_REQUEST);
@@ -56,7 +51,6 @@ class UtilityProviderApi extends Controller
      * @param null
      * @return \Illuminate\Http\JsonResponse
      */
-
     public function getProviderByCode(Request $request)
     {
         try {
@@ -73,25 +67,44 @@ class UtilityProviderApi extends Controller
             if (!blank($providerExists)) {
 
                 $utilityProviderDto = new UtilityProviderDto();
-
-                // $utilityProviderDto->getProiv
                 $utilityProviderDto->setAttributes($providerExists);
-                // $meterNumber = $request->input('meter_number');
-                // /**
-                //  * Now after validating the existance of utility provider , then we use that specific utility providers api to look for their customer information
-                //  *
-                //  *
-                //  */
 
-                //  $client = new Client();
+                //logging
+                Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
 
-                //  $response = $client->request('POST', 'http://127.0.0.1:8000/api/meter', [
-                //      'query' => [
-                //          'meter_num' => $meterNumber,
-                //          'requestId' => $requestId
-                //      ],
-                //  ]);
-                //  $data = json_decode($response->getBody(), true);
+                return Response()->json(["error" => false, "Utility Provider" => $utilityProviderDto->getAttributes()], Response::HTTP_OK);
+            }
+
+            //Logging
+            Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is Failed to be  processed due to Invalid Utitlity provider Code');
+
+            return Response()->json(["error" => false, "Utility Provider" => ['Invalid Utility Provider Code']], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $exception) {
+            Log::info("Exceptional Message::" . $exception->getMessage());
+            return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Get provider utility provider by their id.
+     *
+     * @param null
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getProviderById(Request $request)
+    {
+        try {
+
+            $providerId = $request->input('providerId');
+            $providerExists = $this->utilityProviderDao->getUtilityProviderById($providerId);
+            $helpers = new Helpers();
+            $requestId = $helpers->generateRequestId();
+
+            //Checking if the object has data
+            if (!blank($providerExists)) {
+
+                $utilityProviderDto = new UtilityProviderDto();
+                $utilityProviderDto->setAttributes($providerExists);
 
                 //logging
                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
@@ -118,23 +131,58 @@ class UtilityProviderApi extends Controller
     public function createUtilityProvider(Request $request)
     {
         try {
-            Log::info("Log Message:" . json_encode($request->all()));
-            $utilityProviderDto = new UtilityProviderDto();
-            $utilityProviderDto->setAttributes($request->all());
+            //take all the inputs and store them.
+            $inputs = $request->all();
 
-            // Validate whether such a provider already esists using the name and code.
-            $providerExists = $this->utilityProviderDao->getUtilityProviderByCode($utilityProviderDto->getProvider_code());
-            Log::info("Provider Exists:" . json_encode($providerExists));
+            //generate code as per the context name
+            $helper = new Helpers();
+            $provider_code = $helper->generateCode($inputs['provider_name']);
+            $inputs = array_merge($inputs, ['provider_status' => 'Active', 'provider_code' => $provider_code]);
+
+            //Transfer into DTO
+            $utilityProviderDto = new UtilityProviderDto();
+            $utilityProviderDto->setAttributes($inputs);
+
+            // Validate whether such a provider already exists using the name and code.
+            $providerExists = $this->utilityProviderDao->getUtilityProviderByNameOrCode($utilityProviderDto->getProvider_name(), $utilityProviderDto->getProvider_code());
             if (blank($providerExists)) {
                 $provider = $this->utilityProviderDao->createutilityProvider($utilityProviderDto);
                 if (!blank($provider)) {
                     return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
                 }
-                return Response()->json(["error" => false, 'message' => ['Failed to create Utility provider']], Response::HTTP_OK);
+                return Response()->json(["error" => false, 'message' => ['Failed to create Utility Provider']], Response::HTTP_OK);
             }
             return Response()->json(["error" => false, 'message' => ['Utility provider already exists!']], Response::HTTP_OK);
         } catch (\Exception $e) {
             Log::info("Exceptional Message::" . $e->getMessage());
+            return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /*
+     * Update a Utility Provider.
+     *
+     * @param null
+     * @return \Illuminate\Http\JsonResponse
+    */
+    public function updateUtilityProvider(Request $request)
+    {
+        try {
+            //take all the inputs and store them.
+            $inputs = $request->all();
+
+            Log::info("Update Utility Provider Request::" . json_encode($inputs));
+            //Transfer into DTO
+            $utilityProviderDto = new UtilityProviderDto();
+            $utilityProviderDto->setAttributes($inputs);
+
+            $utilityProvider = $this->utilityProviderDao->updateUtilityProvider($utilityProviderDto);
+            if (!blank($utilityProvider)) {
+                return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
+            }
+            return Response()->json(["error" => false, 'message' => ['Failed to update utility provider.']], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            Log::info("Exceptional Update Utility Provider Message::" . $e->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

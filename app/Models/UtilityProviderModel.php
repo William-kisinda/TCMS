@@ -110,4 +110,19 @@ class UtilityProviderModel extends Model
     {
         $this->attributes = $attributes;
     }
+
+    /**
+     * Get the user associated with the utility provider.
+     */
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
+    //How to check utility providers with users
+    //$UPWithUsers = utility_providers::whereHas('user')->get();
+
+    //How to check utility providers with no users
+    //$usersWithoutPhone = User::doesntHave('phone')->get();
+
 }

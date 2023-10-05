@@ -15,4 +15,5 @@ interface UtilityProviderDao
     public function getAllUtilityProviders();
     public function getUtilityProviderByCode($providerCode);
     public function createUtilityProvider(UtilityProviderDto $providerDto);
+    public function getUtilityProviderByNameOrCode($providerName, $providerCode);
 }

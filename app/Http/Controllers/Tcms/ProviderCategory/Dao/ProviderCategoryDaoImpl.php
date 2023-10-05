@@ -102,7 +102,7 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
      * @author Daniel MM
      */
 
-    public function createProviderCategory(ProviderCategoryDto $providerCategoryDto)
+    public function createProviderCategory(ProviderCategoryDto $providerCategoryDto) 
     {
         $providerCategoryModel = null;
         try {

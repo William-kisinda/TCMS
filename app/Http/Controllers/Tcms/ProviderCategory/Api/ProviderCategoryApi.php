@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tcms\ProviderCategory\Api;
 
+use App\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Tcms\ProviderCategory\Dao\ProviderCategoryDaoImpl;
 use App\Http\Controllers\Tcms\ProviderCategory\Dto\ProviderCategoryDto;
@@ -34,7 +35,7 @@ class ProviderCategoryApi extends Controller
             $providerCategoriesDto = new ProviderCategoryDto();
             //Checking if the object has data
             if (!blank($providerCategories)) {
-                Log::info("Exceptional Message::" . json_encode($providerCategories));
+                Log::info("All Providers Message::" . json_encode($providerCategories));
                 return Response()->json(["error" => false, "providerCategories" => $providerCategories], Response::HTTP_OK);
             }
             return Response()->json(["error" => false, "providerCategories" => $providerCategoriesDto->getAttributes()], Response::HTTP_BAD_REQUEST);
@@ -90,12 +91,20 @@ class ProviderCategoryApi extends Controller
     public function createProviderCategory(Request $request)
     {
         try {
+            //take all the inputs and store them.
+            $inputs = $request->all();
+
+            //generate code as per the context name
+            $helper = new Helpers();
+            $prov_categ_code = $helper->generateCode($inputs['prov_categ_name']);
+            $inputs = array_merge($inputs, ['prov_categ_code' => $prov_categ_code]);
+
+            //Transfer into DTO
             $providerCategoryDto = new ProviderCategoryDto();
-            $providerCategoryDto->setAttributes($request->all());
+            $providerCategoryDto->setAttributes($inputs);
 
             //Validate whether such a category already esists using the name and code.
             $providerCategoryExists = $this->providerCategoryDao->getProviderCategoryByNameOrCode($providerCategoryDto->getProv_categ_name(), $providerCategoryDto->getProv_categ_code());
-            Log::info("Log Message:" . json_encode($request->all()));
             if (blank($providerCategoryExists)) {
                 $providerCategory = $this->providerCategoryDao->createProviderCategory($providerCategoryDto);
                 if (!blank($providerCategory)) {
