@@ -16,7 +16,7 @@ Class DebtDto{
         $this->attributes['debtAmount']=$debtAmount;
 
         $this->attributes['description']=$description;
-    
+
 
         return $this->attributes;
 
@@ -43,6 +43,16 @@ Class DebtDto{
       public function setMeterStatus($status){
           $this ->attributes['status']=$status;
       }
+
+
+      public function getDebtremainingDebtAmount(){
+        return  $this ->attributes['remainingDebtAmount'];
+      }
+
+      public function setDebtremainingDebtAmount($remainingDebtAmount){
+          $this ->attributes['remainingDebtAmount']=$remainingDebtAmount;
+      }
+
 
       public function getAttributes(){
          return  $this ->attributes;

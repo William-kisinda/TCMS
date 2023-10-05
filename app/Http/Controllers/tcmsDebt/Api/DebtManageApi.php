@@ -63,32 +63,8 @@ class DebtManageApi extends Controller
 public function resolve(Request $request)
 {
     try {
-       $meterId = $request->input('meterId');
-       $amount = $request->input('amount');
+        return Response()->json( $this->debtDao->resolveDebt($request->meterId, $request->amount), HttpResponse::HTTP_OK);
 
-        // Call the resolveDebt function from DebtDaoImpl
-        $resolve = $this->debtDao->resolveDebt($meterId, $amount,);
-
-        // Check if the response contains "remainingAmount" and "debtReduction"
-        if (array_key_exists('remainingAmount', $resolve)  && array_key_exists('remainingdebt', $resolve)&& array_key_exists('debtReduction', $resolve) && $resolve['meterExists']) {
-
-
-            Log::info("Debts Response: " . json_encode($resolve));
-
-            return Response()->json([
-                "error" => false,
-                "message" => 'Debt resolved successfully!',
-                "remainingAmount" => $resolve['remainingAmount'],
-                "debtReduction" => $resolve['debtReduction'],
-                "remainingdebt" => $resolve['remainingdebt'],
-            ], HttpResponse::HTTP_OK);
-        }
-
-        return response()->json([
-            "error" => true,
-            "message" => "Could not fetch debts!",
-            "possible reasons : " => "Empty values or meter : " . $meterId . " number does not exists"
-        ], HttpResponse::HTTP_OK);
     } catch (\Exception $e) {
         Log::info("Debts Exception: " . $e->getMessage());
         return response()->json([
@@ -100,10 +76,10 @@ public function resolve(Request $request)
 }
 
 
-public function getDebtByMeterId($meterId)
+public function getDebtByMeterId(Request $request)
 {
     try {
-      //  $meterId = $request->input('meterId');
+       $meterId = $request->input('meterId');
 
         // Call the getDebtByMeterId function from your Dao or Repository
         $debt = $this->debtDao->getDebtByMeterId($meterId);

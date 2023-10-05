@@ -15,7 +15,7 @@ class MeterSeeder extends Seeder
      */
 
      public function run()
-    
+
      {
          for ($i = 1; $i <= 100; $i++) {
              // Generate a random meter number within the specified range
@@ -24,6 +24,7 @@ class MeterSeeder extends Seeder
              DB::table('meters')->insert([
                  'meterNumber' => $meterNumber,
                  'status' => ($i % 2 === 0) ? 'Active' : 'Inactive',
+                 
              ]);
          }
      }

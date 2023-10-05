@@ -47,10 +47,13 @@ class debt extends Model
            $this ->attributes['reductionRate']=$reductionRate;
        }
 
+       public function getDebtremainingDebtAmount(){
+         return  $this ->attributes['remainingDebtAmount'];
+       }
 
-      
-
-
+       public function setDebtremainingDebtAmount($remainingDebtAmount){
+           $this ->attributes['remainingDebtAmount']=$remainingDebtAmount;
+       }
           public function getAttributes(){
             return  $this ->attributes;
          }
@@ -60,7 +63,7 @@ class debt extends Model
           }
         public function meter()
         {
-            return $this->belongsTo(Meter::class, );
+            return $this->hasMany(Meter::class, );
         }
 
 }
