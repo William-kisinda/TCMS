@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('meters', function (Blueprint $table) {
-            $table->id();
-            $table->string('meterNumber')->unique();
-            $table->enum('status', ['Active', 'Inactive']);
-            // $table->foreignId('customers_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('utility_provider_id')->nullable()->constrained()->onDelete('cascade');
         });
     }
 
@@ -25,6 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('meters');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign('utility_provider_id');
+            $table->dropColumn('utility_provider_id');
+        });
     }
 };

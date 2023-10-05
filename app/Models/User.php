@@ -47,4 +47,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the utility provider where the user belongs.
+     */
+    public function utility_provider()
+    {
+        return $this->belongsTo(UtilityProviderModel::class);
+    }
 }

@@ -23,7 +23,7 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
 {
 
     /**
-     * @param $meterId
+     * @param $providerCode
      * @return UtilityProviderModel|null
      * @author Julius M
      */
@@ -48,6 +48,58 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
         return $provider;
     }
 
+    /**
+     * @param $providerId
+     * @return UtilityProviderModel|null
+     * @author Julius M
+     */
+
+     public function getUtilityProviderById($providerId)
+     {
+         $provider = null;
+ 
+         try {
+             $providerInfo = DB::table('utility_providers')->where('id', $providerId)->first();
+ 
+             if (!empty($providerInfo)) {
+                 // If the provider info is found, you can directly create a Provider object.
+                 $provider = new UtilityProviderModel();
+                 $provider->setAttributes((array) $providerInfo);
+             }
+         } catch (\Exception $e) {
+             // Log the exception for debugging purposes.
+             Log::info("UtilityProviderException: " . $e->getMessage());
+         }
+ 
+         return $provider;
+     }
+
+    /**
+     * @param $providerCode
+     * @return UtilityProviderModel|null
+     * @author Julius M
+     */
+
+     public function getUtilityProviderByNameOrCode($providerName, $providerCode)
+     {
+         $provider = null;
+ 
+         try {
+             $providerInfo = DB::table('utility_providers')->where('provider_name', $providerName)->orWhere('provider_code', $providerCode)->first();
+ 
+             if (!empty($providerInfo)) {
+                 // If the provider info is found, you can directly create a Provider object.
+                 $provider = new UtilityProviderModel();
+                 $provider->setAttributes((array) $providerInfo);
+             }
+         } catch (\Exception $e) {
+             // Log the exception for debugging purposes.
+             Log::info("UtilityProviderException: " . $e->getMessage());
+         }
+ 
+         return $provider;
+     }
+ 
 
     /**
      * @param null
@@ -93,4 +145,27 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
         }
         return $utilityProvider;
     }
+
+    /**
+     * @param UtilityProviderDto $providerDto
+     * @return UtilityProviderModel|null
+     * @author Daniel MM
+     */
+     public function updateUtilityProvider(UtilityProviderDto $providerDto)
+     {
+         $utilityProvider = null;
+         try {
+            $utilityProvider = new UtilityProviderModel();
+            $utilityProviderInfo = UtilityProviderModel::where('id', $providerDto->getProvider_id())->first();
+            $utilityProviderInfo->provider_name = $providerDto->getProvider_name();
+            $utilityProviderInfo->provider_code = $providerDto->getProvider_code();
+            $utilityProviderInfo->provider_status = $providerDto->getProvider_status();
+            $utilityProviderInfo->provider_categories_id = $providerDto->getProvider_categories_id();
+            $utilityProvider->setAttributes($providerDto->getAttributes());
+            $utilityProviderInfo->update();
+         } catch (\Exception $e) {
+             Log::info("UtilityProviderException:". $e->getMessage());
+         }
+         return $utilityProvider;
+     }
 }

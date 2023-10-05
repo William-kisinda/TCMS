@@ -18,4 +18,5 @@ interface TariffsDao
     public function getTariffByCode($tariffCode);
     public function getTariffByNameOrCode($tariffName, $tariffCode);
     public function createTariff(TariffsDto $tariffDto);
+    public function updateTariff(TariffsDto $tariffDto);
 }

@@ -70,17 +70,21 @@ Route::post('user/update', [AuthController::class, 'updateUPUser']);
  * @author Daniel.
  *
  */
-
-
 // get all utility providers
 Route::post('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
 
 //Create a utility provider
 Route::post('utilityProvider', [UtilityProviderApi::class, 'createUtilityProvider']);
 
+//Update Utility Provider
+Route::patch('utilityProvider', [UtilityProviderApi::class, 'updateUtilityProvider']);
+
 //Get utility provider by code
 Route::post('providerByCode', [UtilityProviderApi::class, 'getProviderByCode']);
-// });
+
+//Get utility provider by id
+Route::post('utilityProviderById', [UtilityProviderApi::class, 'getProviderById']);
+
 
 /**
  *
@@ -108,6 +112,9 @@ Route::middleware([])->group(function () {
 
         //Get Tariff By Name Or Code
         Route::post('tariffByNameOrCode', [TariffsApi::class, 'getTariffByNameOrCode']);
+
+        //Update Tariff
+        Route::patch('tariff', [TariffsApi::class, 'updateTariff']);
 });
 
 
