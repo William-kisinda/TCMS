@@ -1,14 +1,13 @@
 <?php
-
 namespace App\Http\Controllers\Tcms\Debts\Dao;
 
-use App\Http\Controllers\Tcms\Debts\Dto\DebtDto;
+use Illuminate\Support\Facades\Request;
+use App\Http\Controllers\tcmsDebt\Dto\DebtDto;
+Interface DebtDao{
 
-interface DebtDao{
-
-   public function assignDebt(DebtDto $debtDto, $update = false);
-
-   public function resolveDebt($meterNumber, $amount);
+   public function resolveDebt($meterId, $amount);
 
    public function getDebtByMeterId($meterId);
+
+  public function assignDebtByMeterId($meterId, $AssigneDebtAmount, $AssignedReductionRate,$description,);
 }

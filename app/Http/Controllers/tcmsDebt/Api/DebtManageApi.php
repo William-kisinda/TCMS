@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response as HttpResponse;
-use App\Http\Controllers\tcmsDebt\Dao\DebtDaoImpl;
+use App\Http\Controllers\Tcms\Debts\Dao\DebtDaoImpl;
 
 class DebtManageApi extends Controller
 {
@@ -15,15 +15,6 @@ class DebtManageApi extends Controller
     public function __construct() {
         $this->debtDao = new DebtDaoImpl();
     }
-
-
-
-    public function showPaymentForm()
-    {
-        return view('payment-form');
-    }
-
-
 
 public function resolve(Request $request)
 {

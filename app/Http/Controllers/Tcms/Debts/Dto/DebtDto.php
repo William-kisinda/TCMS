@@ -19,7 +19,7 @@ class DebtDto
         $this->attributes['description'] = $description;
 
         $this->attributes['reductionRate'] = $reductionRate;
-        
+
         $this->attributes['meters_id'] = $metersId;
 
         return $this->attributes;
@@ -47,12 +47,22 @@ class DebtDto
 
     public function getDebt_amount()
     {
-        return  $this->attributes['amount'];
+        return  $this->attributes['debtAmount'];
     }
 
     public function setDebt_amount($debt_amount)
     {
-        $this->attributes['amount'] = $debt_amount;
+        $this->attributes['debtAmount'] = $debt_amount;
+    }
+
+    public function getDebt_remainingAmount()
+    {
+        return  $this->attributes['remainingDebtAmount'];
+    }
+
+    public function setDebt_remainingAmount($remaining_debtAmount)
+    {
+        $this->attributes['remainingDebtAmount'] = $remaining_debtAmount;
     }
 
     public function getDebt_reductionRate()
@@ -79,9 +89,9 @@ class DebtDto
     {
         return  $this->attributes;
     }
-    
+
     public function setAttributes($attributes)
     {
-        $this->attributes = $attributes;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+        $this->attributes = $attributes;
     }
 }

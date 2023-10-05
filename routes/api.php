@@ -138,7 +138,7 @@ Route::post('token-receiver', [ApiEngine::class,'tokenReceiver']);
  *
  */
  Route::middleware([])->group(function () {
-        Route::post('/assignDebt', [DebtManageApi::class, 'assignDebt']);
+        Route::post('/assigndebt', [DebtManageApi::class, 'assignDebt']);
         Route::post('/debtresolve', [DebtManageApi::class, 'resolve']);
         Route::post('/meterdebt', [DebtManageApi::class, 'getDebtByMeterId']);
 });
