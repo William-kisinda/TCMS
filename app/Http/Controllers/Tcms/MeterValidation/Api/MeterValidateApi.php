@@ -58,7 +58,7 @@ class MeterValidateApi extends Controller
                     $meterExists->getMeterNumber(),
                     $debtAmount,
                     $meterExists->getMeterStatus(),
-                    $customer->getCustomerName(),
+                    $customer['full_name'],
                     $requestId
                 );
 

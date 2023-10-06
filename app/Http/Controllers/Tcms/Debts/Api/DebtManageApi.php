@@ -30,30 +30,12 @@ class DebtManageApi extends Controller
             $meterId = $request->input('meters_id');
             $debtDto = new DebtDto();
             $debtDto->setAttributes($request->all());
-
-            // Validate whether such a meter_id already exists in the debts table.
-            // $debtExists = $this->debtDao->getDebtByMeterId($meterId);
-
-            // Log::info("Debt Exists:" . json_encode($debtExists));
-            // if (blank($debtExists)) {
-                $debtInfo = $this->debtDao->assignDebtByMeterId($meterId, $debtDto->getDebt_amount(), $debtDto->getDebt_reductionRate(),  $debtDto->getDebt_description());
-                Log::info("Debt Info:" . json_encode($debtInfo));
-                if (!is_null($debtInfo)) {
-                    return Response()->json(["error" => false, 'debtInfo' => $debtInfo], Response::HTTP_OK);
-                }
-                return Response()->json(["error" => false, 'message' => ['Failed to create debt']], Response::HTTP_OK);
-            // }
-            // else {
-
-            //     //the meter number already assigned with debt.
-            //     $debtInfo = $this->debtDao->assignDebt($debtDto, true);
-
-            //     if (!is_null($debtInfo)) {
-            //         return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
-            //     }
-            //     return Response()->json(["error" => false, 'message' => ['Failed to update debt']], Response::HTTP_OK);
-            // }
-            // return Response()->json(["error" => false, 'message' => ['Debt already exists!']], Response::HTTP_OK);
+            $debtInfo = $this->debtDao->assignDebtByMeterId($meterId, $debtDto->getDebt_amount(), $debtDto->getDebt_reductionRate(),  $debtDto->getDebt_description());
+            Log::info("Debt Info:" . json_encode($debtInfo));
+            if (!is_null($debtInfo)) {
+                return Response()->json(["error" => false, 'debtInfo' => $debtInfo], Response::HTTP_OK);
+            }
+            return Response()->json(["error" => false, 'message' => ['Failed to create debt']], Response::HTTP_OK);
         } catch (\Exception $e) {
             Log::info("Debt Exceptional Message::" . $e->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);

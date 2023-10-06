@@ -100,7 +100,8 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
      {
          $meter = null;
          try {
-             $meterInfo = DB::table('meters')->where('meterNumber', $meterNumber)->first();
+             $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->first();
+             Log::info("Meter Info Check View", [json_encode($meterInfo)]);
              if (!blank($meterInfo)) {
 
                  $meterInfoArray = json_decode(json_encode($meterInfo), true);

@@ -26,7 +26,7 @@ class ValidMeterDto
     {
         $this->attributes = [];
         $this->attributes['id'] = $id;
-        $this->attributes['meterNumber'] = $meterNumber;
+        $this->attributes['meternumber'] = $meterNumber;
         $this->attributes['debt'] = $debtAmount;
         $this->attributes['status'] = $status;
         $this->attributes['customerName'] = $customerName;

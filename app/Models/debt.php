@@ -22,7 +22,7 @@ class Debt extends Model
      public function getReductionRateAttribute($value)
      {
          // Convert the stored fraction to a percentage when retrieving
-         return $value * 100;
+         return $value;
      }
 
     /**

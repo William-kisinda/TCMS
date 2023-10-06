@@ -116,10 +116,8 @@ class UtilityProviderModel extends Model
      */
     public function user()
     {
-        return $this->hasOne(User::class, 'utility_provider_id', 'utility_provider_id');
+        return $this->hasOne(User::class);
     }
 
-    //How to check utility providers with users
-    //$UPWithUsers = utility_providers::whereHas('user')->get();
 
 }

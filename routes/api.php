@@ -7,6 +7,7 @@ use App\Http\Controllers\Tcms\Debts\Api\DebtManageApi;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\ApiEngine;
 use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 use App\Http\Controllers\Tcms\Customers\Api\CustomersController;
+use App\Http\Controllers\Tcms\MeterValidation\Api\MeterValidateApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\TokenGenerateController;
