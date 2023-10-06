@@ -73,6 +73,9 @@ Route::post('user/update', [AuthController::class, 'updateUPUser']);
 // get all utility providers
 Route::post('utilityProviders', [UtilityProviderApi::class, 'getAllProviders']);
 
+// get all utility providers with no users
+Route::post('utilityProvidersWithNoUsers', [UtilityProviderApi::class, 'getAllProvidersWithNoUsers']);
+
 //Create a utility provider
 Route::post('utilityProvider', [UtilityProviderApi::class, 'createUtilityProvider']);
 

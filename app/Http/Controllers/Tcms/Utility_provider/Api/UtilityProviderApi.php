@@ -46,6 +46,32 @@ class UtilityProviderApi extends Controller
     }
 
     /**
+     * Display a listing of of all utility providers.
+     *
+     * @param null
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+     public function getAllProvidersWithNoUsers(Request $request)
+     {
+         //Validate roles and request information like headers and auth tokens.
+         try {
+             $providers = $this->utilityProviderDao->getAllUtilityProvidersWithNoUsers();
+ 
+             $providersDto = new UtilityProviderDto();
+             //Checking if the object has data
+             if (!blank($providers)) {
+                 Log::info("Message::" . json_encode($providers));
+                 return Response()->json(["error" => false, "providers" => $providers], Response::HTTP_OK);
+             }
+             return Response()->json(["error" => false, "providers" => $providersDto->getAttributes()], Response::HTTP_BAD_REQUEST);
+         } catch (\Exception $exception) {
+             Log::info("Exceptional Message::" . $exception->getMessage());
+             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
+         }
+     }
+
+    /**
      * Get provider utility provider by their code.
      *
      * @param null

@@ -5,12 +5,11 @@ namespace App\Http\Controllers\Tcms\Auth\Api;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use App\Models\UtilityProviderModel;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -25,8 +24,19 @@ class AuthController extends Controller
         try {
             Log::info("Log Message:" . json_encode($request->all()));
             $input = $request->all();
-
-            $user = User::create($input);
+            $user = new User;
+            $utilityProviderId = $request->input('utility_provider_id');
+            if(!is_null($utilityProviderId)){
+                $utilityProvider = UtilityProviderModel::find($utilityProviderId);
+                $user->full_name = $request->input('full_name');
+                $user->email = $request->input('email');
+                $user->phone_number = $request->input('phone_number');
+                $user->password = $request->input('password');
+                $user->utility_provider_model_id = $utilityProviderId;
+                $user->utility_provider()->associate($utilityProvider)->save();
+            } else {
+                $user = User::create($input);
+            }
             $user->assignRole($request->input('roles'));
             if (!blank($user)) {
                 return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
@@ -83,9 +93,10 @@ class AuthController extends Controller
             $user = User::find($userId);
 
             Log::info("User::" . json_encode($user));
-
+            
             if (!blank($user)) {
-                $user = ['id' => $user->id, 'full_name' => $user->full_name, 'email' => $user->email, 'phone_number' => $user->phone_number, 'roles' => $user->getRoleNames()];
+                $uprovider = $user->utility_provider;
+                $user = ['id' => $user->id, 'full_name' => $user->full_name, 'email' => $user->email, 'phone_number' => $user->phone_number, 'utility_provider'=> isset($uprovider->provider_name) ? $uprovider->provider_name : "None", 'roles' => $user->getRoleNames()];
                 Log::info("Users Full Data::" . json_encode($user));
                 return Response()->json(["error" => false, 'user' => $user], Response::HTTP_OK);
             }

@@ -27,7 +27,7 @@ class MeterDto
     {
         $this->attributes = [];
         $this->attributes['id'] = $id;
-        $this->attributes['meter_number'] = $meter_number;
+        $this->attributes['meterNumber'] = $meter_number;
         $this->attributes['customers_id'] = $customers_id;
         $this->attributes['status'] = $status;
         return $this->attributes;
@@ -54,7 +54,7 @@ class MeterDto
      */
     public function getMeter_number()
     {
-        return $this->attributes['meter_number'];
+        return $this->attributes['meterNumber'];
     }
 
     /**
@@ -62,7 +62,7 @@ class MeterDto
      */
     public function setMeter_number($meter_number)
     {
-        $this->attributes['meter_number'] = $meter_number;
+        $this->attributes['meterNumber'] = $meter_number;
     }
 
     /**

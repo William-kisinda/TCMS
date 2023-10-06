@@ -99,7 +99,6 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
  
          return $provider;
      }
- 
 
     /**
      * @param null
@@ -121,6 +120,31 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
             }
         } catch (\Exception $exception) {
             Log::info("UtilityProviderException:" . $exception->getMessage());
+        }
+        return $utilityProviders;
+    }
+
+    /**
+     * @param null
+     * @return UtilityProviderModel|null
+     * @author Daniel MM
+     */
+    public function getAllUtilityProvidersWithNoUsers()
+    {
+        $utilityProviders = null;
+        try {
+            $utilityProvidersInfo = UtilityProviderModel::doesntHave('user')->get(['id', 'provider_name']);
+            Log::info("UtilityProviders with no users:" . json_encode($utilityProvidersInfo));
+            if (!blank($utilityProvidersInfo)) {
+
+                $utilityProvidersInfoArray = json_decode(json_encode($utilityProvidersInfo), true);
+
+                $utilityProviders = new Provider();
+
+                $utilityProviders->setAttributes($utilityProvidersInfoArray);
+            }
+        } catch (\Exception $exception) {
+            Log::error("UtilityProviderQueryException:" . $exception->getMessage());
         }
         return $utilityProviders;
     }

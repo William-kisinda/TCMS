@@ -53,7 +53,7 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
           $meters = null;
 
           try {
-              $metersInfo = DB::table('meters')->where('customers_id', $customerId)->get(['id', 'meter_number', 'status'], false);
+              $metersInfo = DB::table('meters')->where('customers_id', $customerId)->get(['id', 'meternumber', 'status'], false);
 
               if (!empty($metersInfo)) {
                 $meters = $metersInfo;
@@ -66,7 +66,7 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
                     if (!empty($debtInfo)) {
                         $newMeterInfo = [
                             'id' => $meter->id,
-                            'meter_number' => $meter->meter_number,
+                            'meter_number' => $meter->meternumber,
                             'status' => $meter->status,
                             'debt' => $debtInfo->amount,
                         ];
@@ -74,7 +74,7 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
                     } else {
                         $newMeterInfo = [
                             'id' => $meter->id,
-                            'meter_number' => $meter->meter_number,
+                            'meter_number' => $meter->meternumber,
                             'status' => $meter->status,
                             'debt' => $debt,
                         ];
@@ -140,7 +140,7 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
             $meterDto = new MeterDto();
 
             $meterDto->setAttributes([
-                "meter_number" => $meter_number,
+                "meterNumber" => $meter_number,
                 "customers_id" => $customerId,
                 "status" => "Active"
             ]);
