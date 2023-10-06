@@ -91,11 +91,10 @@ class Debt extends Model
          public function setAttributes($attributes){
               $this ->attributes=$attributes;
 
-    }
-
-    // public function meter()
-    // {
-    //     return $this->belongsTo(Meter::class);
-    // }
+          }
+        public function meter()
+        {
+            return $this->hasMany(Meter::class, );
+        }
 
 }

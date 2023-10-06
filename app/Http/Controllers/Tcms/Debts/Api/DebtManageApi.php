@@ -26,31 +26,33 @@ class DebtManageApi extends Controller
     */
     public function assignDebt(Request $request) {
         try {
-            Log::info("Log Message:" . json_encode($request->all()));
+            Log::info("Log api hit Message:" . json_encode($request->all()));
             $meterId = $request->input('meters_id');
             $debtDto = new DebtDto();
             $debtDto->setAttributes($request->all());
 
             // Validate whether such a meter_id already exists in the debts table.
-            $debtExists = $this->debtDao->getDebtByMeterId($meterId);
+            // $debtExists = $this->debtDao->getDebtByMeterId($meterId);
 
             // Log::info("Debt Exists:" . json_encode($debtExists));
-            if (blank($debtExists)) {
-                $debtInfo = $this->debtDao->assignDebt($debtDto);
+            // if (blank($debtExists)) {
+                $debtInfo = $this->debtDao->assignDebtByMeterId($meterId, $debtDto->getDebt_amount(), $debtDto->getDebt_reductionRate(),  $debtDto->getDebt_description());
+                Log::info("Debt Info:" . json_encode($debtInfo));
                 if (!is_null($debtInfo)) {
-                    return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
+                    return Response()->json(["error" => false, 'debtInfo' => $debtInfo], Response::HTTP_OK);
                 }
                 return Response()->json(["error" => false, 'message' => ['Failed to create debt']], Response::HTTP_OK);
-            } else {
+            // }
+            // else {
 
-                //the meter number already assigned with debt.
-                $debtInfo = $this->debtDao->assignDebt($debtDto, true);
+            //     //the meter number already assigned with debt.
+            //     $debtInfo = $this->debtDao->assignDebt($debtDto, true);
 
-                if (!is_null($debtInfo)) {
-                    return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
-                }
-                return Response()->json(["error" => false, 'message' => ['Failed to update debt']], Response::HTTP_OK);
-            }
+            //     if (!is_null($debtInfo)) {
+            //         return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
+            //     }
+            //     return Response()->json(["error" => false, 'message' => ['Failed to update debt']], Response::HTTP_OK);
+            // }
             // return Response()->json(["error" => false, 'message' => ['Debt already exists!']], Response::HTTP_OK);
         } catch (\Exception $e) {
             Log::info("Debt Exceptional Message::" . $e->getMessage());
@@ -65,72 +67,49 @@ class DebtManageApi extends Controller
      * @return \Illuminate\Http\JsonResponse
     */
     public function resolve(Request $request)
-    {
-        try {
-            $meterNumber = $request->input('meters_id');
-            $amount = $request->input('amount');
-        ;
-            // Call the resolveDebt function from DebtDaoImpl
-            $resolve = $this->debtDao->resolveDebt($meterNumber, $amount);
+{
+    try {
+        return Response()->json( $this->debtDao->resolveDebt($request->meterId, $request->amount), HttpResponse::HTTP_OK);
 
-            // Check if the response contains "remainingAmount" and "debtReduction"
-            if (array_key_exists('remainingAmount', $resolve)  && array_key_exists('remainingdebt', $resolve) && array_key_exists('debtReduction', $resolve) && $resolve['meterExists']) {
+    } catch (\Exception $e) {
+        Log::info("Debts Exception: " . $e->getMessage());
+        return response()->json([
+            "error" => true,
+            "Debts Exception: " . $e->getMessage(),
+            "message" => "Something went wrong!",
+        ], HttpResponse::HTTP_BAD_REQUEST);
+    }
+}
 
 
-                Log::info("Debts Response: " . json_encode($resolve));
+public function getDebtByMeterId(Request $request)
+{
+    try {
+       $meterId = $request->input('meterId');
 
-                return Response()->json([
-                    "error" => false,
-                    "message" => 'Debt resolved successfully!',
-                    "remainingAmount" => $resolve['remainingAmount'],
-                    "debtReduction" => $resolve['debtReduction'],
-                    "remainingdebt" => $resolve['remainingdebt'],
-                ], HttpResponse::HTTP_OK);
-            }
+        // Call the getDebtByMeterId function from your Dao or Repository
+        $debt = $this->debtDao->getDebtByMeterId($meterId);
 
+        if (!blank($debt)) {
             return response()->json([
-                "error" => true,
-                "message" => "Could not fetch debts!",
-                "possible reasons : " => "Empty values or meter : " . $meterNumber . " number does not exists"
+                "error" => false,
+                "debt" => $debt,
             ], HttpResponse::HTTP_OK);
-        } catch (\Exception $e) {
-            Log::info("Debts Exception: " . $e->getMessage());
+        } else {
             return response()->json([
                 "error" => true,
-                "Debts Exception: " . $e->getMessage(),
-                "message" => "Something went wrong!",
-            ], HttpResponse::HTTP_BAD_REQUEST);
+                "message" => "meter does not exist",
+            ], HttpResponse::HTTP_NOT_FOUND);
         }
+    } catch (\Exception $e) {
+        Log::error("Debt Exception: " . $e->getMessage());
+        return response()->json([
+            "error" => true,
+            "Debts Exception: " . $e->getMessage(),
+            "message" => "Something went wrong!",
+        ], HttpResponse::HTTP_BAD_REQUEST);
     }
-
-    public function getDebtByMeterId(Request $request)
-    {
-        try {
-            $meterId = $request->input('meterId');
-
-            // Call the getDebtByMeterId function from your Dao or Repository
-            $debt = $this->debtDao->getDebtByMeterId($meterId);
-
-            if (!blank($debt)) {
-                return response()->json([
-                    "error" => false,
-                    "debt" => $debt,
-                ], HttpResponse::HTTP_OK);
-            } else {
-                return response()->json([
-                    "error" => true,
-                    "message" => "meter does not exist",
-                ], HttpResponse::HTTP_NOT_FOUND);
-            }
-        } catch (\Exception $e) {
-            Log::error("Debt Exception: " . $e->getMessage());
-            return response()->json([
-                "error" => true,
-                "Debts Exception: " . $e->getMessage(),
-                "message" => "Something went wrong!",
-            ], HttpResponse::HTTP_BAD_REQUEST);
-        }
-    }
+}
 
 
 }

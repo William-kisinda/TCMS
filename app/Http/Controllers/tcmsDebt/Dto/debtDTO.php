@@ -45,6 +45,16 @@ Class DebtDto{
           $this ->attributes['status']=$status;
       }
 
+
+      public function getDebtremainingDebtAmount(){
+        return  $this ->attributes['remainingDebtAmount'];
+      }
+
+      public function setDebtremainingDebtAmount($remainingDebtAmount){
+          $this ->attributes['remainingDebtAmount']=$remainingDebtAmount;
+      }
+
+
       public function getAttributes(){
          return  $this ->attributes;
       }

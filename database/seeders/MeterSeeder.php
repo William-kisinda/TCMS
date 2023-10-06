@@ -18,24 +18,17 @@ class MeterSeeder extends Seeder
      public function run()
 
      {
-        // Define the data to be seeded
-        $meters = [
-            [
-                'meterNumber' => '374421378543',
-                'status' => 'Active',
-                'customers_id' => '1',
-            ],
-            [
-                'meterNumber' => '7564389369432',
-                'status' => 'Inactive',
-                'customers_id' => '2',
-            ],
-            // Add more customer data as needed
-        ];
+         for ($i = 1; $i <= 100; $i++) {
+             // Generate a random meter number within the specified range
+             $meterNumber = rand(10000, 99999);
 
-        // Insert the data into the meters table
-        DB::table('meters')->insert($meters);
-    }
+             DB::table('meters')->insert([
+                 'meterNumber' => $meterNumber,
+                 'status' => ($i % 2 === 0) ? 'Active' : 'Inactive',
+
+             ]);
+         }
+     }
 
  }
 
