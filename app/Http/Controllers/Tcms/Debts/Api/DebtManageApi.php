@@ -7,7 +7,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response as HttpResponse;
-use App\Http\Controllers\Tcms\Debts\Dto\DebtDto;
 use App\Http\Controllers\Tcms\Debts\Dao\DebtDaoImpl;
 
 class DebtManageApi extends Controller
@@ -21,23 +20,18 @@ class DebtManageApi extends Controller
     /*
      * Create a Debt.
      *
-     * @param null
+     * @param
      * @return \Illuminate\Http\JsonResponse
     */
     public function assignDebt(Request $request) {
         try {
-            Log::info("Log api hit Message:" . json_encode($request->all()));
-            $meterId = $request->input('meters_id');
-            $debtDto = new DebtDto();
-            $debtDto->setAttributes($request->all());
-            $debtInfo = $this->debtDao->assignDebtByMeterId($meterId, $debtDto->getDebt_amount(), $debtDto->getDebt_reductionRate(),  $debtDto->getDebt_description());
-            Log::info("Debt Info:" . json_encode($debtInfo));
+            $debtInfo = $this->debtDao->assignDebtByMeterId($request->meters_id, $request->amount, $request->reductionRate,  $request->description);
             if (!is_null($debtInfo)) {
                 return Response()->json(["error" => false, 'debtInfo' => $debtInfo], Response::HTTP_OK);
             }
-            return Response()->json(["error" => false, 'message' => ['Failed to create debt']], Response::HTTP_OK);
+            return Response()->json(["error" => false, 'message' => ['Failed to assign debt']], Response::HTTP_OK);
         } catch (\Exception $e) {
-            Log::info("Debt Exceptional Message::" . $e->getMessage());
+            Log::error("Debt Exceptional Message::" . $e->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

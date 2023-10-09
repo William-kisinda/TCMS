@@ -62,21 +62,17 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
                 //Resolve meter with their debts
                 $debt = 0;
                 foreach($meters as $meter) {
-                    $debtInfo = DB::table('debt')->where('meters_id', $meter->id)->first();
+                    $debtInfo = DB::table('debts')->where('meters_id', $meter->id)->first();
                     if (!empty($debtInfo)) {
                         $newMeterInfo = [
                             'id' => $meter->id,
-                            'meter_number' => $meter->meternumber,
-                            'status' => $meter->status,
-                            'debt' => $debtInfo->amount,
+                            'meter_number' => $meter->meternumber
                         ];
                         array_push($metersData, $newMeterInfo);
                     } else {
                         $newMeterInfo = [
                             'id' => $meter->id,
                             'meter_number' => $meter->meternumber,
-                            'status' => $meter->status,
-                            'debt' => $debt,
                         ];
                         array_push($metersData, $newMeterInfo);
                     }
@@ -141,7 +137,7 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
             $meterDto = new MeterDto();
 
             $meterDto->setAttributes([
-                "meterNumber" => $meter_number,
+                "meternumber" => $meter_number,
                 "customers_id" => $customerId,
                 "status" => "Active"
             ]);

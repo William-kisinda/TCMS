@@ -123,7 +123,7 @@ Route::middleware([])->group(function () {
 
 
 Route::middleware([])->group(function () {
-         // get all customers
+// get all customers
  Route::post('customers', [CustomersController::class, 'getAllCustomers']);
 
  // get all customers

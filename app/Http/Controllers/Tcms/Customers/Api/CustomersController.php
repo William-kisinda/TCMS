@@ -82,14 +82,10 @@ class CustomersController extends Controller
              Log::info("OriginMessage:" . json_encode($customerMetersExists));
              if (!blank($customerMetersExists)) {
  
-                //  $customerDto = new CustomerDto();
- 
-                //  $customerDto->setAttributes($customerMetersExists);
- 
-                 //logging
-                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
- 
-                 return Response()->json(["error" => false, "Customer" => $customerMetersExists], Response::HTTP_OK);
+                //logging
+                Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+
+                return Response()->json(["error" => false, "Customer" => $customerMetersExists], Response::HTTP_OK);
              }
              
              //Logging
@@ -103,7 +99,7 @@ class CustomersController extends Controller
      }
      
      /*
-     * Create a Tariff.
+     * Create a Customer.
      *
      * @param null
      * @return \Illuminate\Http\JsonResponse
@@ -114,10 +110,6 @@ class CustomersController extends Controller
             Log::info("Log Message:" . json_encode($request->all()));
             $customerDto = new CustomerDto();
             $customerDto->setAttributes($request->all());
-
-            // Validate whether such a provider already esists using the name and code.
-            // $customerExists = $this->customerDao->getCustomerByNameOrCode($tariffDto->getTariff_name(), $tariffDto->getTariff_code());
-            // Log::info("Tariff Exists:" . json_encode($tariffExists));
             $customerExists = false;
             if (!$customerExists) {
                 $customer = $this->customerDao->createCustomer($customerDto);

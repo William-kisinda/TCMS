@@ -146,6 +146,7 @@ class CustomerDaoImpl implements CustomerDao
              $meterDao = new MeterDaoImpl();
              
              $meter = $meterDao->createMeter($customerId);
+             Log::channel('daily')->info('Meter created: ' . json_encode($meter));
          } catch (\Exception $e) {
              Log::info("Customer Create Exception:". $e->getMessage());
          }
