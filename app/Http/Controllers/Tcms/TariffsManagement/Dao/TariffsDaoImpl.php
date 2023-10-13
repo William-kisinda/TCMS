@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tcms\TariffsManagement\Dao;
 
 use App\Http\Controllers\Tcms\TariffsManagement\Dto\TariffsDto;
 use App\Models\Tariffs;
+use App\Models\UtilityProviderModel;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Log;
@@ -37,6 +38,29 @@ class TariffsDaoImpl implements TariffsDao
                 $tariffs->setAttributes($tariffsInfoArray);
             }
         } catch (\Exception $exception) {
+            Log::info("Tariffs Exception:" . $exception->getMessage());
+        }
+        return $tariffs;
+    }
+    
+    /**
+     * @param null
+     * @return Tariffs|null
+     * @author Daniel MM
+     */
+    public function getTariffsByUtilityProvider($utilityProviderId)
+    {
+        $tariffs = null;
+        try {
+            // $tariffsInfo = DB::table('tariffs')->get();
+            $tariffsInfo = UtilityProviderModel::where('id', $utilityProviderId)->with('tariffs')->get();
+            if (!blank($tariffsInfo)) {
+
+                $tariffs = $tariffsInfo;
+                // $tariffs = json_decode(json_encode($tariffsInfo), true);
+            }
+        } catch (\Exception $exception) {
+            $tariffs = null;
             Log::info("Tariffs Exception:" . $exception->getMessage());
         }
         return $tariffs;

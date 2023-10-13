@@ -8,9 +8,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Tcms\Meters\Dao\MeterDao;
 use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
+use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
+use App\Http\Controllers\Tcms\Utility_provider\Dto\UtilityProviderDto;
+
+use function PHPUnit\Framework\isNull;
 
 /**
- * This Class Controls Tariffs Datastore
+ * This Class Controls Meters Datastore
  * @author Daniel.
  * Email:danielmathew460@gmail.com
  * 28/09/2023
@@ -97,7 +101,6 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
          $meter = null;
          try {
              $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->first();
-             Log::info("Meter Info Check View", [json_encode($meterInfo)]);
              if (!blank($meterInfo)) {
 
                  $meterInfoArray = json_decode(json_encode($meterInfo), true);
@@ -112,33 +115,66 @@ use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
      }
 
      /**
+      * @param $meterNumber
+      * @return Meter|null
+      * @author Daniel MM
+      */
+      public function checkIfMeterOfUtilityProviderExists($meterNumber, $utility_provider_id)
+      {
+          $meter = null;
+          try {
+              $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->where('utility_provider_id', $utility_provider_id)->first();
+              if (!blank($meterInfo)) {
+ 
+                  $meterInfoArray = json_decode(json_encode($meterInfo), true);
+ 
+                  $meter = new Meter();
+                  $meter->setAttributes($meterInfoArray);
+              }
+          } catch (\Exception $exception) {
+              Log::error("Meter Number Check Exception", [$exception->getMessage()]);
+          }
+          return $meter;
+      }
+
+     /**
       * @param $customerId
       * @return Meter|null
       * @author Daniel MM
       */
-     public function createMeter($customerId)
+     public function createMeter($customerId, $utility_provider_id)
      {
          $meter = null;
           try {
-            $meter = new Meter();
 
             //Generate Meter Number
             $helper = new Helpers();
 
-            $meter_number = $helper->generateMeterNumber();
+            //Resolve for utility_provider_code so we can use to generate meter_number.
+            $utilityProviderDao = new UtilityProviderDaoImpl();
+            $utility_provider = $utilityProviderDao->getUtilityProviderById($utility_provider_id);
+            $utility_provider_code = "";
+            if (!is_null($utility_provider)){
+                $utility_provider_code = $utility_provider->getUtilityProviderCode();
+            };
+
+            $meter_number = $helper->generateMeterNumber($utility_provider_code);
 
             //Check if by any chance the meterNumber has ever been used already.
             while (true) {
                 $meterCheck = $this->checkIfMeterExists($meter_number);
                 if (is_null($meterCheck)) break;
-                $meter_number = $helper->generateMeterNumber();
+                $meter_number = $helper->generateMeterNumber($utility_provider_code);
             }
+
+            $meter = new Meter();
 
             $meterDto = new MeterDto();
 
             $meterDto->setAttributes([
                 "meternumber" => $meter_number,
                 "customers_id" => $customerId,
+                "utility_provider_id" => $utility_provider_id,
                 "status" => "Active"
             ]);
 

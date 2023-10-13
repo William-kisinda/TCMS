@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tcms\Customers\Api;
 
+use Exception;
 use App\Helpers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Tcms\Customers\Dto\CustomerDto;
 use App\Http\Controllers\Tcms\Customers\Dao\CustomerDaoImpl;
+use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
 
 class CustomersController extends Controller
 {
@@ -51,11 +53,11 @@ class CustomersController extends Controller
             //Logging
             Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed.');
 
-            return Response()->json(["error" => false, "customers" => ["Couldn't fetch customers."]], Response::HTTP_BAD_REQUEST);
+            return Response()->json(["error" => false, "customers" => []], Response::HTTP_BAD_REQUEST);
 
         } catch (\Exception $exception) {
 
-            Log::info("Exceptional Message::" . $exception->getMessage());
+            Log::error("Exceptional Message::" . $exception->getMessage());
 
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -93,7 +95,7 @@ class CustomersController extends Controller
  
              return Response()->json(["error" => false, "Customer" => ['Invalid Customer Id']], Response::HTTP_NOT_FOUND);
          } catch (\Exception $exception) {
-             Log::info("Customer Exceptional Message::" . $exception->getMessage());
+             Log::error("Customer Exceptional Message::" . $exception->getMessage());
              return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
          }
      }
@@ -108,11 +110,15 @@ class CustomersController extends Controller
     {
         try {
             Log::info("Log Message:" . json_encode($request->all()));
+            $utilityProviderId = $request->input('utility_provider_id');
+            $utilityProviderDao = new UtilityProviderDaoImpl();
+            $utility_provider = $utilityProviderDao->getUtilityProviderById($utilityProviderId);
+            if (is_null($utility_provider)) throw new Exception("Utility Provider doesn't exist.", 1);
             $customerDto = new CustomerDto();
-            $customerDto->setAttributes($request->all());
+            $customerDto->setAttributes(['full_name' => $request->input('full_name'), 'phone' => $request->input('phone'), 'address' => $request->input('address')]);
             $customerExists = false;
             if (!$customerExists) {
-                $customer = $this->customerDao->createCustomer($customerDto);
+                $customer = $this->customerDao->createCustomer($customerDto, $utilityProviderId);
                 if (!blank($customer)) {
                     return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
                 }
@@ -120,7 +126,7 @@ class CustomersController extends Controller
             }
             return Response()->json(["error" => false, 'message' => ['Customer already exists!']], Response::HTTP_OK);
         } catch (\Exception $e) {
-            Log::info("Exceptional Message::" . $e->getMessage());
+            Log::error("Exceptional Message::" . $e->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

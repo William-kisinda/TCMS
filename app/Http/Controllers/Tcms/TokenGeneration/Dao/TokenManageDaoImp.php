@@ -118,7 +118,7 @@ class TokenManageDaoImp implements TokenManageDao
             }
         } catch (\Exception $e) {
             // Log the exception for debugging purposes.
-            Log::info("Tariff Exception: " . $e->getMessage());
+            Log::info("Token Get Info Exception: " . $e->getMessage());
         }
 
         return $tokenInfo;
@@ -140,7 +140,8 @@ class TokenManageDaoImp implements TokenManageDao
 
              $tokenInfo->save();
          } catch (\Exception $e) {
-             Log::info("Tariff Exception:". $e->getMessage());
+            $tokenInfo = null;
+            Log::info("Token create Exception:". $e->getMessage());
          }
          return $tokenInfo;
      }

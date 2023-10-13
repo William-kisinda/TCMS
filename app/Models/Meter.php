@@ -78,7 +78,21 @@ class Meter extends Model
         $this->attributes['status'] = $meterStatus;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getUtilityProviderId()
+    { 
+        return $this->attributes['utility_provider_id'];
+    }
 
+    /**
+     * @param mixed $customerId
+     */
+    public function setUtilityProviderId($utilityProviderId): void
+    {
+        $this->attributes['utility_provider_id'] = $utilityProviderId;
+    }
 
     /**
      * @return array

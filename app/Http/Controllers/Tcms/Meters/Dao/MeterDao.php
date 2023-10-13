@@ -15,5 +15,5 @@ interface MeterDao
     public function getMeterById($meterId);
     public function getMeterByCustomerId($customerId);
     public function checkIfMeterExists($meterNumber);
-    public function createMeter(MeterDto $customerDto);
+    public function createMeter(MeterDto $customerDto, $utility_provider_id);
 }

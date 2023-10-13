@@ -11,6 +11,7 @@ use App\Http\Controllers\Tcms\Debts\Dao\DebtDaoImpl;
 use App\Http\Controllers\Tcms\Meters\Dao\MeterDaoImpl;
 use App\Http\Controllers\Tcms\Customers\Dao\CustomerDaoImpl;
 use App\Http\Controllers\Tcms\MeterValidation\Dto\ValidMeterDto;
+use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
 
 /**
  * This Class Controls Product Category Datastore
@@ -24,12 +25,14 @@ class MeterValidateApi extends Controller
     private $meterDao;
     private $customerDao;
     private $debts;
+    private $utilityProviderDao;
 
-    public function __construct(MeterDaoImpl $meterDao, CustomerDaoImpl $customerDao, DebtDaoImpl $debts)
+    public function __construct(MeterDaoImpl $meterDao, CustomerDaoImpl $customerDao, DebtDaoImpl $debts, UtilityProviderDaoImpl $utilityProviderDao)
     {
         $this->meterDao = $meterDao;
         $this->customerDao = $customerDao;
         $this->debts = $debts;
+        $this->utilityProviderDao = $utilityProviderDao;
     }
 
     public function getValidMeter(Request $request)
@@ -38,18 +41,21 @@ class MeterValidateApi extends Controller
             $helper = new Helpers;
             // Retrieve the meter number from the request payload
             $meter_num = $request->input('meter_num');
+            $amount = $request->input('amount');
+            $utilityProvider = $request->input('utilityProvider');
 
              // Capture requestId
             $requestId = $helper->generateRequestId();
 
 
             // Checking if the meter exists in the database.
-            $meterExists = $this->meterDao->checkIfMeterExists($meter_num);
+            $meterExists = $this->meterDao->checkIfMeterOfUtilityProviderExists($meter_num, $utilityProvider);
 
             if (!empty($meterExists)) {
                 // Fetching the customer for meter validity.
                 $customer = $this->customerDao->getCustomerById($meterExists->getCustomerId());
                 $debtAmount = $this->debts->getDebtByMeterId($meterExists->getMeterId());
+                $utilityProvider = $this->utilityProviderDao->getUtilityProviderById($meterExists->getUtilityProviderId());
 
                 // Using the DTO to get and set object data properties.
                 $validMeterDto = new ValidMeterDto();
@@ -59,6 +65,10 @@ class MeterValidateApi extends Controller
                     $debtAmount,
                     $meterExists->getMeterStatus(),
                     $customer['full_name'],
+                    $customer['phone'],
+                    $utilityProvider->getUtilityProviderName(),
+                    $utilityProvider->getUtilityProviderId(),
+                    $amount,
                     $requestId
                 );
 

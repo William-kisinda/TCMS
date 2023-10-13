@@ -94,4 +94,9 @@ class Tariffs extends Model
     {
         $this->attributes = $attributes;
     }
+
+    public function utility_providers()
+    {
+        return $this->belongsToMany(UtilityProviderModel::class, 'utility_providers_tariffs', 'tariff_id', 'utility_provider_id');
+    }
 }

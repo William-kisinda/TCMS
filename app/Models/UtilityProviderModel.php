@@ -119,5 +119,8 @@ class UtilityProviderModel extends Model
         return $this->hasOne(User::class);
     }
 
-
+    public function tariffs()
+    {
+        return $this->belongsToMany(Tariffs::class, 'utility_providers_tariffs', 'utility_provider_id', 'tariff_id');
+    }
 }

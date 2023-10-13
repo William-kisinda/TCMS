@@ -23,13 +23,14 @@ class MeterDto
      * @param int
      * @return mixed
      */
-    public function setMeterDto($id, $meter_number, $customers_id, $status)
+    public function setMeterDto($id, $meter_number, $customers_id, $status, $utility_provider_id)
     {
         $this->attributes = [];
         $this->attributes['id'] = $id;
         $this->attributes['meternumber'] = $meter_number;
         $this->attributes['customers_id'] = $customers_id;
         $this->attributes['status'] = $status;
+        $this->attributes['utility_provider_id'] = $utility_provider_id;
         return $this->attributes;
     }
 
@@ -94,6 +95,22 @@ class MeterDto
     public function setMeter_status($meter_status)
     {
         $this->attributes['status'] = $meter_status;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMeter_utility_provider_id()
+    {
+        return $this->attributes['utility_provider_id'];
+    }
+
+    /**
+     * @param mixed $customer_phone
+     */
+    public function setMeter_utility_provider_id($utility_provider_id)
+    {
+        $this->attributes['utility_provider_id'] = $utility_provider_id;
     }
 
     /**

@@ -22,7 +22,7 @@ class ValidMeterDto
     /**
      * @return mixed
      */
-    public function validMeter($id, $meterNumber, $debtAmount, $status,$customerName, $requestId)
+    public function validMeter($id, $meterNumber, $debtAmount, $status, $customerName, $customerPhone, $utility_provider, $utilityProviderId, $amount, $requestId)
     {
         $this->attributes = [];
         $this->attributes['id'] = $id;
@@ -30,6 +30,10 @@ class ValidMeterDto
         $this->attributes['debt'] = $debtAmount;
         $this->attributes['status'] = $status;
         $this->attributes['customerName'] = $customerName;
+        $this->attributes['customerPhone'] = $customerPhone;
+        $this->attributes['utility_provider'] = $utility_provider;
+        $this->attributes['utility_provider_id'] = $utilityProviderId;
+        $this->attributes['amount'] = $amount;
         $this->attributes['requestId'] = $requestId;
         return $this->attributes;
     }

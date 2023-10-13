@@ -40,7 +40,7 @@ class TariffsApi extends Controller
 
                 return Response()->json(["error" => false, "tariffs" => $tariffs], Response::HTTP_OK);
             }
-            return Response()->json(["error" => false, "tariffs" => ["Couldn't fetch tariffs."]], Response::HTTP_BAD_REQUEST);
+            return Response()->json(["error" => false, "tariffs" => []], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {
             Log::info("Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -172,6 +172,46 @@ class TariffsApi extends Controller
          }
      }
 
+     /**
+     * Get tariff by their code.
+     *
+     * @param null
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+     public function getTariffsByUtilityProvider(Request $request)
+     {
+         try {
+            $utilityProviderId = $request->input('utility_provider_id');
+             //Checking if tariffs exists.
+             $tariffsExists = $this->tariffsDao->getTariffsByUtilityProvider($utilityProviderId);
+             $helpers = new Helpers();
+             $requestId = $helpers->generateRequestId();
+ 
+             //Checking if the object has data
+             Log::info("OriginMessage:" . json_encode($tariffsExists));
+             if (!blank($tariffsExists)) {
+ 
+                 $tariffDto = new TariffsDto();
+ 
+                 // $utilityProviderDto->getProiv
+                 $tariffDto->setAttributes($tariffsExists);
+ 
+                 //logging
+                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+ 
+                 return Response()->json(["error" => false, "Tariffs" => $tariffDto->getAttributes()], Response::HTTP_OK);
+             }
+             
+             //Logging
+             Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Tariff Id.');
+ 
+             return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Id']], Response::HTTP_NOT_FOUND);
+         } catch (\Exception $exception) {
+             Log::info("Tariff Exceptional Message::" . $exception->getMessage());
+             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
+         }
+     }
      /**
      * Get tariff by their name, code.
      *

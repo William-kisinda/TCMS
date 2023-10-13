@@ -117,6 +117,9 @@ Route::middleware([])->group(function () {
         //Get Tariff By Name Or Code
         Route::post('tariffByNameOrCode', [TariffsApi::class, 'getTariffByNameOrCode']);
 
+        //Get Tariff By Utility Provider
+        Route::post('tariffsByUtilityProvider', [TariffsApi::class, 'getTariffsByUtilityProvider']);
+
         //Update Tariff
         Route::patch('tariff', [TariffsApi::class, 'updateTariff']);
 });
@@ -139,9 +142,10 @@ Route::middleware([])->group(function () {
  *
  */
 //token Generator
-Route::post('token-generator', [TokenGenerateController::class, 'generateToken']);
+Route::post('token-generator', [TokenGenerateController::class, 'produceMessages']);
+
 //token receiver , API that might be exposed by the client systems
-Route::post('token-receiver', [ApiEngine::class,'tokenReceiver']);
+Route::post('token-receiver', [ApiEngine::class,'tokenNotifications']);
 
 /**
  *

@@ -119,7 +119,7 @@ class CustomerDaoImpl implements CustomerDao
      * @return Customer|null
      * @author Daniel MM
      */
-    public function createCustomer(CustomerDto $customerDto)
+    public function createCustomer(CustomerDto $customerDto, $utility_provider_id)
     {
         $customer = null;
         $meter = null;
@@ -145,7 +145,7 @@ class CustomerDaoImpl implements CustomerDao
              //Create new meter for this customer having with us the id of the customer.
              $meterDao = new MeterDaoImpl();
              
-             $meter = $meterDao->createMeter($customerId);
+             $meter = $meterDao->createMeter($customerId, $utility_provider_id);
              Log::channel('daily')->info('Meter created: ' . json_encode($meter));
          } catch (\Exception $e) {
              Log::info("Customer Create Exception:". $e->getMessage());

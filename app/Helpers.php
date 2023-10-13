@@ -16,10 +16,11 @@ class Helpers {
     }
 
     //Generate Meter Number
-    function generateMeterNumber() {
-        $min = (10**11) + 1; // Smallest 12-digit number (100000000001)
-        $max = (10**12) - 1; // Largest 12-digit number (999999999999)
-        return random_int($min, $max);
+    function generateMeterNumber($utility_provider_code) {
+        $digitsNumberFromCode = substr($utility_provider_code, 2);
+        $min = (10**7) + 1; // Smallest 8-digit number (10000000)
+        $max = (10**8) - 1; // Largest 8-digit number (99999999)
+        return $digitsNumberFromCode . random_int($min, $max);
     }
 
     //Generate Code
@@ -30,6 +31,11 @@ class Helpers {
 
         //Take the first 2 characters of the name and append code to them and return the result.
         return strtoupper(substr($contextName, 0, 2)) . $intCode;
+    }
+
+    //Generate Meter Number
+    function generateMeterToken($amount, $meterNumber, $requestId) {
+        return intval($amount, 10) + $meterNumber + $requestId;
     }
 }
 

@@ -15,6 +15,6 @@ interface CustomerDao
     public function getAllCustomers();
     public function getCustomerById($customerId);
     public function getCustomerMeterNumberById($customerId);
-    public function createCustomer(CustomerDto $customerDto);
+    public function createCustomer(CustomerDto $customerDto, $utility_provider_id);
     public function checkIfCustomerExists($customerName, $customerPhone);
 }

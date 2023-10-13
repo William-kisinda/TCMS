@@ -43,7 +43,8 @@ class DebtDaoImpl implements DebtDao
         $debts = Debt::where('meters_id', $meterId);
 
         if ($debts->get()->isEmpty()) {
-            return $this->returnResponse(['meterExists' => false, 'error' => true, 'reason' => 'Reason meter { ' . $meterId . ' } does not exist in debts table']);
+            // return $this->returnResponse(['meterExists' => false, 'error' => true, 'reason' => 'Reason meter { ' . $meterId . ' } does not exist in debts table']);
+            return $this->returnResponse(['meterExists' => true, 'error' => false, 'remainingAmount' => $amount]);
         }
 
         $debts = $debts->where('remainingDebtAmount', '!=', 0)->orderBy('created_at', 'asc')
