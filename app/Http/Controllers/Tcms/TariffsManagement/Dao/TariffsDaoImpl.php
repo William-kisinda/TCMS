@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tcms\TariffsManagement\Dao;
 use App\Http\Controllers\Tcms\TariffsManagement\Dto\TariffsDto;
 use App\Models\Tariffs;
 use App\Models\UtilityProviderModel;
+use App\Models\UtilityProviderTariffs;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Log;
@@ -190,6 +191,34 @@ class TariffsDaoImpl implements TariffsDao
              Log::info("Tariff Exception:". $e->getMessage());
          }
          return $tariff;
+     }
+
+     /**
+     * @author Daniel MM
+     */
+
+     public function attachTariffsToUtilityProviders($utilityProviderId, $tariffId)
+     {
+         $utilityProviderTariff = null;
+         try {
+            $utilityProviderTariffInfo = DB::table('utility_providers_tariffs')->where('utility_provider_id', $utilityProviderId)->where('tariff_id', $tariffId)->get(['id']);
+
+            Log::info("Utility Provider Tariff Info". json_encode($utilityProviderTariffInfo));
+            if(blank($utilityProviderTariffInfo)) {
+                $utilityProviderTariff = new UtilityProviderTariffs();
+
+                $utilityProviderTariff->setUtilityProvidersId($utilityProviderId);
+
+                $utilityProviderTariff->setTariffId($tariffId);
+
+                $utilityProviderTariff->save();
+            } else {
+                $utilityProviderTariff = "Tariff Exists";
+            }
+         } catch (\Exception $e) {
+             Log::info("Tariff Exception:". $e->getMessage());
+         }
+         return $utilityProviderTariff;
      }
 
       /**

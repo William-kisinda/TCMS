@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Tcms\TariffsManagement\Api;
 
 use App\Helpers;
@@ -8,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Tcms\TariffsManagement\Dao\TariffsDaoImpl;
 use App\Http\Controllers\Tcms\TariffsManagement\Dto\TariffsDto;
+use Illuminate\Support\Facades\DB;
 
 class TariffsApi extends Controller
 {
@@ -77,7 +79,7 @@ class TariffsApi extends Controller
 
                 return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
             }
-            
+
             //Logging
             Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Tariff Id.');
 
@@ -95,167 +97,167 @@ class TariffsApi extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-     public function getTariffByName(Request $request)
-     {
-         try {
- 
-             $tariffName = $request->input('name');
-             //Checking if tariffs exists.
-             $tariffExists = $this->tariffsDao->getTariffByName($tariffName);
-             $helpers = new Helpers();
-             $requestId = $helpers->generateRequestId();
- 
-             //Checking if the object has data
-             Log::info("OriginMessage:" . $tariffExists);
-             if (!blank($tariffExists)) {
- 
-                 $tariffDto = new TariffsDto();
- 
-                 // $utilityProviderDto->getProiv
-                 $tariffDto->setAttributes($tariffExists);
- 
-                 //logging
-                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
- 
-                 return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
-             }
-             
-             //Logging
-             Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Tariff Id.');
- 
-             return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Name']], Response::HTTP_NOT_FOUND);
-         } catch (\Exception $exception) {
-             Log::info("Tariff Exceptional Message::" . $exception->getMessage());
-             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
-         }
-     }
+    public function getTariffByName(Request $request)
+    {
+        try {
 
-     /**
+            $tariffName = $request->input('name');
+            //Checking if tariffs exists.
+            $tariffExists = $this->tariffsDao->getTariffByName($tariffName);
+            $helpers = new Helpers();
+            $requestId = $helpers->generateRequestId();
+
+            //Checking if the object has data
+            Log::info("OriginMessage:" . $tariffExists);
+            if (!blank($tariffExists)) {
+
+                $tariffDto = new TariffsDto();
+
+                // $utilityProviderDto->getProiv
+                $tariffDto->setAttributes($tariffExists);
+
+                //logging
+                Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+
+                return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
+            }
+
+            //Logging
+            Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Tariff Id.');
+
+            return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Name']], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $exception) {
+            Log::info("Tariff Exceptional Message::" . $exception->getMessage());
+            return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * Get tariff by their code.
      *
      * @param null
      * @return \Illuminate\Http\JsonResponse
      */
 
-     public function getTariffByCode(Request $request)
-     {
-         try {
- 
-             $tariffCode = $request->input('code');
-             //Checking if tariffs exists.
-             $tariffExists = $this->tariffsDao->getTariffByCode($tariffCode);
-             $helpers = new Helpers();
-             $requestId = $helpers->generateRequestId();
- 
-             //Checking if the object has data
-             Log::info("OriginMessage:" . $tariffExists);
-             if (!blank($tariffExists)) {
- 
-                 $tariffDto = new TariffsDto();
- 
-                 // $utilityProviderDto->getProiv
-                 $tariffDto->setAttributes($tariffExists);
- 
-                 //logging
-                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
- 
-                 return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
-             }
-             
-             //Logging
-             Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Tariff Id.');
- 
-             return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Code']], Response::HTTP_NOT_FOUND);
-         } catch (\Exception $exception) {
-             Log::info("Tariff Exceptional Message::" . $exception->getMessage());
-             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
-         }
-     }
+    public function getTariffByCode(Request $request)
+    {
+        try {
 
-     /**
+            $tariffCode = $request->input('code');
+            //Checking if tariffs exists.
+            $tariffExists = $this->tariffsDao->getTariffByCode($tariffCode);
+            $helpers = new Helpers();
+            $requestId = $helpers->generateRequestId();
+
+            //Checking if the object has data
+            Log::info("OriginMessage:" . $tariffExists);
+            if (!blank($tariffExists)) {
+
+                $tariffDto = new TariffsDto();
+
+                // $utilityProviderDto->getProiv
+                $tariffDto->setAttributes($tariffExists);
+
+                //logging
+                Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+
+                return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
+            }
+
+            //Logging
+            Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Tariff Id.');
+
+            return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Code']], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $exception) {
+            Log::info("Tariff Exceptional Message::" . $exception->getMessage());
+            return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * Get tariff by their code.
      *
      * @param null
      * @return \Illuminate\Http\JsonResponse
      */
 
-     public function getTariffsByUtilityProvider(Request $request)
-     {
-         try {
+    public function getTariffsByUtilityProvider(Request $request)
+    {
+        try {
             $utilityProviderId = $request->input('utility_provider_id');
-             //Checking if tariffs exists.
-             $tariffsExists = $this->tariffsDao->getTariffsByUtilityProvider($utilityProviderId);
-             $helpers = new Helpers();
-             $requestId = $helpers->generateRequestId();
- 
-             //Checking if the object has data
-             Log::info("OriginMessage:" . json_encode($tariffsExists));
-             if (!blank($tariffsExists)) {
- 
-                 $tariffDto = new TariffsDto();
- 
-                 // $utilityProviderDto->getProiv
-                 $tariffDto->setAttributes($tariffsExists);
- 
-                 //logging
-                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
- 
-                 return Response()->json(["error" => false, "Tariffs" => $tariffDto->getAttributes()], Response::HTTP_OK);
-             }
-             
-             //Logging
-             Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Tariff Id.');
- 
-             return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Id']], Response::HTTP_NOT_FOUND);
-         } catch (\Exception $exception) {
-             Log::info("Tariff Exceptional Message::" . $exception->getMessage());
-             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
-         }
-     }
-     /**
+            //Checking if tariffs exists.
+            $tariffsExists = $this->tariffsDao->getTariffsByUtilityProvider($utilityProviderId);
+            $helpers = new Helpers();
+            $requestId = $helpers->generateRequestId();
+
+            //Checking if the object has data
+            Log::info("OriginMessage:" . json_encode($tariffsExists));
+            if (!blank($tariffsExists)) {
+
+                $tariffDto = new TariffsDto();
+
+                // $utilityProviderDto->getProiv
+                $tariffDto->setAttributes($tariffsExists);
+
+                //logging
+                Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+
+                return Response()->json(["error" => false, "Tariffs" => $tariffDto->getAttributes()], Response::HTTP_OK);
+            }
+
+            //Logging
+            Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Tariff Id.');
+
+            return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Id']], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $exception) {
+            Log::info("Tariff Exceptional Message::" . $exception->getMessage());
+            return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    /**
      * Get tariff by their name, code.
      *
      * @param null
      * @return \Illuminate\Http\JsonResponse
      */
 
-     public function getTariffByNameOrCode(Request $request)
-     {
-         try {
- 
-             $tariffName = $request->input('name');
-             $tariffCode = $request->input('code');
+    public function getTariffByNameOrCode(Request $request)
+    {
+        try {
 
-             //Checking if tariffs exists.
-             $tariffExists = $this->tariffsDao->getTariffByNameOrCode($tariffName, $tariffCode);
-             $helpers = new Helpers();
-             $requestId = $helpers->generateRequestId();
- 
-             //Checking if the object has data
-             Log::info("OriginMessage:" . $tariffExists);
-             if (!blank($tariffExists)) {
- 
-                 $tariffDto = new TariffsDto();
- 
-                 // $utilityProviderDto->getProiv
-                 $tariffDto->setAttributes($tariffExists);
- 
-                 //logging
-                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
- 
-                 return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
-             }
-             
-             //Logging
-             Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Tariff Id.');
- 
-             return Response()->json(["error" => false, "Tariff" => ['Tariff does not exist!']], Response::HTTP_NOT_FOUND);
-         } catch (\Exception $exception) {
-             Log::info("Tariff Exceptional Message::" . $exception->getMessage());
-             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
-         }
-     }
-     
+            $tariffName = $request->input('name');
+            $tariffCode = $request->input('code');
+
+            //Checking if tariffs exists.
+            $tariffExists = $this->tariffsDao->getTariffByNameOrCode($tariffName, $tariffCode);
+            $helpers = new Helpers();
+            $requestId = $helpers->generateRequestId();
+
+            //Checking if the object has data
+            Log::info("OriginMessage:" . $tariffExists);
+            if (!blank($tariffExists)) {
+
+                $tariffDto = new TariffsDto();
+
+                // $utilityProviderDto->getProiv
+                $tariffDto->setAttributes($tariffExists);
+
+                //logging
+                Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+
+                return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
+            }
+
+            //Logging
+            Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Tariff Id.');
+
+            return Response()->json(["error" => false, "Tariff" => ['Tariff does not exist!']], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $exception) {
+            Log::info("Tariff Exceptional Message::" . $exception->getMessage());
+            return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     /*
      * Create a Tariff.
@@ -272,22 +274,44 @@ class TariffsApi extends Controller
             //generate code as per the context name
             $helper = new Helpers();
             $code = $helper->generateCode($inputs['name']);
-            $inputs = array_merge($inputs, ['code' => $code]);
+            $utilityProviderId = $inputs['utility_provider_id'];
+            $inputs = [
+                'name' => $inputs['name'], 'code' => $code, 'percentageAmount' => $inputs['percentageAmount'],
+                "value" => $inputs['value']
+            ];
+            // $inputs = array_merge($inputs, ['code' => $code]);
 
             //Transfer into DTO
             $tariffDto = new TariffsDto();
             $tariffDto->setAttributes($inputs);
 
             // Validate whether such a provider already esists using the name and code.
-            $tariffExists = $this->tariffsDao->getTariffByNameOrCode($tariffDto->getTariff_name(), $tariffDto->getTariff_code());
+            $tariffExists = $this->tariffsDao->getTariffByName($tariffDto->getTariff_name());
             if (blank($tariffExists)) {
                 $tariff = $this->tariffsDao->createTariff($tariffDto);
-                if (!blank($tariff)) {
-                    return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
+                if (!is_null($tariff)) {
+                    $tariffId = $tariff->getTariffId();
+                    $utilityProviderTariff = $this->tariffsDao->attachTariffsToUtilityProviders($utilityProviderId, $tariffId);
+                    if (!is_null($utilityProviderTariff)){
+                        if($utilityProviderTariff == "Tariff Exists")
+                            return Response()->json(["error" => false, 'message' => ['Tariff already exists.']], Response::HTTP_OK);
+                        return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
+                    }
+                    return Response()->json(["error" => false, 'message' => ['Failed to assign tariff.']], Response::HTTP_OK);
                 }
                 return Response()->json(["error" => false, 'message' => ['Failed to create tariff']], Response::HTTP_OK);
+            } //else do somthing else
+            else {
+                //get the tariff Id
+                $tariffId = $tariffExists->getTariffId();
+                $utilityProviderTariff = $this->tariffsDao->attachTariffsToUtilityProviders($utilityProviderId, $tariffId);
+                if (!is_null($utilityProviderTariff)){
+                    if($utilityProviderTariff == "Tariff Exists")
+                        return Response()->json(["error" => false, 'message' => ['Tariff already exists.']], Response::HTTP_OK);
+                    return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
+                }
+                return Response()->json(["error" => false, 'message' => ['Failed to attach tariff.']], Response::HTTP_OK);
             }
-            return Response()->json(["error" => false, 'message' => ['Tariff already exists!']], Response::HTTP_OK);
         } catch (\Exception $e) {
             Log::info("Exceptional Create Tariff Message::" . $e->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
