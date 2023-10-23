@@ -33,13 +33,12 @@ class TokenManageDto
         return $this->attributes;
     }
 
-    public function setCreateInfo( $token, $meterId, $generationDate, $tariffId)
+    public function setCreateInfo( $token, $meterId, $generationDate)
     {
         $this->attributes = [];
         $this->attributes['token'] = $token;
         $this->attributes['meter_id'] = $meterId;
         $this->attributes['generation_date'] = $generationDate;
-        $this->attributes['tariff_id'] = $tariffId;
         return $this->attributes;
     }
 
@@ -104,22 +103,6 @@ class TokenManageDto
     public function setGenerationDate($generationDate)
     {
         $this->attributes['generation_date'] = $generationDate;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTariff_value()
-    {
-        return $this->attributes['tariff_id'];
-    }
-
-    /**
-     * @param mixed $tariffId
-     */
-    public function setTariff_value($tariffId)
-    {
-        $this->attributes['tariff_id'] = $tariffId;
     }
 
     /**

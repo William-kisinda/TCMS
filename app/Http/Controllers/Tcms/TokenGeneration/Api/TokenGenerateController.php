@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\GenerateToken;
 use App\Http\Controllers\Tcms\TokenGeneration\Config\Connection;
 use Symfony\Component\HttpFoundation\Response;
-// require_once __DIR__ . '/vendor/autoload.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 

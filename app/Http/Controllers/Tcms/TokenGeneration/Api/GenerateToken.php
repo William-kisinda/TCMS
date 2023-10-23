@@ -51,9 +51,6 @@ class GenerateToken
             $meter = $meterDao->checkIfMeterExists($this->meterNumber);
             if ($meter) {
 
-                //tariff codes for a moment until solution for tariff is obtained
-                $tariffId = 1;
-
                 // Handle Debt Operations
                 $debtDao = new DebtDaoImpl();
                 $debtResolved = $debtDao->resolveDebt($meter->getMeterId(), $this->amount);
@@ -91,7 +88,7 @@ class GenerateToken
                 //store token ManageInfo
                 $tokenDto = new TokenManageDto();
 
-                $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'), $tariffId);
+                $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'));
 
                 // Dispatch the job for saving info to database to the RabbitMQ queue
                 // TokenManage::dispatch($tokenDto)->onQueue('dbSave');
