@@ -26,7 +26,7 @@ class TokenGenerateController extends Controller
     {
         try {
             //Generate RequestId for this Transaction
-            $helpers = new Helpers();
+            $helpers = app(Helpers::class);
             $requestId = $helpers->generateRequestId();
 
             // validation
@@ -45,7 +45,7 @@ class TokenGenerateController extends Controller
 
             $inputs = ["amount" => $amount, "meterNum" => $meterNumber, "utility_provider"=>$utility_provider, "requestId" => $requestId];
 
-            $rabbitConnection = new Connection();
+            $rabbitConnection = app(Connection::class);
             $channel = $rabbitConnection->getConnectionChannel();
 
             $msg = new AMQPMessage(json_encode($inputs));
@@ -67,7 +67,7 @@ class TokenGenerateController extends Controller
     public function consumeMessages()
     {
         try {
-            $rabbitConnection = new Connection();
+            $rabbitConnection = app(Connection::class);
             $channel = $rabbitConnection->getConnectionChannel();
 
             echo " [*] Waiting for messages. To exit press CTRL+C\n";
@@ -86,7 +86,7 @@ class TokenGenerateController extends Controller
                 }
             };
 
-            $rabbitConnection = new Connection();
+            $rabbitConnection = app(Connection::class);
             $channel = $rabbitConnection->getConnectionChannel();
             $channel->basic_consume('incomingqueue1', '', false, true, false, false, $callback);
 

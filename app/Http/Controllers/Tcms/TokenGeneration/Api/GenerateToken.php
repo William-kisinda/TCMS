@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Tcms\TokenGeneration\Api;
 
 use App\Helpers;
-use App\Http\Controllers\Tcms\Debts\Dao\DebtDao;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Tcms\Debts\Dao\DebtDaoImpl;
 use App\Http\Controllers\Tcms\Meters\Dao\MeterDaoImpl;
@@ -25,20 +24,15 @@ class GenerateToken
     private $requestId;
     private $utility_provider;
     private $errorIfAny;
-    private $meterDao;
-    protected $tariffDao;
-    protected $debtDao;
 
-    public function __construct($amount, $meterNumber, $requestId, $utility_provider, MeterDaoImpl $meterDao, TariffsDaoImpl $tariffDao, DebtDaoImpl $debtDao, )
+
+    public function __construct($amount, $meterNumber, $requestId, $utility_provider)
     {
         $this->amount = $amount;
         $this->meterNumber = $meterNumber;
         $this->requestId = $requestId;
         $this->utility_provider = $utility_provider;
         $this->errorIfAny = false;
-        $this->meterDao = $meterDao;
-        $this->tariffDao = $tariffDao;
-        $this->debtDao = $debtDao;
     }
 
     public function generateToken()
@@ -46,18 +40,21 @@ class GenerateToken
         try {
 
             //validate meter number
-            $meter = $this->meterDao->checkIfMeterExists($this->meterNumber);
+            $meterDao = app(MeterDaoImpl::class);
+            $meter = $meterDao->checkIfMeterExists($this->meterNumber);
             if ($meter) {
 
                 // Handle Debt Operations
-                $debtResolved = $this->debtDao->resolveDebt($meter->getMeterId(), $this->amount);
+                $debtDao = app(DebtDaoImpl::class);
+                $debtResolved = $debtDao->resolveDebt($meter->getMeterId(), $this->amount);
                 $newAmount = $debtResolved['remainingAmount'];
                 $this->amount = $newAmount;
 
                 // Deduct Tariffs
                 //Get tariffs assosciated with this provider.
                 $utilityProviderTariffAmounts = [];
-                $tariffsData = $this->tariffDao->getTariffsByUtilityProvider($this->utility_provider);
+                $tariffDao = app(TariffsDaoImpl::class);
+                $tariffsData = $tariffDao->getTariffsByUtilityProvider($this->utility_provider);
                 $tariffsDataArray = json_decode(json_encode($tariffsData));
                 $tariffsArray = json_decode(json_encode($tariffsDataArray[0]));
                 $tariffs = $tariffsArray->tariffs;
@@ -77,18 +74,18 @@ class GenerateToken
                 // Log::info("Tariff Amounts ".json_encode($utilityProviderTariffAmounts));
                 // Log::info("Final Amount ". $amount);
                 // Generate a unique token for each specific meter
-                $helpers = new Helpers();
+                $helpers = app(Helpers::class);
 
                 $token = $helpers->generateMeterToken($amount, $this->meterNumber, $this->requestId);
 
                 //store token ManageInfo
-                $tokenDto = new ();
+                $tokenDto = app(TokenManageDto::class);
 
                 $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'));
 
                 // Dispatch the job for saving info to database to the RabbitMQ queue
                 // TokenManage::dispatch($tokenDto)->onQueue('dbSave');
-                $tokenManageDao = new TokenManageDaoImp();
+                $tokenManageDao = app(TokenManageDaoImp::class);
                 $token_manage = $tokenManageDao->createManageInfo($tokenDto);
 
                 if (!is_null($token_manage)) {
