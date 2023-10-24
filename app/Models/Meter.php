@@ -50,7 +50,7 @@ class Meter extends Model
      * @return mixed
      */
     public function getCustomerId()
-    { 
+    {
         return $this->attributes['customers_id'];
     }
 
@@ -82,7 +82,7 @@ class Meter extends Model
      * @return mixed
      */
     public function getUtilityProviderId()
-    { 
+    {
         return $this->attributes['utility_provider_id'];
     }
 

@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\GenerateToken;
 use App\Http\Controllers\Tcms\TokenGeneration\Config\Connection;
 use Symfony\Component\HttpFoundation\Response;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 /**
@@ -45,7 +44,7 @@ class TokenGenerateController extends Controller
             }
 
             $inputs = ["amount" => $amount, "meterNum" => $meterNumber, "utility_provider"=>$utility_provider, "requestId" => $requestId];
-            
+
             $rabbitConnection = new Connection();
             $channel = $rabbitConnection->getConnectionChannel();
 

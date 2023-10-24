@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Tcms\Utility_provider\Dao;
 
 use App\Http\Controllers\Tcms\Utility_provider\Dto\UtilityProviderDto;
-use App\Models\Meter;
-use App\Models\Customer;
 use App\Models\Provider;
 use App\Models\UtilityProviderModel;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +19,11 @@ use Illuminate\Support\Facades\Log;
 
 class UtilityProviderDaoImpl implements UtilityProviderDao
 {
+    private $utilityProviderModel;
+
+    public function __construct(UtilityProviderModel $utilityProviderModel) {
+        $this->utilityProviderModel = $utilityProviderModel;
+    }
 
     /**
      * @param $providerCode
@@ -30,22 +33,20 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
 
     public function getUtilityProviderByCode($providerCode)
     {
-        $provider = null;
 
         try {
             $providerInfo = DB::table('utility_providers')->where('provider_code', $providerCode)->first();
 
             if (!empty($providerInfo)) {
                 // If the provider info is found, you can directly create a Provider object.
-                $provider = new UtilityProviderModel();
-                $provider->setAttributes((array) $providerInfo);
+                $this->utilityProviderModel->setAttributes((array) $providerInfo);
             }
         } catch (\Exception $e) {
             // Log the exception for debugging purposes.
             Log::info("UtilityProviderException: " . $e->getMessage());
         }
 
-        return $provider;
+        return $this->utilityProviderModel;
     }
 
     /**
@@ -56,22 +57,20 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
 
      public function getUtilityProviderById($providerId)
      {
-         $provider = null;
- 
+
          try {
              $providerInfo = DB::table('utility_providers')->where('id', $providerId)->first();
- 
+
              if (!empty($providerInfo)) {
                  // If the provider info is found, you can directly create a Provider object.
-                 $provider = new UtilityProviderModel();
-                 $provider->setAttributes((array) $providerInfo);
+                 $this->utilityProviderModel->setAttributes((array) $providerInfo);
              }
          } catch (\Exception $e) {
              // Log the exception for debugging purposes.
              Log::info("UtilityProviderException: " . $e->getMessage());
          }
- 
-         return $provider;
+
+         return $this->utilityProviderModel;
      }
 
     /**
@@ -82,22 +81,19 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
 
      public function getUtilityProviderByNameOrCode($providerName, $providerCode)
      {
-         $provider = null;
- 
          try {
              $providerInfo = DB::table('utility_providers')->where('provider_name', $providerName)->orWhere('provider_code', $providerCode)->first();
- 
+
              if (!empty($providerInfo)) {
                  // If the provider info is found, you can directly create a Provider object.
-                 $provider = new UtilityProviderModel();
-                 $provider->setAttributes((array) $providerInfo);
+                 $this->utilityProviderModel->setAttributes((array) $providerInfo);
              }
          } catch (\Exception $e) {
              // Log the exception for debugging purposes.
              Log::info("UtilityProviderException: " . $e->getMessage());
          }
- 
-         return $provider;
+
+         return $this->utilityProviderModel;
      }
 
     /**
@@ -114,7 +110,7 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
 
                 $utilityProvidersInfoArray = json_decode(json_encode($utilityProvidersInfo), true);
 
-                $utilityProviders = new Provider();
+                $utilityProviders = app(Provider::class);
 
                 $utilityProviders->setAttributes($utilityProvidersInfoArray);
             }
@@ -139,7 +135,7 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
 
                 $utilityProvidersInfoArray = json_decode(json_encode($utilityProvidersInfo), true);
 
-                $utilityProviders = new Provider();
+                $utilityProviders = app(Provider::class);
 
                 $utilityProviders->setAttributes($utilityProvidersInfoArray);
             }
@@ -157,17 +153,14 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
 
     public function createUtilityProvider(UtilityProviderDto $providerDto)
     {
-        $utilityProvider = null;
         try {
-            $utilityProvider = new UtilityProviderModel();
-            
-            $utilityProvider->setAttributes($providerDto->getAttributes());
+            $this->utilityProviderModel->setAttributes($providerDto->getAttributes());
 
-            $utilityProvider->save();
+            $this->utilityProviderModel->save();
         } catch (\Exception $e) {
             Log::info("UtilityProviderException:". $e->getMessage());
         }
-        return $utilityProvider;
+        return $this->utilityProviderModel;
     }
 
     /**
@@ -177,19 +170,17 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
      */
      public function updateUtilityProvider(UtilityProviderDto $providerDto)
      {
-         $utilityProvider = null;
          try {
-            $utilityProvider = new UtilityProviderModel();
             $utilityProviderInfo = UtilityProviderModel::where('id', $providerDto->getProvider_id())->first();
             $utilityProviderInfo->provider_name = $providerDto->getProvider_name();
             $utilityProviderInfo->provider_code = $providerDto->getProvider_code();
             $utilityProviderInfo->provider_status = $providerDto->getProvider_status();
             $utilityProviderInfo->provider_categories_id = $providerDto->getProvider_categories_id();
-            $utilityProvider->setAttributes($providerDto->getAttributes());
+            $$this->utilityProviderModel->setAttributes($providerDto->getAttributes());
             $utilityProviderInfo->update();
          } catch (\Exception $e) {
              Log::info("UtilityProviderException:". $e->getMessage());
          }
-         return $utilityProvider;
+         return $this->utilityProviderModel;
      }
 }

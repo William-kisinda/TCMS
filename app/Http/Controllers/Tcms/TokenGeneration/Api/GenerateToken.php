@@ -3,15 +3,8 @@
 namespace App\Http\Controllers\Tcms\TokenGeneration\Api;
 
 use App\Helpers;
-use GuzzleHttp\Client;
-use App\Job\TokenManage;
-use App\Job\SendNotification;
-use Illuminate\Bus\Queueable;
+use App\Http\Controllers\Tcms\Debts\Dao\DebtDao;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use App\Http\Controllers\Tcms\Debts\Dao\DebtDaoImpl;
 use App\Http\Controllers\Tcms\Meters\Dao\MeterDaoImpl;
 use App\Http\Controllers\Tcms\TokenGeneration\Dto\TokenManageDto;
@@ -27,19 +20,25 @@ use App\Models\Notifications;
 
 class GenerateToken
 {
-    protected $amount;
-    protected $meterNumber;
-    protected $requestId;
-    protected $utility_provider;
-    protected $errorIfAny;
+    private $amount;
+    private $meterNumber;
+    private $requestId;
+    private $utility_provider;
+    private $errorIfAny;
+    private $meterDao;
+    protected $tariffDao;
+    protected $debtDao;
 
-    public function __construct($amount, $meterNumber, $requestId, $utility_provider)
+    public function __construct($amount, $meterNumber, $requestId, $utility_provider, MeterDaoImpl $meterDao, TariffsDaoImpl $tariffDao, DebtDaoImpl $debtDao, )
     {
         $this->amount = $amount;
         $this->meterNumber = $meterNumber;
         $this->requestId = $requestId;
         $this->utility_provider = $utility_provider;
         $this->errorIfAny = false;
+        $this->meterDao = $meterDao;
+        $this->tariffDao = $tariffDao;
+        $this->debtDao = $debtDao;
     }
 
     public function generateToken()
@@ -47,28 +46,25 @@ class GenerateToken
         try {
 
             //validate meter number
-            $meterDao = new MeterDaoImpl;
-            $meter = $meterDao->checkIfMeterExists($this->meterNumber);
+            $meter = $this->meterDao->checkIfMeterExists($this->meterNumber);
             if ($meter) {
 
                 // Handle Debt Operations
-                $debtDao = new DebtDaoImpl();
-                $debtResolved = $debtDao->resolveDebt($meter->getMeterId(), $this->amount);
+                $debtResolved = $this->debtDao->resolveDebt($meter->getMeterId(), $this->amount);
                 $newAmount = $debtResolved['remainingAmount'];
                 $this->amount = $newAmount;
 
                 // Deduct Tariffs
                 //Get tariffs assosciated with this provider.
                 $utilityProviderTariffAmounts = [];
-                $tariffDao = new TariffsDaoImpl();
-                $tariffsData = $tariffDao->getTariffsByUtilityProvider($this->utility_provider);
+                $tariffsData = $this->tariffDao->getTariffsByUtilityProvider($this->utility_provider);
                 $tariffsDataArray = json_decode(json_encode($tariffsData));
                 $tariffsArray = json_decode(json_encode($tariffsDataArray[0]));
                 $tariffs = $tariffsArray->tariffs;
                 foreach ($tariffs as $tariff) {
                     array_push($utilityProviderTariffAmounts, $tariff->percentageAmount);
                 }
-                
+
                 $amount = $this->amount;
 
                 foreach ($utilityProviderTariffAmounts as $tariffAmount) {
@@ -82,11 +78,11 @@ class GenerateToken
                 // Log::info("Final Amount ". $amount);
                 // Generate a unique token for each specific meter
                 $helpers = new Helpers();
-                
+
                 $token = $helpers->generateMeterToken($amount, $this->meterNumber, $this->requestId);
 
                 //store token ManageInfo
-                $tokenDto = new TokenManageDto();
+                $tokenDto = new ();
 
                 $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'));
 
@@ -129,7 +125,7 @@ class GenerateToken
                             Log::info("notification send and received sucessful: ");
                             Log::info($token, ['Paid Amount after Tariffs: ', $amount]);
                         }
-                        
+
                     } catch(\Exception $exception) {
                         Log::error('Notification save failed: ' . $exception->getMessage());
                     }

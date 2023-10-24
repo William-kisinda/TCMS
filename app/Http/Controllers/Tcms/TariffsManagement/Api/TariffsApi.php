@@ -9,16 +9,19 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Tcms\TariffsManagement\Dao\TariffsDaoImpl;
 use App\Http\Controllers\Tcms\TariffsManagement\Dto\TariffsDto;
-use Illuminate\Support\Facades\DB;
 
 class TariffsApi extends Controller
 {
-    private $tariffsDao = null;
+    private $tariffsDao;
+    private $tariffDto;
+    private $helper;
 
 
-    public function __construct()
+    public function __construct(TariffsDaoImpl $tariffDao, TariffsDto $tariffDto, Helpers $helper)
     {
-        $this->tariffsDao = new TariffsDaoImpl();
+        $this->tariffsDao = $tariffDao;
+        $this->tariffDto = $tariffDto;
+        $this->helper = $helper;
     }
 
     /**
@@ -35,7 +38,6 @@ class TariffsApi extends Controller
         try {
             $tariffs = $this->tariffsDao->getAllTariffs();
 
-            $tariffsDto = new TariffsDto();
             //Checking if the object has data
             if (!blank($tariffs)) {
                 Log::info("Message::" . json_encode($tariffs));
@@ -63,21 +65,19 @@ class TariffsApi extends Controller
             $tariffId = $request->input('id');
             //Checking if tariffs exists.
             $tariffExists = $this->tariffsDao->getTariffById($tariffId);
-            $helpers = new Helpers();
-            $requestId = $helpers->generateRequestId();
+
+            $requestId = $this->helper->generateRequestId();
 
             //Checking if the object has data
             Log::info("OriginMessage:" . $tariffExists);
             if (!blank($tariffExists)) {
 
-                $tariffDto = new TariffsDto();
-
-                $tariffDto->setAttributes($tariffExists);
+                $this->tariffDto->setAttributes($tariffExists);
 
                 //logging
                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
 
-                return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
+                return Response()->json(["error" => false, "Tariff" => $this->tariffDto->getAttributes()], Response::HTTP_OK);
             }
 
             //Logging
@@ -104,22 +104,20 @@ class TariffsApi extends Controller
             $tariffName = $request->input('name');
             //Checking if tariffs exists.
             $tariffExists = $this->tariffsDao->getTariffByName($tariffName);
-            $helpers = new Helpers();
-            $requestId = $helpers->generateRequestId();
+
+            $requestId = $this->helper->generateRequestId();
 
             //Checking if the object has data
             Log::info("OriginMessage:" . $tariffExists);
             if (!blank($tariffExists)) {
 
-                $tariffDto = new TariffsDto();
-
                 // $utilityProviderDto->getProiv
-                $tariffDto->setAttributes($tariffExists);
+                $this->tariffDto->setAttributes($tariffExists);
 
                 //logging
                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
 
-                return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
+                return Response()->json(["error" => false, "Tariff" => $this->tariffDto->getAttributes()], Response::HTTP_OK);
             }
 
             //Logging
@@ -146,22 +144,20 @@ class TariffsApi extends Controller
             $tariffCode = $request->input('code');
             //Checking if tariffs exists.
             $tariffExists = $this->tariffsDao->getTariffByCode($tariffCode);
-            $helpers = new Helpers();
-            $requestId = $helpers->generateRequestId();
+
+            $requestId = $this->helper->generateRequestId();
 
             //Checking if the object has data
             Log::info("OriginMessage:" . $tariffExists);
             if (!blank($tariffExists)) {
 
-                $tariffDto = new TariffsDto();
-
                 // $utilityProviderDto->getProiv
-                $tariffDto->setAttributes($tariffExists);
+                $this->tariffDto->setAttributes($tariffExists);
 
                 //logging
                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
 
-                return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
+                return Response()->json(["error" => false, "Tariff" => $this->tariffDto->getAttributes()], Response::HTTP_OK);
             }
 
             //Logging
@@ -187,22 +183,20 @@ class TariffsApi extends Controller
             $utilityProviderId = $request->input('utility_provider_id');
             //Checking if tariffs exists.
             $tariffsExists = $this->tariffsDao->getTariffsByUtilityProvider($utilityProviderId);
-            $helpers = new Helpers();
-            $requestId = $helpers->generateRequestId();
+
+            $requestId = $this->helper->generateRequestId();
 
             //Checking if the object has data
             Log::info("OriginMessage:" . json_encode($tariffsExists));
             if (!blank($tariffsExists)) {
 
-                $tariffDto = new TariffsDto();
-
                 // $utilityProviderDto->getProiv
-                $tariffDto->setAttributes($tariffsExists);
+                $this->tariffDto->setAttributes($tariffsExists);
 
                 //logging
                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
 
-                return Response()->json(["error" => false, "Tariffs" => $tariffDto->getAttributes()], Response::HTTP_OK);
+                return Response()->json(["error" => false, "Tariffs" => $this->tariffDto->getAttributes()], Response::HTTP_OK);
             }
 
             //Logging
@@ -230,22 +224,20 @@ class TariffsApi extends Controller
 
             //Checking if tariffs exists.
             $tariffExists = $this->tariffsDao->getTariffByNameOrCode($tariffName, $tariffCode);
-            $helpers = new Helpers();
-            $requestId = $helpers->generateRequestId();
+
+            $requestId = $this->helper->generateRequestId();
 
             //Checking if the object has data
             Log::info("OriginMessage:" . $tariffExists);
             if (!blank($tariffExists)) {
 
-                $tariffDto = new TariffsDto();
-
                 // $utilityProviderDto->getProiv
-                $tariffDto->setAttributes($tariffExists);
+                $this->tariffDto->setAttributes($tariffExists);
 
                 //logging
                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
 
-                return Response()->json(["error" => false, "Tariff" => $tariffDto->getAttributes()], Response::HTTP_OK);
+                return Response()->json(["error" => false, "Tariff" => $this->tariffDto->getAttributes()], Response::HTTP_OK);
             }
 
             //Logging
@@ -272,8 +264,7 @@ class TariffsApi extends Controller
             $inputs = $request->all();
 
             //generate code as per the context name
-            $helper = new Helpers();
-            $code = $helper->generateCode($inputs['name']);
+            $code = $this->helper->generateCode($inputs['name']);
             $utilityProviderId = $inputs['utility_provider_id'];
             $inputs = [
                 'name' => $inputs['name'], 'code' => $code, 'percentageAmount' => $inputs['percentageAmount'],
@@ -282,13 +273,12 @@ class TariffsApi extends Controller
             // $inputs = array_merge($inputs, ['code' => $code]);
 
             //Transfer into DTO
-            $tariffDto = new TariffsDto();
-            $tariffDto->setAttributes($inputs);
+            $this->tariffDto->setAttributes($inputs);
 
             // Validate whether such a provider already esists using the name and code.
-            $tariffExists = $this->tariffsDao->getTariffByName($tariffDto->getTariff_name());
+            $tariffExists = $this->tariffsDao->getTariffByName($this->tariffDto->getTariff_name());
             if (blank($tariffExists)) {
-                $tariff = $this->tariffsDao->createTariff($tariffDto);
+                $tariff = $this->tariffsDao->createTariff($this->tariffDto);
                 if (!is_null($tariff)) {
                     $tariffId = $tariff->getTariffId();
                     $utilityProviderTariff = $this->tariffsDao->attachTariffsToUtilityProviders($utilityProviderId, $tariffId);
@@ -332,10 +322,9 @@ class TariffsApi extends Controller
 
             Log::info("Update Tariff Request::" . json_encode($inputs));
             //Transfer into DTO
-            $tariffDto = new TariffsDto();
-            $tariffDto->setAttributes($inputs);
+            $this->tariffDto->setAttributes($inputs);
 
-            $tariff = $this->tariffsDao->updateTariff($tariffDto);
+            $tariff = $this->tariffsDao->updateTariff($this->tariffDto);
             Log::info("Update Tariff Response Display::" . json_encode($inputs));
             if (!blank($tariff)) {
                 return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);

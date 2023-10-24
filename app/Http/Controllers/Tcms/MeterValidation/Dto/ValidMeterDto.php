@@ -38,6 +38,20 @@ class ValidMeterDto
         return $this->attributes;
     }
 
+    public function meterInfo($id, $meterNumber, $debtAmount, $status, $customerName, $customerPhone, $utility_provider, $utilityProviderId, $requestId)
+    {
+        $this->attributes = [];
+        $this->attributes['id'] = $id;
+        $this->attributes['meternumber'] = $meterNumber;
+        $this->attributes['debt'] = $debtAmount;
+        $this->attributes['status'] = $status;
+        $this->attributes['customerName'] = $customerName;
+        $this->attributes['customerPhone'] = $customerPhone;
+        $this->attributes['utility_provider'] = $utility_provider;
+        $this->attributes['utility_provider_id'] = $utilityProviderId;
+        $this->attributes['requestId'] = $requestId;
+        return $this->attributes;
+    }
     /**
      * @param array $attributes
      */

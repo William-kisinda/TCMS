@@ -163,4 +163,9 @@ Route::post('token-receiver', [ApiEngine::class,'tokenNotifications']);
  * @author Julius.
  *
  */
+
+//validate Meter during payment
 Route::post('/meter', [MeterValidateApi::class, 'getValidMeter']);
+
+//check Meter Existance
+Route::post('/metercheck', [MeterValidateApi::class, 'getMeterInfo']);

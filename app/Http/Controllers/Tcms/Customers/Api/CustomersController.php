@@ -14,12 +14,14 @@ use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
 
 class CustomersController extends Controller
 {
-    private $customerDao = null;
+    private $customerDao;
+    private $helpers;
 
 
-    public function __construct()
+    public function __construct(CustomerDaoImpl $customerDao, Helpers $helpers)
     {
-        $this->customerDao = new CustomerDaoImpl();
+        $this->customerDao = $customerDao;
+        $this->helpers = $helpers;
     }
 
     /**
@@ -35,10 +37,8 @@ class CustomersController extends Controller
         try {
             $customers = $this->customerDao->getAllCustomers();
 
-            $helpers = new Helpers();
+            $requestId = $this->helpers->generateRequestId();
 
-            $requestId = $helpers->generateRequestId();
-            
             //Checking if the object has data
             if (!blank($customers)) {
 
@@ -73,33 +73,33 @@ class CustomersController extends Controller
      public function getCustomerById(Request $request)
      {
          try {
- 
+
              $customerId = $request->input('customerId');
              //Checking if tariffs exists.
              $customerMetersExists = $this->customerDao->getCustomerById($customerId);
-             $helpers = new Helpers();
-             $requestId = $helpers->generateRequestId();
- 
+
+             $requestId = $this->helpers->generateRequestId();
+
              //Checking if the object has data
              Log::info("OriginMessage:" . json_encode($customerMetersExists));
              if (!blank($customerMetersExists)) {
- 
+
                 //logging
                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
 
                 return Response()->json(["error" => false, "Customer" => $customerMetersExists], Response::HTTP_OK);
              }
-             
+
              //Logging
              Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' failed due to Invalid Customer Id.');
- 
+
              return Response()->json(["error" => false, "Customer" => ['Invalid Customer Id']], Response::HTTP_NOT_FOUND);
          } catch (\Exception $exception) {
              Log::error("Customer Exceptional Message::" . $exception->getMessage());
              return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
          }
      }
-     
+
      /*
      * Create a Customer.
      *
@@ -111,10 +111,10 @@ class CustomersController extends Controller
         try {
             Log::info("Log Message:" . json_encode($request->all()));
             $utilityProviderId = $request->input('utility_provider_id');
-            $utilityProviderDao = new UtilityProviderDaoImpl();
+            $utilityProviderDao = app(UtilityProviderDaoImpl::class);
             $utility_provider = $utilityProviderDao->getUtilityProviderById($utilityProviderId);
             if (is_null($utility_provider)) throw new Exception("Utility Provider doesn't exist.", 1);
-            $customerDto = new CustomerDto();
+            $customerDto = app(CustomerDto::class);
             $customerDto->setAttributes(['full_name' => $request->input('full_name'), 'phone' => $request->input('phone'), 'address' => $request->input('address')]);
             $customerExists = false;
             if (!$customerExists) {

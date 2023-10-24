@@ -2,7 +2,6 @@
 namespace App\Http\Controllers\Tcms\Utility_provider\Api;
 
 use App\Helpers;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -12,11 +11,13 @@ use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
 
 class UtilityProviderApi extends Controller
 {
-    private $utilityProviderDao = null;
+    private $utilityProviderDao;
+    private $utilityProviderDto;
 
-    public function __construct()
+    public function __construct(UtilityProviderDaoImpl $utilityProviderDao, UtilityProviderDto $utilityProviderDto)
     {
-        $this->utilityProviderDao = new UtilityProviderDaoImpl();
+        $this->utilityProviderDao = $utilityProviderDao;
+        $this->utilityProviderDto = $utilityProviderDto;
     }
 
     /**
@@ -26,19 +27,18 @@ class UtilityProviderApi extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function getAllProviders(Request $request)
+    public function getAllProviders()
     {
         //Validate roles and request information like headers and auth tokens.
         try {
             $providers = $this->utilityProviderDao->getAllUtilityProviders();
 
-            $providersDto = new UtilityProviderDto();
             //Checking if the object has data
             if (!blank($providers)) {
                 Log::info("Message::" . json_encode($providers));
                 return Response()->json(["error" => false, "providers" => $providers], Response::HTTP_OK);
             }
-            return Response()->json(["error" => false, "providers" => $providersDto->getAttributes()], Response::HTTP_BAD_REQUEST);
+            return Response()->json(["error" => false, "providers" => $this->utilityProviderDto->getAttributes()], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {
             Log::info("Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -52,19 +52,18 @@ class UtilityProviderApi extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-     public function getAllProvidersWithNoUsers(Request $request)
+     public function getAllProvidersWithNoUsers()
      {
          //Validate roles and request information like headers and auth tokens.
          try {
              $providers = $this->utilityProviderDao->getAllUtilityProvidersWithNoUsers();
- 
-             $providersDto = new UtilityProviderDto();
+
              //Checking if the object has data
              if (!blank($providers)) {
                  Log::info("Message::" . json_encode($providers));
                  return Response()->json(["error" => false, "providers" => $providers], Response::HTTP_OK);
              }
-             return Response()->json(["error" => false, "providers" => $providersDto->getAttributes()], Response::HTTP_BAD_REQUEST);
+             return Response()->json(["error" => false, "providers" => $this->utilityProviderDto->getAttributes()], Response::HTTP_BAD_REQUEST);
          } catch (\Exception $exception) {
              Log::info("Exceptional Message::" . $exception->getMessage());
              return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -85,20 +84,19 @@ class UtilityProviderApi extends Controller
             //Checking if utility provider exists.
             // $providerCode = $request->input('code');
             $providerExists = $this->utilityProviderDao->getUtilityProviderByCode($providerCode);
-            $helpers = new Helpers();
+            $helpers = app(Helpers::class);
             $requestId = $helpers->generateRequestId();
 
             //Checking if the object has data
             Log::info("OriginMessage:" . $providerExists);
             if (!blank($providerExists)) {
 
-                $utilityProviderDto = new UtilityProviderDto();
-                $utilityProviderDto->setAttributes($providerExists);
+                $this->utilityProviderDto->setAttributes($providerExists);
 
                 //logging
                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
 
-                return Response()->json(["error" => false, "Utility Provider" => $utilityProviderDto->getAttributes()], Response::HTTP_OK);
+                return Response()->json(["error" => false, "Utility Provider" => $this->utilityProviderDto->getAttributes()], Response::HTTP_OK);
             }
 
             //Logging
@@ -110,7 +108,7 @@ class UtilityProviderApi extends Controller
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     /**
      * Get provider utility provider by their id.
      *
@@ -123,19 +121,18 @@ class UtilityProviderApi extends Controller
 
             $providerId = $request->input('providerId');
             $providerExists = $this->utilityProviderDao->getUtilityProviderById($providerId);
-            $helpers = new Helpers();
+            $helpers = app(Helpers::class);
             $requestId = $helpers->generateRequestId();
 
             //Checking if the object has data
             if (!blank($providerExists)) {
 
-                $utilityProviderDto = new UtilityProviderDto();
-                $utilityProviderDto->setAttributes($providerExists);
+                $this->utilityProviderDto->setAttributes($providerExists);
 
                 //logging
                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
 
-                return Response()->json(["error" => false, "Utility Provider" => $utilityProviderDto->getAttributes()], Response::HTTP_OK);
+                return Response()->json(["error" => false, "Utility Provider" => $this->utilityProviderDto->getAttributes()], Response::HTTP_OK);
             }
 
             //Logging
@@ -161,18 +158,17 @@ class UtilityProviderApi extends Controller
             $inputs = $request->all();
 
             //generate code as per the context name
-            $helper = new Helpers();
+            $helper = app(Helpers::class);
             $provider_code = $helper->generateCode($inputs['provider_name']);
             $inputs = array_merge($inputs, ['provider_status' => 'Active', 'provider_code' => $provider_code]);
 
             //Transfer into DTO
-            $utilityProviderDto = new UtilityProviderDto();
-            $utilityProviderDto->setAttributes($inputs);
+            $this->utilityProviderDto->setAttributes($inputs);
 
             // Validate whether such a provider already exists using the name and code.
-            $providerExists = $this->utilityProviderDao->getUtilityProviderByNameOrCode($utilityProviderDto->getProvider_name(), $utilityProviderDto->getProvider_code());
+            $providerExists = $this->utilityProviderDao->getUtilityProviderByNameOrCode($this->utilityProviderDto->getProvider_name(), $this->utilityProviderDto->getProvider_code());
             if (blank($providerExists)) {
-                $provider = $this->utilityProviderDao->createutilityProvider($utilityProviderDto);
+                $provider = $this->utilityProviderDao->createutilityProvider($this->utilityProviderDto);
                 if (!blank($provider)) {
                     return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
                 }
@@ -199,10 +195,9 @@ class UtilityProviderApi extends Controller
 
             Log::info("Update Utility Provider Request::" . json_encode($inputs));
             //Transfer into DTO
-            $utilityProviderDto = new UtilityProviderDto();
-            $utilityProviderDto->setAttributes($inputs);
+            $this->utilityProviderDto->setAttributes($inputs);
 
-            $utilityProvider = $this->utilityProviderDao->updateUtilityProvider($utilityProviderDto);
+            $utilityProvider = $this->utilityProviderDao->updateUtilityProvider($this->utilityProviderDto);
             if (!blank($utilityProvider)) {
                 return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
             }

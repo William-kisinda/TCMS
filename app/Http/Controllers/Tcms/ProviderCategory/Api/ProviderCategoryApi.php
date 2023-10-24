@@ -12,11 +12,13 @@ use Illuminate\Support\Facades\Log;
 
 class ProviderCategoryApi extends Controller
 {
-    private $providerCategoryDao = null;
+    private $providerCategoryDao;
+    private $providerCategoriesDto;
 
-    public function __construct()
+    public function __construct(ProviderCategoryDaoImpl $providerCategory, ProviderCategoryDto $providerCategoriesDto)
     {
-        $this->providerCategoryDao = new ProviderCategoryDaoImpl();
+        $this->providerCategoryDao = $providerCategory;
+        $this->providerCategoriesDto = $providerCategoriesDto;
     }
 
     /**
@@ -32,13 +34,12 @@ class ProviderCategoryApi extends Controller
         try {
             $providerCategories = $this->providerCategoryDao->getProviderCategories();
 
-            $providerCategoriesDto = new ProviderCategoryDto();
             //Checking if the object has data
             if (!blank($providerCategories)) {
                 Log::info("All Providers Message::" . json_encode($providerCategories));
                 return Response()->json(["error" => false, "providerCategories" => $providerCategories], Response::HTTP_OK);
             }
-            return Response()->json(["error" => false, "providerCategories" => $providerCategoriesDto->getAttributes()], Response::HTTP_BAD_REQUEST);
+            return Response()->json(["error" => false, "providerCategories" => $this->providerCategoriesDto->getAttributes()], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {
             Log::info("Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -57,25 +58,24 @@ class ProviderCategoryApi extends Controller
         try {
 
             $providerCategoryId = $request->input('providerCategoryId');
-            
+
             //Checking if provider category exists.
             $providerCategoryExists = $this->providerCategoryDao->getProviderCategoryById($providerCategoryId);
 
-            $providerCategoryDto = new ProviderCategoryDto();
             //Checking if the object has data
             Log::info("OriginMessage:" . gettype($providerCategoryExists));
             if (!blank($providerCategoryExists)) {
                 // Log::info("Exceptional Message::" . json_encode($providerCategoryExists));
 
                 //Using the DTO to get and set object data properties.
-                $providerCategoryArray = $providerCategoryDto->getProviderCategoryDto($providerCategoryExists->getProviderCategoryId(), $providerCategoryExists->getProviderCategoryCode(), $providerCategoryExists->getProviderCategoryName());
+                $providerCategoryArray = $this->providerCategoriesDto->getProviderCategoryDto($providerCategoryExists->getProviderCategoryId(), $providerCategoryExists->getProviderCategoryCode(), $providerCategoryExists->getProviderCategoryName());
 
                 //Now setting the provider categories array attributes.
-                $providerCategoryDto->setAttributes($providerCategoryArray);
+                $this->providerCategoriesDto->setAttributes($providerCategoryArray);
 
-                return Response()->json(["error" => false, "providerCategory" => $providerCategoryDto->getAttributes()], Response::HTTP_OK);
+                return Response()->json(["error" => false, "providerCategory" => $this->providerCategoriesDto->getAttributes()], Response::HTTP_OK);
             }
-            return Response()->json(["error" => false, "providerCategory" => $providerCategoryDto->getAttributes()], Response::HTTP_BAD_REQUEST);
+            return Response()->json(["error" => false, "providerCategory" => $this->providerCategoriesDto->getAttributes()], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {
             Log::info("Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -95,18 +95,17 @@ class ProviderCategoryApi extends Controller
             $inputs = $request->all();
 
             //generate code as per the context name
-            $helper = new Helpers();
+            $helper = app(Helpers::class);
             $prov_categ_code = $helper->generateCode($inputs['prov_categ_name']);
             $inputs = array_merge($inputs, ['prov_categ_code' => $prov_categ_code]);
 
             //Transfer into DTO
-            $providerCategoryDto = new ProviderCategoryDto();
-            $providerCategoryDto->setAttributes($inputs);
+            $this->providerCategoriesDto->setAttributes($inputs);
 
             //Validate whether such a category already esists using the name and code.
-            $providerCategoryExists = $this->providerCategoryDao->getProviderCategoryByNameOrCode($providerCategoryDto->getProv_categ_name(), $providerCategoryDto->getProv_categ_code());
+            $providerCategoryExists = $this->providerCategoryDao->getProviderCategoryByNameOrCode($this->providerCategoriesDto->getProv_categ_name(), $this->providerCategoriesDto->getProv_categ_code());
             if (blank($providerCategoryExists)) {
-                $providerCategory = $this->providerCategoryDao->createProviderCategory($providerCategoryDto);
+                $providerCategory = $this->providerCategoryDao->createProviderCategory($this->providerCategoriesDto);
                 if (!blank($providerCategory)) {
                     return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
                 }
