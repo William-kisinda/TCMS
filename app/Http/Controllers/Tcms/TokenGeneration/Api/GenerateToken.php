@@ -38,7 +38,6 @@ class GenerateToken
     public function generateToken()
     {
         try {
-
             //validate meter number
             $meterDao = app(MeterDaoImpl::class);
             $meter = $meterDao->checkIfMeterExists($this->meterNumber);
@@ -89,7 +88,7 @@ class GenerateToken
                 $token_manage = $tokenManageDao->createManageInfo($tokenDto);
 
                 if (!is_null($token_manage)) {
-                    Log::info("Token Info saved Sucessful!");
+                   Log::channel('custom_daily')->info("Token Info saved Sucessful!");
                 } else {
                     $this->errorIfAny = true;
                 }
@@ -119,25 +118,30 @@ class GenerateToken
                             'meternumber' => $this->meterNumber,
                         ]);
                         if($notification) {
-                            Log::info("notification send and received sucessful: ");
-                            Log::info($token, ['Paid Amount after Tariffs: ', $amount]);
+
+                           Log::channel('custom_daily')->info("notification send and received sucessful: ");
+                           Log::channel('custom_daily')->info($token, ['Paid Amount after Tariffs: ', $amount]);
                         }
 
                     } catch(\Exception $exception) {
-                        Log::error('Notification save failed: ' . $exception->getMessage());
+                        Log::channel('custom_daily')->error('Notification save failed: ' . $exception->getMessage());
                     }
                 } else {
-                    Log::info("Token info could not be saved successfully.");
+                    Log::channel('custom_daily')->info("Token info could not be saved successfully.");
                 }
             } else {
-                Log::info("Your Meter Number is Invalid", [" The request with Id: ", $this->requestId]);
+                $yourDynamicVariable = 'example'; // Set your dynamic variable
+
+                Log::channel('dynamic')->info('Log this message', ['filename' => $yourDynamicVariable]);
+               // Log::channel('custom_daily')->info("Your Meter Number is Invalid", [" The request with Id: ", $this->requestId]);
             }
         } catch (\Exception $exception) {
             // Log any exceptions or errors
             $this->errorIfAny = true;
-            // Log::info("Debt Resolved: ".json_encode($debtResolved));
-            Log::error('Job failed: ' . $exception->getMessage());
+         //   Log::info("Debt Resolved: ".json_encode($debtResolved));
+            Log::channel('custom_daily')->error('Job failed: ' . $exception->getMessage());
         }
         return array($this->errorIfAny, $this->requestId);
     }
+
 }

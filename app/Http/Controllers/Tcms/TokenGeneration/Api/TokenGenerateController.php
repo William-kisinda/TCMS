@@ -59,7 +59,8 @@ class TokenGenerateController extends Controller
             // Return a response to the user indicating that the request has been received
             return response()->json(['message' => 'Request accepted. you will receive your token shortly.']);
         } catch (\Exception $exception) {
-            Log::info("Exceptional Message::" . $exception->getMessage());
+
+            Log::channel('custom_daily')->info("Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => 'Failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -74,7 +75,7 @@ class TokenGenerateController extends Controller
 
             $callback = function ($receivedMsg) {
                 $msgArray = json_decode($receivedMsg->body, true);
-                Log::info("Recieved Inputs::" . json_encode($msgArray));
+                Log::channel('custom_daily')->info("Recieved Inputs::" . json_encode($msgArray));
 
                 //Begin processing the message data
                 $generateToken = new GenerateToken($msgArray['amount'], $msgArray['meterNum'], $msgArray['requestId'], $msgArray['utility_provider']);
@@ -97,7 +98,9 @@ class TokenGenerateController extends Controller
             $channel->close();
             $rabbitConnection->closeConnection();
         } catch (\Exception $exception) {
-            Log::info("Exceptional Message::" . $exception->getMessage());
+
+           Log::channel('custom_daily')->info("Exceptional Message::" . $exception->getMessage());
         }
     }
+
 }

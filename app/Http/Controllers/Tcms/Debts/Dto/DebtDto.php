@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Tcms\Debts\Dto;
+namespace app\Http\Controllers\Tcms\Debts\Dto;
 
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 

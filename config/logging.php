@@ -5,6 +5,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 
+
+
 return [
 
     /*
@@ -58,6 +60,13 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'custom_daily' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/.log'),
+            'level' => 'debug',
+            'days' => 7,
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
@@ -67,7 +76,7 @@ return [
 
         'daily' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/laravel.log'),
+            'path' => storage_path('logs/name.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 20,
             'replace_placeholders' => true,
