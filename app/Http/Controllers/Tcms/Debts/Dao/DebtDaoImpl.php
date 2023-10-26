@@ -17,7 +17,7 @@ class DebtDaoImpl implements DebtDao
     public function assignDebtByMeterId($meterId, $AssigneDebtAmount, $AssignedReductionRate, $description)
     {
         $description = (string) $description;
-        $newDebt = new Debt();
+        $newDebt = app(Debt::class);
         $newDebt->meters_id = $meterId;
         $newDebt->debtAmount = $AssigneDebtAmount;
         $newDebt->remainingDebtAmount = $AssigneDebtAmount;

@@ -11,10 +11,10 @@ use App\Http\Controllers\Tcms\Debts\Dao\DebtDaoImpl;
 
 class DebtManageApi extends Controller
 {
-    private $debtDao = null;
+    private $debtDao;
 
-    public function __construct() {
-        $this->debtDao = new DebtDaoImpl();
+    public function __construct(DebtDaoImpl $debtDao) {
+        $this->debtDao = $debtDao;
     }
 
     /*

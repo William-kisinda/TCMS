@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Tcms\Meters\Dao\MeterDao;
 use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
 use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
-use App\Http\Controllers\Tcms\Utility_provider\Dto\UtilityProviderDto;
 
 use function PHPUnit\Framework\isNull;
 
@@ -23,6 +22,14 @@ use function PHPUnit\Framework\isNull;
 
  class MeterDaoImpl implements MeterDao
  {
+
+      protected $meters;
+
+      public function __construct(Meter $meter)
+    {
+        $this->meters = $meter;
+    }
+
      /**
       * @param $meterId
       * @return Meter|null
@@ -30,20 +37,19 @@ use function PHPUnit\Framework\isNull;
       */
      public function getMeterById($meterId)
      {
-         $meter = null;
          try {
              $meterInfo = DB::table('meters')->where('id', $meterId)->first();
              if (!blank($meterInfo)) {
 
                  $meterInfoArray = json_decode(json_encode($meterInfo), true);
 
-                 $meter = new Meter();
-                 $meter->setAttributes($meterInfoArray);
+                 $this->meters->setAttributes($meterInfoArray);
+
              }
          } catch (\Exception $exception) {
              Log::error("MeterId Get Exception", [$exception->getMessage()]);
          }
-         return $meter;
+         return $this->meters;
      }
 
      /**
@@ -98,20 +104,18 @@ use function PHPUnit\Framework\isNull;
       */
      public function checkIfMeterExists($meterNumber)
      {
-         $meter = null;
          try {
              $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->first();
              if (!blank($meterInfo)) {
 
                  $meterInfoArray = json_decode(json_encode($meterInfo), true);
 
-                 $meter = new Meter();
-                 $meter->setAttributes($meterInfoArray);
+                 $this->meters->setAttributes($meterInfoArray);
              }
          } catch (\Exception $exception) {
              Log::error("Meter Number Check Exception", [$exception->getMessage()]);
          }
-         return $meter;
+         return $this->meters;
      }
 
      /**
@@ -121,20 +125,18 @@ use function PHPUnit\Framework\isNull;
       */
       public function checkIfMeterOfUtilityProviderExists($meterNumber, $utility_provider_id)
       {
-          $meter = null;
           try {
               $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->where('utility_provider_id', $utility_provider_id)->first();
               if (!blank($meterInfo)) {
- 
+
                   $meterInfoArray = json_decode(json_encode($meterInfo), true);
- 
-                  $meter = new Meter();
-                  $meter->setAttributes($meterInfoArray);
+
+                $this->meters->setAttributes($meterInfoArray);
               }
           } catch (\Exception $exception) {
               Log::error("Meter Number Check Exception", [$exception->getMessage()]);
           }
-          return $meter;
+          return $this->meters;
       }
 
      /**
@@ -144,11 +146,10 @@ use function PHPUnit\Framework\isNull;
       */
      public function createMeter($customerId, $utility_provider_id)
      {
-         $meter = null;
           try {
 
             //Generate Meter Number
-            $helper = new Helpers();
+            $helper = app(Helpers::class);
 
             //Resolve for utility_provider_code so we can use to generate meter_number.
             $utilityProviderDao = new UtilityProviderDaoImpl();
@@ -167,7 +168,7 @@ use function PHPUnit\Framework\isNull;
                 $meter_number = $helper->generateMeterNumber($utility_provider_code);
             }
 
-            $meter = new Meter();
+            //$meter = new Meter();
 
             $meterDto = new MeterDto();
 
@@ -180,12 +181,12 @@ use function PHPUnit\Framework\isNull;
 
             Log::info("Meter Attributes:". json_encode($meterDto->getAttributes()));
 
-            $meter->setAttributes($meterDto->getAttributes());
-            $meter->save();
+            $this->meters->setAttributes($meterDto->getAttributes());
+            $this->meters->save();
 
           } catch (\Exception $e) {
             Log::info("Meter Creation Exception:". $e->getMessage());
           }
-          return $meter;
+          return $this->meters;
      }
  }

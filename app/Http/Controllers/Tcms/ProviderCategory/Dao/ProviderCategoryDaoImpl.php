@@ -18,6 +18,11 @@ use App\Http\Controllers\Tcms\ProviderCategory\Dto\ProviderCategoryDto;
 
 class ProviderCategoryDaoImpl implements ProviderCategoryDao
 {
+    private $providerCategory;
+
+    public function __construct(ProviderCategory $providerCategory) {
+        $this->providerCategory = $providerCategory;
+    }
 
     /**
      * @param null
@@ -33,9 +38,8 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
 
                 $providerCategoriesInfoArray = json_decode(json_encode($providerCategoriesInfo), true);
 
-                $providerCategory = new ProviderCategory();
 
-                $providerCategory->setAttributes($providerCategoriesInfoArray);
+                $this->providerCategory->setAttributes($providerCategoriesInfoArray);
             }
         } catch (\Exception $exception) {
             Log::error("ProviderCategoryException", $exception->getMessage());
@@ -57,8 +61,7 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
             $providerCategoryInfoExists = DB::table('provider_categories')->where('id', '=', $providerCategoryId)->get();
             if (!blank($providerCategoryInfoExists)) {
                 $providerCategoryInfoArray = json_decode(json_encode($providerCategoryInfoExists), true);
-                $providerCategory = new ProviderCategory();
-                $providerCategory->setAttributes($providerCategoryInfoArray[0]);
+                $this->providerCategory->setAttributes($providerCategoryInfoArray[0]);
             }
             //throw $th;
         } catch (\Exception $e) {
@@ -85,8 +88,7 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
 
             if (!is_null($providerCategoryExistInfo)) {
                 // Data exists, you can access it directly
-                $providerCategory = new ProviderCategory();
-                $providerCategory->setAttributes((array) $providerCategoryExistInfo);
+                $this->providerCategory->setAttributes((array) $providerCategoryExistInfo);
             }
         } catch (\Exception $exception) {
             Log::error('ProviderCategoryException:' . $exception->getMessage());
@@ -102,16 +104,15 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
      * @author Daniel MM
      */
 
-    public function createProviderCategory(ProviderCategoryDto $providerCategoryDto) 
+    public function createProviderCategory(ProviderCategoryDto $providerCategoryDto)
     {
         $providerCategoryModel = null;
         try {
-            $providerCategoryModel = new ProviderCategory();
 
-            $providerCategoryModel->setProviderCategoryCode($providerCategoryDto->getProv_categ_code());
-            $providerCategoryModel->setProviderCategoryName($providerCategoryDto->getProv_categ_name());
+            $this->providerCategory->setProviderCategoryCode($providerCategoryDto->getProv_categ_code());
+            $this->providerCategory->setProviderCategoryName($providerCategoryDto->getProv_categ_name());
 
-            $providerCategoryModel->save();
+            $this->providerCategory->save();
         } catch (\Exception $e) {
             Log::error("ProviderCategoryException", $e->getMessage());
         }

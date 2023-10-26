@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Tcms\Customers\Dao\CustomerDao;
 use App\Http\Controllers\Tcms\Customers\Dto\CustomerDto;
 use App\Http\Controllers\Tcms\Meters\Dao\MeterDaoImpl;
+use App\Models\Meter;
 
 /**
  * This Class Controls Tariffs Datastore
@@ -19,27 +20,33 @@ use App\Http\Controllers\Tcms\Meters\Dao\MeterDaoImpl;
 
 class CustomerDaoImpl implements CustomerDao
 {
+
+    protected $customers;
+
+      public function __construct(Customer $customers)
+    {
+        $this->customers = $customers;
+    }
+
     /**
      * @param null
      * @return array|null
      * @author Julius M
      */
     public function getAllCustomers(){
-        $customers = null;
         try {
             $customersInfo = DB::table('customers')->get();
             if (!blank($customersInfo)) {
 
                 $customersInfoArray = json_decode(json_encode($customersInfo), true);
 
-                $customers = new Customer();
-                $customers->setAttributes($customersInfoArray);
+                $this->customers->setAttributes($customersInfoArray);
 
             }
         } catch (\Exception $exception) {
             Log::error("Customers Exception", $exception->getMessage());
         }
-        return $customers;
+        return $this->customers;
     }
 
     /**
@@ -50,16 +57,13 @@ class CustomerDaoImpl implements CustomerDao
 
      public function getCustomerById($customerId)
      {
-         $customer = null;
-         $customerMeters = null;
-         $customerData = null;
          try {
              $customerInfo = DB::table('customers')->where('id', $customerId)->first();
 
              if (!empty($customerInfo)) {
                  // If the customer info is found, you can directly create a Customer object.
-                 $customer = new Customer();
-                 $customer->setAttributes((array) $customerInfo);
+
+                 $this->customers->setAttributes((array) $customerInfo);
 
                  //Now we resolve customer's meter details
                  $customerMeters = $this->getCustomerMeterNumberById($customerId);
@@ -67,10 +71,10 @@ class CustomerDaoImpl implements CustomerDao
                  //Now we can redefine our return object with both customer data and their meter information.
 
                  $customerData = [
-                    'id' => $customer->getCustomerId(),
-                    'full_name' => $customer->getCustomerName(),
-                    'phone' => $customer->getCustomerPhone(),
-                    'address' => $customer->getCustomerAddress(),
+                    'id' => $this->customers->getCustomerId(),
+                    'full_name' => $this->customers->getCustomerName(),
+                    'phone' => $this->customers->getCustomerPhone(),
+                    'address' => $this->customers->getCustomerAddress(),
                     'meters' => $customerMeters
                  ];
              }
@@ -84,7 +88,8 @@ class CustomerDaoImpl implements CustomerDao
 
     public function getCustomerMeterNumberById($customerId)
     {
-        $meterDao = new MeterDaoImpl();
+        $meter = app(Meter::class);
+        $meterDao = new MeterDaoImpl($meter);
         $customerMeters = $meterDao->getMeterByCustomerId($customerId);
         return $customerMeters;
     }
@@ -96,22 +101,21 @@ class CustomerDaoImpl implements CustomerDao
      */
     public function checkIfCustomerExists($customerName, $customerPhone)
     {
-        $customer = null;
 
         try {
             $customerInfo = DB::table('customers')->where('full_name', $customerName)->orWhere('phone', $customerPhone)->first();
 
             if (!empty($customerInfo)) {
                 // If the customer info is found, you can directly create a Customer object..
-                $customer = new Customer();
-                $customer->setAttributes((array) $customerInfo);
+
+                $this->customers->setAttributes((array) $customerInfo);
             }
         } catch (\Exception $e) {
             // Log the exception for debugging purposes.
             Log::info("Tariff Exception: " . $e->getMessage());
         }
 
-        return $customer;
+        return $this->customers;
     }
 
     /**
@@ -121,30 +125,27 @@ class CustomerDaoImpl implements CustomerDao
      */
     public function createCustomer(CustomerDto $customerDto, $utility_provider_id)
     {
-        $customer = null;
-        $meter = null;
          try {
-             $customer = new Customer();
-             $customerId = null;
 
-             $customer->setAttributes($customerDto->getAttributes());
+             $this->customers->setAttributes($customerDto->getAttributes());
 
              $customerExists = $this->checkIfCustomerExists($customerDto->getCustomer_name(), $customerDto->getCustomer_phone());
              if (is_null($customerExists)){
 
-                $customer->save();
+                $this->customers->save();
 
                 //Get the id of newly stored customer.
-                $customerId = $customer->id;
+                $customerId = $this->customers->id;
              } else {
-                
+
                 //Get the id of newly stored customer.
                 $customerId = $customerExists->id;
              }
 
              //Create new meter for this customer having with us the id of the customer.
-             $meterDao = new MeterDaoImpl();
-             
+             $meter = app(Meter::class);
+             $meterDao = new MeterDaoImpl($meter);
+
              $meter = $meterDao->createMeter($customerId, $utility_provider_id);
              Log::channel('daily')->info('Meter created: ' . json_encode($meter));
          } catch (\Exception $e) {

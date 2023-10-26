@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\GenerateToken;
 use App\Http\Controllers\Tcms\TokenGeneration\Config\Connection;
 use Symfony\Component\HttpFoundation\Response;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 /**
@@ -27,7 +26,7 @@ class TokenGenerateController extends Controller
     {
         try {
             //Generate RequestId for this Transaction
-            $helpers = new Helpers();
+            $helpers = app(Helpers::class);
             $requestId = $helpers->generateRequestId();
 
             // validation
@@ -45,8 +44,8 @@ class TokenGenerateController extends Controller
             }
 
             $inputs = ["amount" => $amount, "meterNum" => $meterNumber, "utility_provider"=>$utility_provider, "requestId" => $requestId];
-            
-            $rabbitConnection = new Connection();
+
+            $rabbitConnection = app(Connection::class);
             $channel = $rabbitConnection->getConnectionChannel();
 
             $msg = new AMQPMessage(json_encode($inputs));
@@ -60,7 +59,8 @@ class TokenGenerateController extends Controller
             // Return a response to the user indicating that the request has been received
             return response()->json(['message' => 'Request accepted. you will receive your token shortly.']);
         } catch (\Exception $exception) {
-            Log::info("Exceptional Message::" . $exception->getMessage());
+
+            Log::channel('custom_daily')->info("Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => 'Failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -68,14 +68,14 @@ class TokenGenerateController extends Controller
     public function consumeMessages()
     {
         try {
-            $rabbitConnection = new Connection();
+            $rabbitConnection = app(Connection::class);
             $channel = $rabbitConnection->getConnectionChannel();
 
             echo " [*] Waiting for messages. To exit press CTRL+C\n";
 
             $callback = function ($receivedMsg) {
                 $msgArray = json_decode($receivedMsg->body, true);
-                Log::info("Recieved Inputs::" . json_encode($msgArray));
+                Log::channel('custom_daily')->info("Recieved Inputs::" . json_encode($msgArray));
 
                 //Begin processing the message data
                 $generateToken = new GenerateToken($msgArray['amount'], $msgArray['meterNum'], $msgArray['requestId'], $msgArray['utility_provider']);
@@ -87,7 +87,7 @@ class TokenGenerateController extends Controller
                 }
             };
 
-            $rabbitConnection = new Connection();
+            $rabbitConnection = app(Connection::class);
             $channel = $rabbitConnection->getConnectionChannel();
             $channel->basic_consume('incomingqueue1', '', false, true, false, false, $callback);
 
@@ -98,7 +98,9 @@ class TokenGenerateController extends Controller
             $channel->close();
             $rabbitConnection->closeConnection();
         } catch (\Exception $exception) {
-            Log::info("Exceptional Message::" . $exception->getMessage());
+
+           Log::channel('custom_daily')->info("Exceptional Message::" . $exception->getMessage());
         }
     }
+
 }

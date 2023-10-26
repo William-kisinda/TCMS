@@ -26,26 +26,29 @@ class MeterValidateApi extends Controller
     private $customerDao;
     private $debts;
     private $utilityProviderDao;
+    private $helpers;
+    private $meterDto;
 
-    public function __construct(MeterDaoImpl $meterDao, CustomerDaoImpl $customerDao, DebtDaoImpl $debts, UtilityProviderDaoImpl $utilityProviderDao)
+    public function __construct(MeterDaoImpl $meterDao, CustomerDaoImpl $customerDao, DebtDaoImpl $debts, UtilityProviderDaoImpl $utilityProviderDao, Helpers $helpers, ValidMeterDto $meterDto)
     {
         $this->meterDao = $meterDao;
         $this->customerDao = $customerDao;
         $this->debts = $debts;
         $this->utilityProviderDao = $utilityProviderDao;
+        $this->helpers = $helpers;
+        $this->meterDto = $meterDto;
     }
 
     public function getValidMeter(Request $request)
     {
         try {
-            $helper = new Helpers;
             // Retrieve the meter number from the request payload
             $meter_num = $request->input('meter_num');
             $amount = $request->input('amount');
             $utilityProvider = $request->input('utilityProvider');
 
              // Capture requestId
-            $requestId = $helper->generateRequestId();
+            $requestId = $this->helpers->generateRequestId();
 
 
             // Checking if the meter exists in the database.
@@ -58,8 +61,7 @@ class MeterValidateApi extends Controller
                 $utilityProvider = $this->utilityProviderDao->getUtilityProviderById($meterExists->getUtilityProviderId());
 
                 // Using the DTO to get and set object data properties.
-                $validMeterDto = new ValidMeterDto();
-                $validMeterArray = $validMeterDto->validMeter(
+                $validMeterArray = $this->meterDto->validMeter(
                     $meterExists->getMeterId(),
                     $meterExists->getMeterNumber(),
                     $debtAmount,
@@ -73,12 +75,68 @@ class MeterValidateApi extends Controller
                 );
 
                 // Now setting the provider categories array attributes.
-                $validMeterDto->setAttributes($validMeterArray);
+                $this->meterDto->setAttributes($validMeterArray);
 
                 Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
 
 
-                return response()->json(["error" => false, "Meter Information" => $validMeterDto->getAttributes()], Response::HTTP_OK);
+                return response()->json(["error" => false, "Meter Information" => $this->meterDto->getAttributes()], Response::HTTP_OK);
+
+
+        }
+            Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is Failed to be  processed due to Invalid Meter Number');
+
+            return response()->json(["error" => true, "message" => "Invalid Meter Number"]);
+
+
+
+        } catch (\Exception $exception) {
+            Log::error("Exceptional Message: " . $exception->getMessage());
+
+            return response()->json(["error" => true, "message" => "An error occurred"], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getMeterInfo(Request $request)
+    {
+        try {
+            // Retrieve the meter number from the request payload
+            $meter_num = $request->input('meter_num');
+            $utilityProvider = $request->input('utilityProvider');
+
+             // Capture requestId
+            $requestId = $this->helpers->generateRequestId();
+
+
+            // Checking if the meter exists in the database.
+            $meterExists = $this->meterDao->checkIfMeterOfUtilityProviderExists($meter_num, $utilityProvider);
+
+            if (!empty($meterExists)) {
+                // Fetching the customer for meter validity.
+                $customer = $this->customerDao->getCustomerById($meterExists->getCustomerId());
+                $debtAmount = $this->debts->getDebtByMeterId($meterExists->getMeterId());
+                $utilityProvider = $this->utilityProviderDao->getUtilityProviderById($meterExists->getUtilityProviderId());
+
+                // Using the DTO to get and set object data properties.
+                $validMeterArray = $this->meterDto->meterInfo(
+                    $meterExists->getMeterId(),
+                    $meterExists->getMeterNumber(),
+                    $debtAmount,
+                    $meterExists->getMeterStatus(),
+                    $customer['full_name'],
+                    $customer['phone'],
+                    $utilityProvider->getUtilityProviderName(),
+                    $utilityProvider->getUtilityProviderId(),
+                    $requestId
+                );
+
+                // Now setting the provider categories array attributes.
+                $this->meterDto->setAttributes($validMeterArray);
+
+                Log::channel('daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+
+
+                return response()->json(["error" => false, "Meter Information" => $this->meterDto->getAttributes()], Response::HTTP_OK);
 
 
         }

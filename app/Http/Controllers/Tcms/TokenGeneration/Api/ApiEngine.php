@@ -45,7 +45,7 @@ class ApiEngine extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-     public function tokenNotifications(Request $request)
+     public function tokenNotifications()
      {
          //Validate roles and request information like headers and auth tokens.
          try {
