@@ -10,6 +10,7 @@ use App\Http\Controllers\Tcms\Customers\Api\CustomersController;
 use App\Http\Controllers\Tcms\MeterValidation\Api\MeterValidateApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
+use App\Http\Controllers\Tcms\Roles\RolesController;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\TokenGenerateController;
 
 /*
@@ -42,15 +43,12 @@ Route::post('listProviderCategories', [ProviderCategoryApi::class, 'getProviderC
 //get provider categories by their Id
 Route::post('listProviderCategory', [ProviderCategoryApi::class, 'getProviderCategoryById']);
 
+
 /**
  *  Route to handle user authentication.
  * @author Daniel.
  *
  */
-
-// Route::middleware([])->group(function () {
-// This route allows up to 5 requests per minute (adjust as needed).
-
 //Create a user
 Route::post('user/create', [AuthController::class, 'createUPUser']);
 
@@ -63,11 +61,10 @@ Route::post('user/show', [AuthController::class, 'getUPUserById']);
 // get all users
 Route::post('user/update', [AuthController::class, 'updateUPUser']);
 
-// });
-
 
 /**
  *
+ * API Routes for Utility Providers Management
  * @author Daniel.
  *
  */
@@ -92,40 +89,40 @@ Route::post('utilityProviderById', [UtilityProviderApi::class, 'getProviderById'
 
 /**
  *
+ * API Routes for Tariffs Management
  * @author Daniel.
  *
  */
+// get all tariffs
+Route::post('tariffs', [TariffsApi::class, 'getAllTariffs']);
 
-Route::middleware([])->group(function () {
-        // This route allows up to 5 requests per minute (adjust as needed).
+//Create a tariff
+Route::post('tariff', [TariffsApi::class, 'createTariff']);
 
-        // get all tariffs
-        Route::post('tariffs', [TariffsApi::class, 'getAllTariffs']);
+//Get Tariff By Id
+Route::post('tariffById', [TariffsApi::class, 'getTariffById']);
 
-        //Create a tariff
-        Route::post('tariff', [TariffsApi::class, 'createTariff']);
+//Get Tariff By Name
+Route::post('tariffByName', [TariffsApi::class, 'getTariffByName']);
 
-        //Get Tariff By Id
-        Route::post('tariffById', [TariffsApi::class, 'getTariffById']);
+//Get Tariff By Code
+Route::post('tariffByCode', [TariffsApi::class, 'getTariffByCode']);
 
-        //Get Tariff By Name
-        Route::post('tariffByName', [TariffsApi::class, 'getTariffByName']);
+//Get Tariff By Name Or Code
+Route::post('tariffByNameOrCode', [TariffsApi::class, 'getTariffByNameOrCode']);
 
-        //Get Tariff By Code
-        Route::post('tariffByCode', [TariffsApi::class, 'getTariffByCode']);
+//Get Tariff By Utility Provider
+Route::post('tariffsByUtilityProvider', [TariffsApi::class, 'getTariffsByUtilityProvider']);
 
-        //Get Tariff By Name Or Code
-        Route::post('tariffByNameOrCode', [TariffsApi::class, 'getTariffByNameOrCode']);
-
-        //Get Tariff By Utility Provider
-        Route::post('tariffsByUtilityProvider', [TariffsApi::class, 'getTariffsByUtilityProvider']);
-
-        //Update Tariff
-        Route::patch('tariff', [TariffsApi::class, 'updateTariff']);
-});
+//Update Tariff
+Route::patch('tariff', [TariffsApi::class, 'updateTariff']);
 
 
-Route::middleware([])->group(function () {
+/**
+ * API Routes for Customers Management
+ * @author Daniel.
+ *
+ */
 // get all customers
  Route::post('customers', [CustomersController::class, 'getAllCustomers']);
 
@@ -134,7 +131,15 @@ Route::middleware([])->group(function () {
 
  // get all customers
  Route::post('customer/create', [CustomersController::class, 'createCustomer']);
-});
+
+ /**
+ * API Routes for Roles Management
+ * @author Daniel.
+ *
+ */
+// get all roles
+Route::post('roles', [RolesController::class, 'getRoles']);
+
 
 /**
  * API Routes for Token Management
@@ -152,11 +157,10 @@ Route::post('token-receiver', [ApiEngine::class,'tokenNotifications']);
  * @author Hamphrey Urio.
  *
  */
- Route::middleware([])->group(function () {
-        Route::post('/assigndebt', [DebtManageApi::class, 'assignDebt']);
-        Route::post('/debtresolve', [DebtManageApi::class, 'resolve']);
-        Route::post('/meterdebt', [DebtManageApi::class, 'getDebtByMeterId']);
-});
+Route::post('/assigndebt', [DebtManageApi::class, 'assignDebt']);
+Route::post('/debtresolve', [DebtManageApi::class, 'resolve']);
+Route::post('/meterdebt', [DebtManageApi::class, 'getDebtByMeterId']);
+
 
 /**
  * API Routes for Meter validation
