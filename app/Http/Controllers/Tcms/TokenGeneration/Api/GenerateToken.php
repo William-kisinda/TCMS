@@ -49,7 +49,7 @@ class GenerateToken
                 $newAmount = $debtResolved['remainingAmount'];
                 $this->amount = $newAmount;
 
-                // Deduct Tariffs
+                        // Deduct Tariffs
                 //Get tariffs assosciated with this provider.
                 $utilityProviderTariffAmounts = [];
                 $tariffDao = app(TariffsDaoImpl::class);
@@ -65,51 +65,36 @@ class GenerateToken
 
                 foreach ($utilityProviderTariffAmounts as $tariffAmount) {
                     // $amount1 = $tariffDao->deductTariffByCode($tariffCode, $this->amount);
-                    $tariffedAmount = (($amount*$tariffAmount)/100);
-
+                    $tariffedAmount = (($this->amount*$tariffAmount)/100);
                     $amount = $amount - floatval($tariffedAmount);
                 }
 
-                // Log::info("Tariff Amounts ".json_encode($utilityProviderTariffAmounts));
-                // Log::info("Final Amount ". $amount);
                 // Generate a unique token for each specific meter
                 $helpers = app(Helpers::class);
-
                 $token = $helpers->generateMeterToken($amount, $this->meterNumber, $this->requestId);
 
-                //store token ManageInfo
+                //store created token Info to the database
                 $tokenDto = app(TokenManageDto::class);
-
-                $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'),$this->requestId,$this->utility_provider);
-
-                // Dispatch the job for saving info to database to the RabbitMQ queue
-                // TokenManage::dispatch($tokenDto)->onQueue('dbSave');
+                $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'),$this->utility_provider,$this->requestId);
                 $tokenManageDao = app(TokenManageDaoImp::class);
                 $token_manage = $tokenManageDao->createManageInfo($tokenDto);
 
-                if (!is_null($token_manage)) {
-                   Log::channel('custom_daily')->info("Token Info saved Sucessful!");
+                //check if data is saved successful to the Database
+                if ($token_manage) {
+                   Log::channel('custom_daily')->info("\nToken Information with Request ID: ".$this->requestId." saved Sucessful!\n With the Information : ".json_encode($token_manage)."\n that can be successful accessed with the user for his notification");
                 } else {
                     $this->errorIfAny = true;
+                    Log::channel('custom_daily')->error("Token operation with the request ID: ".$this->requestId ."The Data failed to be saved to the database");
                 }
 
-                if (!$this->errorIfAny) {
-
-
-                } else {
-                    Log::channel('custom_daily')->info("Token info could not be saved successfully.");
-                }
             } else {
-                $yourDynamicVariable = 'example'; // Set your dynamic variable
-
-                Log::channel('dynamic')->info('Log this message', ['filename' => $yourDynamicVariable]);
-               // Log::channel('custom_daily')->info("Your Meter Number is Invalid", [" The request with Id: ", $this->requestId]);
+                $this->errorIfAny = true;
+                Log::channel('custom_daily')->info("\nInvalid Meter Number , The request with Id : ". $this->requestId." , He/she might try to harm the system");
             }
         } catch (\Exception $exception) {
             // Log any exceptions or errors
             $this->errorIfAny = true;
-         //   Log::info("Debt Resolved: ".json_encode($debtResolved));
-            Log::channel('custom_daily')->error('Job failed: ' . $exception->getMessage());
+            Log::channel('custom_daily')->error('\nJob failed: ' . $exception->getMessage());
         }
         return array($this->errorIfAny, $this->requestId);
     }

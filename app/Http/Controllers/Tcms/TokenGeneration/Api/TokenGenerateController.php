@@ -60,7 +60,7 @@ class TokenGenerateController extends Controller
             return response()->json(['message' => 'Request accepted. you will receive your token shortly.']);
         } catch (\Exception $exception) {
 
-            Log::channel('custom_daily')->info("Exceptional Message::" . $exception->getMessage());
+            Log::channel('custom_daily')->error("Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => 'Failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
