@@ -16,6 +16,7 @@ interface TokenManageDao
     public function getInfoById($tokenId);
     public function getInfoByMeterId($meterId);
     public function getInfoByToken($token);
+    public function getNotificationByRequestIdMeterNumber($meterId,$requestId);
    // public function getInfoByDate($date);
    // public function getInfoByDateAndMeterId($date, $meterId);
     public function createManageInfo(TokenManageDto $tokenManageInfo);

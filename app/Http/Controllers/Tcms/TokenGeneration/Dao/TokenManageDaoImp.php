@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Tcms\TokenGeneration\Dao\TokenManageDao;
 use App\Http\Controllers\Tcms\TokenGeneration\Dto\TokenManageDto;
+use App\Job\TokenManage;
 
 /**
  * This Class is for Token Information data access
@@ -130,14 +131,40 @@ class TokenManageDaoImp implements TokenManageDao
      public function createManageInfo(TokenManageDto $tokenManageInfo)
      {
          try {
+            $tokenManage = new Token_manage();
+            $tokenManage->setAttributes($tokenManageInfo->getAttributes());
 
-            $this->tokenManage->setAttributes($tokenManageInfo->getAttributes());
-
-            $this->tokenManage->save();
+            $tokenManage->save();
          } catch (\Exception $e) {
             $tokenInfo = null;
             Log::info("Token create Exception:". $e->getMessage());
          }
+         return $tokenManage;
+     }
+
+     /**
+     * @param $meterId
+     * @return Token_manage|null
+     * @author Julius
+     */
+
+     public function getNotificationByRequestIdMeterNumber($meterId,$requestId)
+     {
+
+         try {
+             $tokenData = DB::table('token_manage')->where('meter_id', $meterId)->where('requestId', $requestId)->get();
+
+             if (!empty($tokenData)) {
+                 // If the token info is found, you can directly create a Token_manage object.
+                 $tokenDataArray = json_decode(json_encode($tokenData), true);
+
+                 $this->tokenManage->setAttributes($tokenDataArray);
+             }
+         } catch (\Exception $e) {
+             // Log the exception for debugging purposes.
+             Log::info("Token Information Exception: " . $e->getMessage());
+         }
+
          return $this->tokenManage;
      }
 }

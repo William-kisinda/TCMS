@@ -152,7 +152,7 @@ use function PHPUnit\Framework\isNull;
             $helper = app(Helpers::class);
 
             //Resolve for utility_provider_code so we can use to generate meter_number.
-            $utilityProviderDao = new UtilityProviderDaoImpl();
+            $utilityProviderDao = app(UtilityProviderDaoImpl::class);
             $utility_provider = $utilityProviderDao->getUtilityProviderById($utility_provider_id);
             $utility_provider_code = "";
             if (!is_null($utility_provider)){

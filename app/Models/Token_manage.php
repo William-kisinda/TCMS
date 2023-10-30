@@ -80,17 +80,33 @@ class Token_manage extends Model
     /**
      * @return mixed
      */
-    public function getTariffId()
+    public function getUtilityProviderId()
     {
-        return $this->attributes['tariff_id'];
+        return $this->attributes['utility_provider_id'];
     }
 
     /**
      * @param mixed $tariffId
      */
-    public function setUtilityProviderCategory($tariffId): void
+    public function setUtilityProviderId($tariffId): void
     {
-        $this->attributes['tariff_id'] = $tariffId;
+        $this->attributes['utility_provider_id'] = $tariffId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRequestId()
+    {
+        return $this->attributes['requestId'];
+    }
+
+    /**
+     * @param mixed $requestId
+     */
+    public function setRequestId($tariffId): void
+    {
+        $this->attributes['requestId'] = $tariffId;
     }
 
 

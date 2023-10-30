@@ -80,7 +80,7 @@ class GenerateToken
                 //store token ManageInfo
                 $tokenDto = app(TokenManageDto::class);
 
-                $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'));
+                $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'),$this->requestId,$this->utility_provider);
 
                 // Dispatch the job for saving info to database to the RabbitMQ queue
                 // TokenManage::dispatch($tokenDto)->onQueue('dbSave');
@@ -94,38 +94,8 @@ class GenerateToken
                 }
 
                 if (!$this->errorIfAny) {
-                    // Dispatch the send notification job to the RabbitMQ queue
-                    // $endUrl = 'http://127.0.0.1:8000/api/token-receiver';
-                    // //SendNotification::dispatch($token, $endUrl)->onQueue('notification');
-                    // try {
-                    //     $client = new Client();
-                    //     $response = $client->request('POST', $endUrl, [
-                    //         'query' => [
-                    //             'token' => $token,
-                    //             // other data will be added here
-                    //         ],
-                    //     ]);
-                    //     Log::info("notification send and received sucessful: " . $response->getStatusCode());
-                    //     Log::info($token, ['Paid Amount after Tariffs: ', $amount]);
-                    // } catch (\Exception $exception) {
-                    //     // Log any exceptions or errors
-                    //     $this->errorIfAny = true;
-                    //     Log::error('Notification task failed: ' . $exception->getMessage());
-                    // }
-                    try {
-                        $notification = Notifications::create([
-                            'token' => $token,
-                            'meternumber' => $this->meterNumber,
-                        ]);
-                        if($notification) {
 
-                           Log::channel('custom_daily')->info("notification send and received sucessful: ");
-                           Log::channel('custom_daily')->info($token, ['Paid Amount after Tariffs: ', $amount]);
-                        }
 
-                    } catch(\Exception $exception) {
-                        Log::channel('custom_daily')->error('Notification save failed: ' . $exception->getMessage());
-                    }
                 } else {
                     Log::channel('custom_daily')->info("Token info could not be saved successfully.");
                 }

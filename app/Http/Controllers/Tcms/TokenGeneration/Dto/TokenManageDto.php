@@ -22,23 +22,26 @@ class TokenManageDto
      * @param int
      * @return mixed
      */
-    public function setManageInfo($tokenId, $token, $meterId, $generationDate, $tariffId)
+    public function setManageInfo($tokenId, $token, $meterId, $generationDate, $utility_provider_id,$requestId)
     {
         $this->attributes = [];
         $this->attributes['id'] = $tokenId;
         $this->attributes['token'] = $token;
         $this->attributes['meter_id'] = $meterId;
         $this->attributes['generation_date'] = $generationDate;
-        $this->attributes['tariff_id'] = $tariffId;
+        $this->attributes['utility_provider_id'] = $utility_provider_id;
+        $this->attributes['requestId'] = $requestId;
         return $this->attributes;
     }
 
-    public function setCreateInfo( $token, $meterId, $generationDate)
+    public function setCreateInfo( $token, $meterId, $generationDate, $utility_provider_id, $requestId)
     {
         $this->attributes = [];
         $this->attributes['token'] = $token;
         $this->attributes['meter_id'] = $meterId;
         $this->attributes['generation_date'] = $generationDate;
+        $this->attributes['utility_provider_id'] = $utility_provider_id;
+        $this->attributes['requestId'] = $requestId;
         return $this->attributes;
     }
 
