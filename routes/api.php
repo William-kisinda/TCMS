@@ -11,6 +11,7 @@ use App\Http\Controllers\Tcms\MeterValidation\Api\MeterValidateApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
 use App\Http\Controllers\Tcms\Roles\RolesController;
+use App\Http\Controllers\Tcms\TokenGeneration\Api\NotificationApi;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\TokenGenerateController;
 
 /*
@@ -173,3 +174,13 @@ Route::post('/meter', [MeterValidateApi::class, 'getValidMeter']);
 
 //check Meter Existance
 Route::post('/metercheck', [MeterValidateApi::class, 'getMeterInfo']);
+
+
+/**
+ * API Routes for Notification fetching
+ * @author Julius.
+ *
+ */
+
+//Return Notification for each requestID and Meter Number
+Route::post('/notification', [NotificationApi::class, 'sendNotification']);
