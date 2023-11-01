@@ -9,16 +9,22 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Tcms\Meters\Dao\MeterDaoImpl;
 use App\Http\Controllers\Tcms\TokenGeneration\Dao\TokenManageDaoImp;
+use App\Http\Controllers\Tcms\TokenGeneration\Dto\TokenManageDto;
+use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
 use Exception;
 
 class NotificationApi extends Controller
 {
     protected $meterDao;
     protected $tokenManageDao;
+    protected $tokenDto;
+    protected $utilityProviderDao;
 
-    public function __construct(MeterDaoImpl $meterDao, TokenManageDaoImp $tokenManageDao) {
+    public function __construct(MeterDaoImpl $meterDao, TokenManageDaoImp $tokenManageDao,TokenManageDto $tokenDto, UtilityProviderDaoImpl $utilityProviderDao) {
         $this->meterDao = $meterDao;
         $this->tokenManageDao = $tokenManageDao;
+        $this->tokenDto = $tokenDto;
+        $this->utilityProviderDao = $utilityProviderDao;
     }
 
     /**
@@ -50,12 +56,14 @@ class NotificationApi extends Controller
             }
             //fetch meter information
             $meterId = $this->meterDao->checkIfMeterExists($meterNumber,)->getMeterId();
-            $tokenInfo = $this->tokenManageDao->getNotificationByRequestIdMeterNumber($meterId,$requestId);
+            $tokenInfo = $this->tokenManageDao->getNotificationByRequestIdMeterNumber($meterId,$requestId);;
+            $providername = $this->utilityProviderDao->getUtilityProviderById($tokenInfo['utility_provider_id'])->getUtilityProviderName();
+            $notifications = $this->tokenDto->notificatiobInformation($tokenInfo->getToken() ,$meterNumber, $tokenInfo->getGenerationDate(), $providername, $requestId);
 
             //Log Notification Information
-            Log::channel('custom_daily')->info('\nNotification Accessing Response, For the Request with the RequestId: ' . json_encode(['request_id' => $requestId]) . ' Send Successsful with Notification body:\n'.json_encode($tokenInfo));
+            Log::channel('custom_daily')->info('\nNotification Accessing Response, For the Request with the RequestId: ' . json_encode(['request_id' => $requestId]) . ' Send Successsful with Notification body:\n'.json_encode($notifications));
 
-            return response()->json(["error" => false, "Meter Information" => $tokenInfo->getAttributes()], Response::HTTP_OK);
+            return response($notifications);
         } catch (\Exception $exception) {
             Log::channel('custom_daily')->error('\nNotification Accessing Response, For the Request with the RequestId: ' . json_encode(['request_id' => $requestId]). "  Send Failed due to the Error : ".$exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);

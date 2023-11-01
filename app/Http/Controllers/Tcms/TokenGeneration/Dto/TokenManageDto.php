@@ -45,6 +45,17 @@ class TokenManageDto
         return $this->attributes;
     }
 
+    public function notificatiobInformation($token, $meterNumber, $generationDate, $provider_name, $requestId)
+    {
+        $this->attributes = [];
+        $this->attributes['token'] = $token;
+        $this->attributes['meterNumber'] = $meterNumber;
+        $this->attributes['generation_date'] = $generationDate;
+        $this->attributes['provider_name'] = $provider_name;
+        $this->attributes['requestId'] = $requestId;
+        return $this->attributes;
+    }
+
     /**
      * @return mixed
      */
