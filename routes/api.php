@@ -3,15 +3,17 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Tcms\Roles\RolesController;
 use App\Http\Controllers\Tcms\Auth\Api\AuthController;
 use App\Http\Controllers\Tcms\Debts\Api\DebtManageApi;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\ApiEngine;
+use App\Http\Controllers\Tcms\gui\Api\DashboardDataController;
 use App\Http\Controllers\Tcms\TariffsManagement\Api\TariffsApi;
 use App\Http\Controllers\Tcms\Customers\Api\CustomersController;
+use App\Http\Controllers\Tcms\TokenGeneration\Api\NotificationApi;
 use App\Http\Controllers\Tcms\MeterValidation\Api\MeterValidateApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
-use App\Http\Controllers\Tcms\Roles\RolesController;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\TokenGenerateController;
 use App\Http\Controllers\Tcms\Users\Api\UsersController;
 
@@ -182,3 +184,16 @@ Route::post('/meter', [MeterValidateApi::class, 'getValidMeter']);
 
 //check Meter Existance
 Route::post('/metercheck', [MeterValidateApi::class, 'getMeterInfo']);
+
+
+/**
+ * API Routes for fetching resources to the user
+ * @author Julius.
+ *
+ */
+
+//Notification API
+Route::post('/notification', [NotificationApi::class, 'sendNotification']);
+
+//Dashboard Data collection API
+Route::post('/dashboardData', [DashboardDataController::class,'dashboardData']);

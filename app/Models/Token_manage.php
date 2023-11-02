@@ -86,11 +86,11 @@ class Token_manage extends Model
     }
 
     /**
-     * @param mixed $tariffId
+     * @param mixed $utilityProviderId
      */
-    public function setUtilityProviderId($tariffId): void
+    public function setUtilityProviderId($utilityProviderId): void
     {
-        $this->attributes['utility_provider_id'] = $tariffId;
+        $this->attributes['utility_provider_id'] = $utilityProviderId;
     }
 
     /**
@@ -104,9 +104,9 @@ class Token_manage extends Model
     /**
      * @param mixed $requestId
      */
-    public function setRequestId($tariffId): void
+    public function setRequestId($requestId): void
     {
-        $this->attributes['requestId'] = $tariffId;
+        $this->attributes['requestId'] = $requestId;
     }
 
 

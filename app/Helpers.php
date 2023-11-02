@@ -2,11 +2,14 @@
 
 namespace App;
 
+use Illuminate\Support\Carbon;
+
 class Helpers {
     //request and response ID generator
     function generateRequestId()
     {
-        return date('YmdHis');
+        $currentDateTime = Carbon::now();
+        return $currentDateTime->format('YmdHisv');
     }
 
     //Logname generator

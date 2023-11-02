@@ -29,17 +29,26 @@ class TokenGenerateController extends Controller
             $helpers = app(Helpers::class);
             $requestId = $helpers->generateRequestId();
 
+             //Log Incoming Request information
+             Log::channel('custom_daily')->info("\nThe request for Token generation with the requestId :".$requestId. "\nSuccessful received with the following information :\n Request Header Information : ".json_encode($request->header()). "\nRequest body Information: ".json_encode($request->input()));
+
             // validation
             $utility_provider = $request->input('utilityProvider');
             $amount = $request->input('amount');
             $meterNumber = $request->input('meterNumber');
             if(!isset($utility_provider) || is_null($utility_provider)){
+                //log error for the invalid input
+                Log::channel('custom_daily')->info("\nToken Generation Request with request ID : ".$requestId."    User provide Invalid Utility Provider ID which is: ".$utility_provider);
                 return response()->json(['message' => 'Incorrect information for utility provider.']);
             }
             if(is_null($amount) || !is_numeric($amount)){
+                //log error for the invalid input
+                Log::channel('custom_daily')->info("\nToken Generation Request with request ID : ".$requestId."    User provide Invalid Amount which is: ".$amount);
                 return response()->json(['message' => 'Incorrect information for amount.']);
             }
             if(is_null($meterNumber) || !is_numeric($meterNumber)){
+                //log error for the invalid input
+                Log::channel('custom_daily')->info("\nToken Generation Request with request ID : ".$requestId."    User provide Invalid Meter Number which is : ".$meterNumber);
                 return response()->json(['message' => 'Incorrect information for meter number.']);
             }
 
@@ -49,18 +58,20 @@ class TokenGenerateController extends Controller
             $channel = $rabbitConnection->getConnectionChannel();
 
             $msg = new AMQPMessage(json_encode($inputs));
-            //$channel->basic_publish($msg, '', 'tokenGen');  //Publish to queue
 
             $channel->basic_publish($msg, 'incoming', 'x');
 
             $channel->close();
             $rabbitConnection->closeConnection();
 
+             //Log Outgoing Response information
+             Log::channel('custom_daily')->info("\nThe Response for Token generation with the requestId :".$requestId. "\nSuccessful Sent to the user, with the following information :\nResponse body Information: ".json_encode($request->input()));
+
             // Return a response to the user indicating that the request has been received
             return response()->json(['message' => 'Request accepted. you will receive your token shortly.']);
         } catch (\Exception $exception) {
 
-            Log::channel('custom_daily')->info("Exceptional Message::" . $exception->getMessage());
+            Log::channel('custom_daily')->error("Exceptional Message::" . $exception->getMessage(). "\nFor the Request with a requestId:".$inputs['requestId']);
             return Response()->json(["error" => true, "message" => 'Failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -75,7 +86,7 @@ class TokenGenerateController extends Controller
 
             $callback = function ($receivedMsg) {
                 $msgArray = json_decode($receivedMsg->body, true);
-                Log::channel('custom_daily')->info("Recieved Inputs::" . json_encode($msgArray));
+                Log::channel('custom_daily')->info("\nThe request with an Id: ".$receivedMsg->body.  "Successful received with the consumer with the queue message: ". $receivedMsg->body);
 
                 //Begin processing the message data
                 $generateToken = new GenerateToken($msgArray['amount'], $msgArray['meterNum'], $msgArray['requestId'], $msgArray['utility_provider']);
@@ -99,7 +110,7 @@ class TokenGenerateController extends Controller
             $rabbitConnection->closeConnection();
         } catch (\Exception $exception) {
 
-           Log::channel('custom_daily')->info("Exceptional Message::" . $exception->getMessage());
+           Log::channel('custom_daily')->error("Exceptional Message:" . $exception->getMessage());
         }
     }
 

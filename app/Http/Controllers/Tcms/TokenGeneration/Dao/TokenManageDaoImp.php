@@ -153,7 +153,7 @@ class TokenManageDaoImp implements TokenManageDao
      {
 
          try {
-             $tokenData = DB::table('token_manage')->where('meter_id', $meterId)->where('requestId', $requestId)->get();
+             $tokenData = DB::table('token_manage')->where('meter_id', $meterId)->where('requestId', $requestId)->get()->first();
 
              if (!empty($tokenData)) {
                  // If the token info is found, you can directly create a Token_manage object.

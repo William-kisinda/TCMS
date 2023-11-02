@@ -129,24 +129,24 @@ class CustomerDaoImpl implements CustomerDao
 
              $this->customers->setAttributes($customerDto->getAttributes());
 
-             $customerExists = $this->checkIfCustomerExists($customerDto->getCustomer_name(), $customerDto->getCustomer_phone());
-             if (is_null($customerExists)){
+            //  $customerExists = $this->checkIfCustomerExists($customerDto->getCustomer_name(), $customerDto->getCustomer_phone());
+            //  if (is_null($customerExists)){
 
-                $this->customers->save();
+            //     $this->customers->save();
 
-                //Get the id of newly stored customer.
-                $customerId = $this->customers->id;
-             } else {
+            //     //Get the id of newly stored customer.
+            //     $customerId = $this->customers->id;
+            //  } else {
 
-                //Get the id of newly stored customer.
-                $customerId = $customerExists->id;
-             }
+            //     //Get the id of newly stored customer.
+            //     $customerId = $customerExists->id;
+            //  }
 
              //Create new meter for this customer having with us the id of the customer.
              $meter = app(Meter::class);
              $meterDao = new MeterDaoImpl($meter);
 
-             $meter = $meterDao->createMeter($customerId, $utility_provider_id);
+           //  $meter = $meterDao->createMeter($customerId, $utility_provider_id);
              Log::channel('daily')->info('Meter created: ' . json_encode($meter));
          } catch (\Exception $e) {
              Log::info("Customer Create Exception:". $e->getMessage());
