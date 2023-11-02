@@ -34,6 +34,7 @@ class ProviderCategoryApi extends Controller
         try {
             $providerCategories = $this->providerCategoryDao->getProviderCategories();
 
+            Log::info("ProviderCategory".json_encode($providerCategories));
             //Checking if the object has data
             if (!blank($providerCategories)) {
                 Log::info("All Providers Message::" . json_encode($providerCategories));

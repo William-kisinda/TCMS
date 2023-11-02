@@ -109,6 +109,36 @@ class TokenManageDto
     }
 
     /**
+     * @return mixed
+     */
+    public function getUtilityProviderId()
+    {
+        return $this->attributes['utility_provider_id'];
+    }
+    /**
+     * @param mixed $generatiotariff_id
+     */
+    public function setUtilityProviderId($utility_provider_id)
+    {
+        $this->attributes['utility_provider_id'] = $utility_provider_id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRequestId()
+    {
+        return $this->attributes['requestId'];
+    }
+    /**
+     * @param mixed $generatiotariff_id
+     */
+    public function setRequestId($requestId)
+    {
+        $this->attributes['requestId'] = $requestId;
+    }
+
+    /**
      * @return array
      */
     public function getAttributes()

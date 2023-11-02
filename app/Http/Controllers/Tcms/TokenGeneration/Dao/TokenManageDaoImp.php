@@ -130,6 +130,7 @@ class TokenManageDaoImp implements TokenManageDao
 
      public function createManageInfo(TokenManageDto $tokenManageInfo)
      {
+        $tokenManage = null;
          try {
             $tokenManage = new Token_manage();
             $tokenManage->setAttributes($tokenManageInfo->getAttributes());

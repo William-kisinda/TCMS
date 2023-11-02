@@ -10,129 +10,60 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\UtilityProviderModel;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
+    private $utilityProviderDao;
+
+    public function __construct()
+    {
+        $this->utilityProviderDao = new UtilityProviderDaoImpl(new UtilityProviderModel());
+    }
     /*
-     * Create a Utility Provider User.
+     * Authenticate a User.
      *
      * @param null
      * @return \Illuminate\Http\JsonResponse
     */
-    public function createUPUser(Request $request)
+    public function login(Request $request)
     {
-        try {
-            Log::info("Log Message:" . json_encode($request->all()));
-            $input = $request->all();
-            $user = new User;
-            $utilityProviderId = $request->input('utility_provider_id');
-            if(!is_null($utilityProviderId)){
-                $utilityProvider = UtilityProviderModel::find($utilityProviderId);
-                $user->full_name = $request->input('full_name');
-                $user->email = $request->input('email');
-                $user->phone_number = $request->input('phone_number');
-                $user->password = $request->input('password');
-                $user->utility_provider_model_id = $utilityProviderId;
-                $user->utility_provider()->associate($utilityProvider)->save();
-            } else {
-                $user = User::create($input);
-            }
-            $user->assignRole($request->input('roles'));
-            if (!blank($user)) {
-                return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
-            }
-            return Response()->json(["error" => false, 'message' => ['Failed to create user!']], Response::HTTP_OK);
-        } catch (\Exception $e) {
-            Log::info("Exceptional Message::" . $e->getMessage());
-            return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-    
-    /**
-     * Get all users
-     * 
-     * @param Request $request
-     * @return Response
-     */
-    public function getUPUsers(Request $request)
-    {
-        $users = [];
-        try {
+        $this->validate($request, [
+            'email' => 'required|email|string',
+            'password' => 'required'
+        ]);
 
-            $users = User::get();
-            $usersArray = array();
-            Log::info("Users::" . json_encode($users));
+        $credentials = $request->all();
 
-            if (!blank($users)) {
-                foreach($users as $key => $user){
-                    $userData = ['id' => $user->id, 'full_name' => $user->full_name, 'email' => $user->email, 'phone_number' => $user->phone_number, 'roles' => $user->getRoleNames()];
-                    array_push($usersArray, $userData);
-                    Log::info("Users Full Data::" . json_encode($usersArray));
-                }
-                return Response()->json(["error" => false, 'users' => $usersArray], Response::HTTP_OK);
-            }
-            return Response()->json(["error" => false, 'users' => $users], Response::HTTP_OK);
-        } catch (\Exception $e) {
-            Log::info("Exceptional Message::" . $e->getMessage());
-            return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        if (!Auth::attempt($credentials)) {
+            return Response()->json(["error" => true, 'message' => 'Incorrect credentials!Try again.'], Response::HTTP_BAD_REQUEST);
         }
+
+        $user = Auth::user();
+        $token = $user->createToken('main')->plainTextToken;
+        $user_utility_provider = $user->utility_provider;
+        $roles = $user->getRoleNames();
+        $permissions = collect(Auth::user()->getAllPermissions())->pluck('name')->toArray();
+        $utilityProvider = "None";
+
+        if (isset($user_utility_provider->provider_name)) {
+            $utilityProvider = $user_utility_provider->provider_name;
+        }
+        return Response()->json(["error" => false, 'data' => ['user' => $user, 'token' => $token, 'utility_provider' => $utilityProvider, 'roles' => $roles, 'permissions' => $permissions]], Response::HTTP_OK);
     }
 
-    /**
-     * Get user By Id
-     * 
-     * @param Request $request
-     * @return Response
-     */
-    public function getUPUserById(Request $request)
+    /*
+     * Logout a User.
+     *
+     * @param null
+     * @return \Illuminate\Http\JsonResponse
+    */
+    public function logout(Request $request)
     {
-        $userId = $request->input('userId');
-        $user = [];
-        try {
-
-            $user = User::find($userId);
-
-            Log::info("User::" . json_encode($user));
-            
-            if (!blank($user)) {
-                $uprovider = $user->utility_provider;
-                $user = ['id' => $user->id, 'full_name' => $user->full_name, 'email' => $user->email, 'phone_number' => $user->phone_number, 'utility_provider'=> isset($uprovider->provider_name) ? $uprovider->provider_name : "None", 'roles' => $user->getRoleNames()];
-                Log::info("Users Full Data::" . json_encode($user));
-                return Response()->json(["error" => false, 'user' => $user], Response::HTTP_OK);
-            }
-            return Response()->json(["error" => false, 'user' => $user], Response::HTTP_OK);
-        } catch (\Exception $e) {
-            Log::info("Exceptional Message::" . $e->getMessage());
-            return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        Auth::logout();
+        Session::flush();
+        return Response()->json(["error" => false, 'success' => true], Response::HTTP_OK);
     }
-    /**
-     * Update User
-     * 
-     * @param Request $request
-     * @return Response
-     */
-    public function updateUPUser(Request $request)
-    {
-        $userId = $request->input('id');
-        try {
-
-            $user = User::find($userId);
-
-            Log::info("User::" . json_encode($user));
-            $user->update($request->all());
-            DB::table('model_has_roles')->where('model_id', $userId)->delete(); //We delete previously assigned roles ready to save new roles updated.
-
-            $user->assignRole($request->input('roles'));
-
-            if (!blank($user)) {
-                return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
-            }
-            return Response()->json(["error" => false, 'message' => ['Failed to create user!']], Response::HTTP_OK);
-        } catch (\Exception $e) {
-            Log::info("Update User Exceptional Message::" . $e->getMessage());
-            return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-    
 }

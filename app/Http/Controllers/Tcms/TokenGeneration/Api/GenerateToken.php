@@ -80,7 +80,7 @@ class GenerateToken
                 //store token ManageInfo
                 $tokenDto = app(TokenManageDto::class);
 
-                $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'),$this->requestId,$this->utility_provider);
+                $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'), $this->utility_provider, $this->requestId);
 
                 // Dispatch the job for saving info to database to the RabbitMQ queue
                 // TokenManage::dispatch($tokenDto)->onQueue('dbSave');
