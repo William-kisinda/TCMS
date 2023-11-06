@@ -60,12 +60,27 @@ return [
             'ignore_exceptions' => false,
         ],
 
-        'custom_daily' => [
+        'meter_validation' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/.log'),
+            'path' => storage_path('logs/meter_validation.log'),
             'level' => 'debug',
             'days' => 7,
         ],
+
+        'token_purchase' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/token_purchase.log'),
+            'level' => 'debug',
+            'days' => 7,
+        ],
+
+        'token_check' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/token_check.log'),
+            'level' => 'debug',
+            'days' => 7,
+        ],
+
 
         'single' => [
             'driver' => 'single',

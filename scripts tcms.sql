@@ -9,6 +9,10 @@ select * from provider_categories
 select * from token_manage
 select * from utility_providers_tariffs
 select * from notifications
+select * from partners
+
+DELETE FROM token_manage;
+
 
 CREATE TABLE IF NOT EXISTS utility_providers_tariffs (
    id SERIAL PRIMARY KEY,
@@ -29,3 +33,10 @@ ADD CONSTRAINT fk_util_provider FOREIGN KEY(utility_provider_id) REFERENCES util
 DROP TABLE utility_providers_tariffs
 -- Alter table token_manage
 -- rename column meter_id to meters_id
+
+
+CREATE TABLE partners (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    code VARCHAR(255) NOT NULL
+);

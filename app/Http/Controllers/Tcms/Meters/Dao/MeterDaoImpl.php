@@ -46,6 +46,7 @@ use function PHPUnit\Framework\isNull;
                  $this->meters->setAttributes($meterInfoArray);
 
              }
+             $this->meters= null;
          } catch (\Exception $exception) {
              Log::error("MeterId Get Exception", [$exception->getMessage()]);
          }
@@ -112,8 +113,10 @@ use function PHPUnit\Framework\isNull;
 
                  $this->meters->setAttributes($meterInfoArray);
              }
+             $this->meters= null;
          } catch (\Exception $exception) {
-             Log::error("Meter Number Check Exception", [$exception->getMessage()]);
+            $this->meters= null;
+            Log::error("Meter Number Check Exception", [$exception->getMessage()]);
          }
          return $this->meters;
      }
@@ -127,14 +130,16 @@ use function PHPUnit\Framework\isNull;
       {
           try {
               $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->where('utility_provider_id', $utility_provider_id)->first();
-              if (!blank($meterInfo)) {
+              if ($meterInfo) {
 
                   $meterInfoArray = json_decode(json_encode($meterInfo), true);
 
                 $this->meters->setAttributes($meterInfoArray);
               }
+              $this->meters= null;
           } catch (\Exception $exception) {
-              Log::error("Meter Number Check Exception", [$exception->getMessage()]);
+            $this->meters= null;
+            Log::error("Meter Number Check Exception", [$exception->getMessage()]);
           }
           return $this->meters;
       }
@@ -167,8 +172,6 @@ use function PHPUnit\Framework\isNull;
                 if (is_null($meterCheck)) break;
                 $meter_number = $helper->generateMeterNumber($utility_provider_code);
             }
-
-            //$meter = new Meter();
 
             $meterDto = new MeterDto();
 
