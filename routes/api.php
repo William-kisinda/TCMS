@@ -1,5 +1,6 @@
 <?php
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Tcms\Roles\RolesController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Tcms\MeterValidation\Api\MeterValidateApi;
 use App\Http\Controllers\Tcms\Utility_provider\Api\UtilityProviderApi;
 use App\Http\Controllers\Tcms\ProviderCategory\Api\ProviderCategoryApi;
 use App\Http\Controllers\Tcms\TokenGeneration\Api\TokenGenerateController;
+use App\Http\Controllers\Tcms\Users\Api\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +32,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         return $request->user();
 });
 
+/**
+ *  Route to handle user Authentication.
+ * @author Daniel.
+ *
+ */
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']);
 
 /**
  * Below are are the route for the utility provider categories
@@ -47,21 +56,21 @@ Route::post('listProviderCategory', [ProviderCategoryApi::class, 'getProviderCat
 
 
 /**
- *  Route to handle user authentication.
+ *  Route to handle users.
  * @author Daniel.
  *
  */
 //Create a user
-Route::post('user/create', [AuthController::class, 'createUPUser']);
+Route::post('user/create', [UsersController::class, 'createUPUser']);
 
 // get all users
-Route::post('users', [AuthController::class, 'getUPUsers']);
+Route::post('users', [UsersController::class, 'getUPUsers']);
 
 // get all users
-Route::post('user/show', [AuthController::class, 'getUPUserById']);
+Route::post('user/show', [UsersController::class, 'getUPUserById']);
 
 // get all users
-Route::post('user/update', [AuthController::class, 'updateUPUser']);
+Route::post('user/update', [UsersController::class, 'updateUPUser']);
 
 
 /**
@@ -126,15 +135,15 @@ Route::patch('tariff', [TariffsApi::class, 'updateTariff']);
  *
  */
 // get all customers
- Route::post('customers', [CustomersController::class, 'getAllCustomers']);
+Route::post('customers', [CustomersController::class, 'getAllCustomers']);
 
- // get all customers
- Route::post('customerById', [CustomersController::class, 'getCustomerById']);
+// get all customers
+Route::post('customerById', [CustomersController::class, 'getCustomerById']);
 
- // get all customers
- Route::post('customer/create', [CustomersController::class, 'createCustomer']);
+// get all customers
+Route::post('customer/create', [CustomersController::class, 'createCustomer']);
 
- /**
+/**
  * API Routes for Roles Management
  * @author Daniel.
  *
@@ -152,7 +161,7 @@ Route::post('roles', [RolesController::class, 'getRoles']);
 Route::post('token-generator', [TokenGenerateController::class, 'produceMessages']);
 
 //token receiver , API that might be exposed by the client systems
-Route::post('token-receiver', [ApiEngine::class,'tokenNotifications']);
+Route::post('token-receiver', [ApiEngine::class, 'tokenNotifications']);
 
 /**
  *

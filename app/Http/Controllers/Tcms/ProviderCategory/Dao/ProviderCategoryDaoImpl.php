@@ -31,20 +31,20 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
      */
     public function getProviderCategories()
     {
-        $providerCategory = null;
+        $providerCategories = null;
         try {
-            $providerCategoriesInfo = DB::table('provider_categories')->get();
+            $providerCategoriesInfo = DB::table('provider_categories')->get(['id', 'name', 'code'], false);
+            
             if (!blank($providerCategoriesInfo)) {
 
                 $providerCategoriesInfoArray = json_decode(json_encode($providerCategoriesInfo), true);
 
-
-                $this->providerCategory->setAttributes($providerCategoriesInfoArray);
+                $providerCategories = $providerCategoriesInfoArray;
             }
         } catch (\Exception $exception) {
-            Log::error("ProviderCategoryException", $exception->getMessage());
+            Log::error("ProviderCategoryException", [$exception->getMessage()]);
         }
-        return $providerCategory;
+        return $providerCategories;
     }
 
     /**
@@ -65,7 +65,7 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
             }
             //throw $th;
         } catch (\Exception $e) {
-            Log::error("ProviderCategoryException", $e->getMessage());
+            Log::error("ProviderCategoryException", [$e->getMessage()]);
         }
         return $providerCategory;
     }
@@ -114,7 +114,7 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
 
             $this->providerCategory->save();
         } catch (\Exception $e) {
-            Log::error("ProviderCategoryException", $e->getMessage());
+            Log::error("ProviderCategoryException", [$e->getMessage()]);
         }
         return $providerCategoryModel;
     }

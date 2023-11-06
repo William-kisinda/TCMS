@@ -26,11 +26,16 @@ CREATE TABLE IF NOT EXISTS utility_providers_tariffs (
    REFERENCES tariffs(id) ON DELETE CASCADE
 );
 
-ALTER TABLE meters
+ALTER TABLE token_manage
 ADD COLUMN utility_provider_id BIGINT,
 ADD CONSTRAINT fk_util_provider FOREIGN KEY(utility_provider_id) REFERENCES utility_providers(id);
 
-DROP TABLE utility_providers_tariffs
+ALTER TABLE token_manage
+DROP CONSTRAINT utility_provider_id,
+DROP COLUMN utility_provider_id;
+
+
+DROP TABLE notifications
 -- Alter table token_manage
 -- rename column meter_id to meters_id
 
