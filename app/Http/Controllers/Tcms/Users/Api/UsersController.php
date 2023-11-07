@@ -94,7 +94,7 @@ class UsersController extends Controller
             
             if (!blank($user)) {
                 $uprovider = $user->utility_provider;
-                $user = ['id' => $user->id, 'full_name' => $user->full_name, 'email' => $user->email, 'phone_number' => $user->phone_number, 'utility_provider'=> isset($uprovider->provider_name) ? $uprovider->provider_name : "None", 'roles' => $user->getRoleNames()];
+                $user = ['id' => $user->id, 'full_name' => $user->full_name, 'email' => $user->email, 'phone_number' => $user->phone_number, 'utility_provider_id' => $user->utility_provider_id, 'utility_provider'=> isset($uprovider->provider_name) ? $uprovider->provider_name : "None", 'roles' => $user->getRoleNames()];
                 Log::info("Users Full Data::" . json_encode($user));
                 return Response()->json(["error" => false, 'user' => $user], Response::HTTP_OK);
             }

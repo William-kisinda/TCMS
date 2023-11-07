@@ -34,7 +34,7 @@ class ProviderCategoryApi extends Controller
         try {
             $providerCategories = $this->providerCategoryDao->getProviderCategories();
 
-            Log::info("ProviderCategory".json_encode($providerCategories));
+            Log::info("ProviderCategory" . json_encode($providerCategories));
             //Checking if the object has data
             if (!blank($providerCategories)) {
                 Log::info("All Providers Message::" . json_encode($providerCategories));
@@ -107,7 +107,7 @@ class ProviderCategoryApi extends Controller
             $providerCategoryExists = $this->providerCategoryDao->getProviderCategoryByNameOrCode($this->providerCategoriesDto->getProv_categ_name(), $this->providerCategoriesDto->getProv_categ_code());
             if (blank($providerCategoryExists)) {
                 $providerCategory = $this->providerCategoryDao->createProviderCategory($this->providerCategoriesDto);
-                if (!blank($providerCategory)) {
+                if (!blank($providerCategory->getAttributes())) {
                     return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
                 }
                 return Response()->json(["error" => false, 'message' => ['Failed to create provider category']], Response::HTTP_OK);

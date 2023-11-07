@@ -40,7 +40,6 @@ class TariffsApi extends Controller
 
             //Checking if the object has data
             if (!blank($tariffs)) {
-                Log::info("Message::" . json_encode($tariffs));
 
                 return Response()->json(["error" => false, "tariffs" => $tariffs], Response::HTTP_OK);
             }
@@ -69,7 +68,6 @@ class TariffsApi extends Controller
             $requestId = $this->helper->generateRequestId();
 
             //Checking if the object has data
-            Log::info("OriginMessage:" . $tariffExists);
             if (!blank($tariffExists)) {
 
                 $this->tariffDto->setAttributes($tariffExists);
@@ -85,7 +83,7 @@ class TariffsApi extends Controller
 
             return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Id']], Response::HTTP_NOT_FOUND);
         } catch (\Exception $exception) {
-            Log::info("Tariff Exceptional Message::" . $exception->getMessage());
+            Log::error("Tariff Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -108,7 +106,6 @@ class TariffsApi extends Controller
             $requestId = $this->helper->generateRequestId();
 
             //Checking if the object has data
-            Log::info("OriginMessage:" . $tariffExists);
             if (!blank($tariffExists)) {
 
                 // $utilityProviderDto->getProiv
@@ -125,7 +122,7 @@ class TariffsApi extends Controller
 
             return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Name']], Response::HTTP_NOT_FOUND);
         } catch (\Exception $exception) {
-            Log::info("Tariff Exceptional Message::" . $exception->getMessage());
+            Log::error("Tariff Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -148,7 +145,6 @@ class TariffsApi extends Controller
             $requestId = $this->helper->generateRequestId();
 
             //Checking if the object has data
-            Log::info("OriginMessage:" . $tariffExists);
             if (!blank($tariffExists)) {
 
                 // $utilityProviderDto->getProiv
@@ -165,7 +161,7 @@ class TariffsApi extends Controller
 
             return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Code']], Response::HTTP_NOT_FOUND);
         } catch (\Exception $exception) {
-            Log::info("Tariff Exceptional Message::" . $exception->getMessage());
+            Log::error("Tariff Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -187,7 +183,6 @@ class TariffsApi extends Controller
             $requestId = $this->helper->generateRequestId();
 
             //Checking if the object has data
-            Log::info("OriginMessage:" . json_encode($tariffsExists));
             if (!blank($tariffsExists)) {
 
                 // $utilityProviderDto->getProiv
@@ -204,7 +199,7 @@ class TariffsApi extends Controller
 
             return Response()->json(["error" => false, "Tariff" => ['Invalid Tariff Id']], Response::HTTP_NOT_FOUND);
         } catch (\Exception $exception) {
-            Log::info("Tariff Exceptional Message::" . $exception->getMessage());
+            Log::error("Tariff Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -228,7 +223,6 @@ class TariffsApi extends Controller
             $requestId = $this->helper->generateRequestId();
 
             //Checking if the object has data
-            Log::info("OriginMessage:" . $tariffExists);
             if (!blank($tariffExists)) {
 
                 // $utilityProviderDto->getProiv
@@ -245,7 +239,7 @@ class TariffsApi extends Controller
 
             return Response()->json(["error" => false, "Tariff" => ['Tariff does not exist!']], Response::HTTP_NOT_FOUND);
         } catch (\Exception $exception) {
-            Log::info("Tariff Exceptional Message::" . $exception->getMessage());
+            Log::error("Tariff Exceptional Message::" . $exception->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -279,11 +273,11 @@ class TariffsApi extends Controller
             $tariffExists = $this->tariffsDao->getTariffByName($this->tariffDto->getTariff_name());
             if (blank($tariffExists)) {
                 $tariff = $this->tariffsDao->createTariff($this->tariffDto);
-                if (!is_null($tariff)) {
+                if ($tariff->getAttributes()) {
                     $tariffId = $tariff->getTariffId();
                     $utilityProviderTariff = $this->tariffsDao->attachTariffsToUtilityProviders($utilityProviderId, $tariffId);
-                    if (!is_null($utilityProviderTariff)){
-                        if($utilityProviderTariff == "Tariff Exists")
+                    if (!is_null($utilityProviderTariff)) {
+                        if ($utilityProviderTariff == "Tariff Exists")
                             return Response()->json(["error" => false, 'message' => ['Tariff already exists.']], Response::HTTP_OK);
                         return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
                     }
@@ -295,15 +289,15 @@ class TariffsApi extends Controller
                 //get the tariff Id
                 $tariffId = $tariffExists->getTariffId();
                 $utilityProviderTariff = $this->tariffsDao->attachTariffsToUtilityProviders($utilityProviderId, $tariffId);
-                if (!is_null($utilityProviderTariff)){
-                    if($utilityProviderTariff == "Tariff Exists")
+                if (!is_null($utilityProviderTariff)) {
+                    if ($utilityProviderTariff == "Tariff Exists")
                         return Response()->json(["error" => false, 'message' => ['Tariff already exists.']], Response::HTTP_OK);
                     return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
                 }
                 return Response()->json(["error" => false, 'message' => ['Failed to attach tariff.']], Response::HTTP_OK);
             }
         } catch (\Exception $e) {
-            Log::info("Exceptional Create Tariff Message::" . $e->getMessage());
+            Log::error("Exceptional Create Tariff Message::" . $e->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -320,18 +314,16 @@ class TariffsApi extends Controller
             //take all the inputs and store them.
             $inputs = $request->all();
 
-            Log::info("Update Tariff Request::" . json_encode($inputs));
             //Transfer into DTO
             $this->tariffDto->setAttributes($inputs);
 
             $tariff = $this->tariffsDao->updateTariff($this->tariffDto);
-            Log::info("Update Tariff Response Display::" . json_encode($inputs));
             if (!blank($tariff)) {
                 return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
             }
             return Response()->json(["error" => false, 'message' => ['Failed to create tariff']], Response::HTTP_OK);
         } catch (\Exception $e) {
-            Log::info("Exceptional Update Tariff Message::" . $e->getMessage());
+            Log::error("Exceptional Update Tariff Message::" . $e->getMessage());
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

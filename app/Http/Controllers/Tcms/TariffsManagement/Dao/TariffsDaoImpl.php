@@ -41,7 +41,7 @@ class TariffsDaoImpl implements TariffsDao
                 $this->tariffs->setAttributes($tariffsInfoArray);
             }
         } catch (\Exception $exception) {
-            Log::info("Tariffs Exception:" . $exception->getMessage());
+            Log::error("Tariffs Exception:" . $exception->getMessage());
         }
         return $this->tariffs;
     }
@@ -64,7 +64,7 @@ class TariffsDaoImpl implements TariffsDao
             }
         } catch (\Exception $exception) {
             $tariffs = null;
-            Log::info("Tariffs Exception:" . $exception->getMessage());
+            Log::error("Tariffs Exception:" . $exception->getMessage());
         }
         return $tariffs;
     }
@@ -77,21 +77,20 @@ class TariffsDaoImpl implements TariffsDao
 
     public function getTariffById($tariffId)
     {
-
+        $tariff = null;
         try {
             $tariffInfo = DB::table('tariffs')->where('id', $tariffId)->first();
-
             if (!empty($tariffInfo)) {
                 // If the tariff info is found, you can directly create a Tariff object.
-
-                $this->tariffs->setAttributes((array) $tariffInfo);
+                $tariff = $this->tariffs;
+                $tariff->setAttributes((array) $tariffInfo);
             }
         } catch (\Exception $e) {
             // Log the exception for debugging purposes.
-            Log::info("Tariff Exception: " . $e->getMessage());
+            Log::error("Tariff Exception: " . $e->getMessage());
         }
 
-        return $this->tariffs;
+        return $tariff;
     }
 
 
@@ -103,20 +102,20 @@ class TariffsDaoImpl implements TariffsDao
 
     public function getTariffByName($tariffName)
     {
-
         try {
             $tariffInfo = DB::table('tariffs')->where('name', $tariffName)->first();
-
             if (!empty($tariffInfo)) {
                 // If the tariff info is found, you can directly create a Tariff object.
                 $this->tariffs->setAttributes((array) $tariffInfo);
+                return $this->tariffs;
+            }
+            else {
+                return null;
             }
         } catch (\Exception $e) {
             // Log the exception for debugging purposes.
-            Log::info("Tariff Exception: " . $e->getMessage());
+            Log::error("Tariff Exception: " . $e->getMessage());
         }
-
-        return $this->tariffs;
     }
 
     /**
@@ -127,20 +126,21 @@ class TariffsDaoImpl implements TariffsDao
 
      public function getTariffByCode($tariffCode)
      {
-
+        $tariff = null;
         try {
             $tariffInfo = DB::table('tariffs')->where('code', $tariffCode)->first();
 
             if (!empty($tariffInfo)) {
                 // If the tariff info is found, you can directly create a Tariff object.
-                $this->tariffs->setAttributes((array) $tariffInfo);
+                $tariff =$this->tariffs;
+                $tariff->setAttributes((array) $tariffInfo);
             }
         } catch (\Exception $e) {
             // Log the exception for debugging purposes.
-            Log::info("Tariff Exception: " . $e->getMessage());
+            Log::error("Tariff Exception: " . $e->getMessage());
         }
 
-        return $this->tariffs;
+        return $tariff;
      }
 
      /**
@@ -151,17 +151,20 @@ class TariffsDaoImpl implements TariffsDao
 
     public function getTariffByNameOrCode($tariffName, $tariffCode)
     {
-
+        // $tariff = null;
         try {
             $tariffInfo = DB::table('tariffs')->where('name', $tariffName)->orWhere('code', $tariffCode)->first();
-
+            
             if (!empty($tariffInfo)) {
                 // If the tariff info is found, you can directly create a Tariff object.
+                // $tariff = $this->tariffs;
                 $this->tariffs->setAttributes((array) $tariffInfo);
+            } else {
+                $this->tariffs = null;
             }
         } catch (\Exception $e) {
             // Log the exception for debugging purposes.
-            Log::info("Tariff Exception: " . $e->getMessage());
+            Log::error("Tariff Exception: " . $e->getMessage());
         }
 
         return $this->tariffs;
@@ -175,13 +178,14 @@ class TariffsDaoImpl implements TariffsDao
 
      public function createTariff(TariffsDto $tariffDto)
      {
+        // $tariff = null;
          try {
+            // $tariff = $this->tariffs;
+            $this->tariffs->setAttributes($tariffDto->getAttributes());
 
-             $this->tariffs->setAttributes($tariffDto->getAttributes());
-
-             $this->tariffs->save();
+            $this->tariffs->save();
          } catch (\Exception $e) {
-             Log::info("Tariff Exception:". $e->getMessage());
+             Log::error("Tariff Exception:". $e->getMessage());
          }
          return $this->tariffs;
      }
@@ -196,7 +200,6 @@ class TariffsDaoImpl implements TariffsDao
          try {
             $utilityProviderTariffInfo = DB::table('utility_providers_tariffs')->where('utility_provider_id', $utilityProviderId)->where('tariff_id', $tariffId)->get(['id']);
 
-            Log::info("Utility Provider Tariff Info". json_encode($utilityProviderTariffInfo));
             if(blank($utilityProviderTariffInfo)) {
                 $utilityProviderTariff = app(UtilityProviderTariffs::class);
 
@@ -209,7 +212,7 @@ class TariffsDaoImpl implements TariffsDao
                 $utilityProviderTariff = "Tariff Exists";
             }
          } catch (\Exception $e) {
-             Log::info("Tariff Exception:". $e->getMessage());
+             Log::error("Tariff Attach Exception:". $e->getMessage());
          }
          return $utilityProviderTariff;
      }
@@ -233,7 +236,7 @@ class TariffsDaoImpl implements TariffsDao
             }
         } catch (\Exception $e) {
             // Log the exception for debugging purposes.
-            Log::info("Tariff Exception: " . $e->getMessage());
+            Log::error("Tariff Deduct by Code Exception: " . $e->getMessage());
         }
         return $finalAmount;
     }
@@ -244,17 +247,18 @@ class TariffsDaoImpl implements TariffsDao
      * @author Daniel MM
      */
     public function updateTariff(TariffsDto $tariffDto){
+        $tariff = null;
          try {
             $tariffInfo = Tariffs::where('id', $tariffDto->getTariff_id())->first();
             $tariffInfo->name = $tariffDto->getTariff_name();
-            $tariffInfo->code = $tariffDto->getTariff_code();
             $tariffInfo->percentageAmount = $tariffDto->getTariff_percentageAmount();
             $tariffInfo->value = $tariffDto->getTariff_value();
-            $this->tariffs->setAttributes($tariffDto->getAttributes());
+            $tariff = $this->tariffs;
+            $tariff->setAttributes($tariffDto->getAttributes());
             $tariffInfo->update();
          } catch (\Exception $e) {
-             Log::info("Tariff Exception:". $e->getMessage());
+             Log::error("Tariff Update Exception:". $e->getMessage());
          }
-         return $this->tariffs;
+         return $tariff;
     }
 }
