@@ -56,12 +56,13 @@ class ValidMeterDto
         return $this->attributes;
     }
 
-    public function responseErrorDto($requestId, $ackCode, $description)
+    public function responseErrorDto($requestId, $ackCode, $description, $errorMessage)
     {
         $this->attributes = [];
         $this->attributes['requestId'] = $requestId;
-        $this->attributes['ackCode'] = $ackCode;
+        $this->attributes['ErrorCode'] = $ackCode;
         $this->attributes['description'] = $description;
+        $this->attributes['errorMessage'] = $errorMessage;
         return $this->attributes;
     }
     /**
