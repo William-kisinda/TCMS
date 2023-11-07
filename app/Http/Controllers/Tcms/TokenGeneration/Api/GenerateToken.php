@@ -21,17 +21,21 @@ class GenerateToken
 {
     private $amount;
     private $meterNumber;
-    private $requestId;
-    private $utility_provider;
+    private $utilityProvider;
     private $errorIfAny;
+    private $requestTime;
+    protected $partnersCode;
+    protected $requestId;
 
 
-    public function __construct($amount, $meterNumber, $requestId, $utility_provider)
+    public function __construct($amount, $meterNumber, $utilityProvider, $requestTime, $partnersCode, $requestId)
     {
         $this->amount = $amount;
         $this->meterNumber = $meterNumber;
+        $this->utilityProvider = $utilityProvider;
+        $this->requestTime = $requestTime;
+        $this->partnersCode = $partnersCode;
         $this->requestId = $requestId;
-        $this->utility_provider = $utility_provider;
         $this->errorIfAny = false;
     }
 
@@ -53,7 +57,7 @@ class GenerateToken
                 //Get tariffs assosciated with this provider.
                 $utilityProviderTariffAmounts = [];
                 $tariffDao = app(TariffsDaoImpl::class);
-                $tariffsData = $tariffDao->getTariffsByUtilityProvider($this->utility_provider);
+                $tariffsData = $tariffDao->getTariffsByUtilityProvider($this->utilityProvider);
                 $tariffsDataArray = json_decode(json_encode($tariffsData));
                 $tariffsArray = json_decode(json_encode($tariffsDataArray[0]));
                 $tariffs = $tariffsArray->tariffs;
@@ -69,15 +73,15 @@ class GenerateToken
                     $amount = $amount - floatval($tariffedAmount);
                 }
 
-                // Generate a unique token for each specific meter
+                // Generate a unique token for each specifrr
                 $helpers = app(Helpers::class);
                 $token = $helpers->generateMeterToken($amount, $this->meterNumber, $this->requestId); 
 
                 //store created token Info to the database
                 $tokenDto = app(TokenManageDto::class);
-                $tokenDto->setCreateInfo($token, $meter->getMeterId(), date('Ymd'),$this->utility_provider,$this->requestId);
                 $tokenManageDao = app(TokenManageDaoImp::class);
-                $token_manage = $tokenManageDao->createManageInfo($tokenDto);
+                $tokenInfo = $tokenDto->newTokenInfo($token, $meter->getMeterId(), now(),$this->utilityProvider,$this->requestId,$this->requestTime,$this->partnersCode);// require to extract partner Id from partner code
+                $token_manage = $tokenManageDao->createManageInfo($tokenInfo);
 
                 //check if data is saved successful to the Database
                 if ($token_manage) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tcms\MeterValidation\Api;
 
 use App\Helpers;
+use App\ErrorCode;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -49,20 +50,23 @@ class MeterValidateApi extends Controller
     public function getValidMeter(Request $request)
     {
         try {
-            // Retrieve the meter number from the request payload
-            $meter_num = $request->input('meter_num');
+            // Retrieve the meter number from the request payload     //Minded that all the input fields are mandatory
+            $meterNumber = $request->input('meterNumber');
             $amount = $request->input('amount');
             $utilityProvider = $request->input('utilityProvider');
+            $userRequestId = $request->input('requestId');
+            $partnerCode = $request->input('partnerCode');
+            $requestTime = $request->input('requestTime');
 
              // Capture requestId
-            $requestId = $this->helpers->generateRequestId();
+            $serverRequestId = $this->helpers->generateRequestId();
 
             //Log request information
-            Log::channel('custom_daily')->info("\nThe request for Validating Meter Number with the requestId :".$requestId. "\nSuccessful received with the following information :\n Request Header Information : ".json_encode($request->header()). "\nRequest body Information: ".json_encode($request->input()));
+            Log::channel('meter_validation')->info("\nThe request for Validating Meter Number with the requestId :".$serverRequestId. "\nSuccessful received with the following information :\n Request Header Information : ".json_encode($request->header()). "\nRequest body Information: ".json_encode($request->input()));
 
 
             // Checking if the meter exists in the database.
-            $meterExists = $this->meterDao->checkIfMeterOfUtilityProviderExists($meter_num, $utilityProvider);
+            $meterExists = $this->meterDao->checkIfMeterOfUtilityProviderExists($meterNumber, $utilityProvider);
 
             if (!is_null($meterExists)) {
                 // Fetching the customer for meter validity.
@@ -81,7 +85,7 @@ class MeterValidateApi extends Controller
                     $utilityProvider->getUtilityProviderName(),
                     $utilityProvider->getUtilityProviderId(),
                     $amount,
-                    $requestId
+                    $serverRequestId
                 );
 
                 // Now setting the provider categories array attributes.
@@ -89,20 +93,20 @@ class MeterValidateApi extends Controller
 
 
                //Log response Data
-               Log::channel('custom_daily')->info("\nThe Response Data for Validating Meter Number with the requestId :".$requestId. "\nSent to the user with the following Data :".json_encode($this->meterDto));
+               Log::channel('meter_validation')->info("\nThe Response Data for Validating Meter Number with the requestId :".$serverRequestId. "\nSent to the user with the following Data :".json_encode($this->meterDto));
 
                 return response()->json(["error" => false, "Meter Information" => $this->meterDto->getAttributes()], Response::HTTP_OK);
 
 
         }
-            Log::channel('custom_daily')->info('\nThe Response Data for Validating Meter Number with the requestId :' . json_encode(['request_id' => $requestId]) . '   ,is Failed to be  processed due to Invalid Meter Number');
+            Log::channel('meter_validation')->info('\nThe Response Data for Validating Meter Number with the requestId :' . json_encode(['request_id' => $serverRequestId]) . '   ,is Failed to be  processed due to Invalid Meter Number');
 
             return response()->json(["error" => true, "message" => "Invalid Meter Number"]);
 
 
 
         } catch (\Exception $exception) {
-            Log::channel('custom_daily')->error("\nRequest Failed to be processed:  Exceptional Message: " . $exception->getMessage());
+            Log::channel('meter_validation')->error("\nRequest Failed to be processed:  Exceptional Message: " . $exception->getMessage());
 
             return response()->json(["error" => true, "message" => "An error occurred"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -119,54 +123,82 @@ class MeterValidateApi extends Controller
     public function getMeterInfo(Request $request)
     {
         try {
-            // Retrieve the meter number from the request payload
-            $meter_num = $request->input('meter_num');
-            $utilityProvider = $request->input('utilityProvider');
+             //Log received Request information
+             Log::channel('meter_validation')->info("\nThe request for Validating Meter Number with the requestId :".$request->input('requestId'). "\nSuccessful received with the following information :\n Request Header Information : ".json_encode($request->header()). "\nRequest body Information: ".json_encode($request->input()));
 
-             // Capture requestId
-            $requestId = null;
+             //Validate Inputs
+             $validatedInputs = $request->validate([
+                'meterNumber' => ['required','numeric','digits:12'],
+                'utilityProvider' => ['required','string'],
+                'requestId' => ['required','numeric'],
+                'partnerCode' => ['required','alpha_num:ascii'],
+                'requestTime' => ['required', 'date_format:Y-m-d H:i:s'],
+             ]);
 
+              // Retrieve the meter number from the validated request payload
+            $meterNumber = $validatedInputs['meterNumber'];
+            $utilityProvider = $validatedInputs['utilityProvider'];
+            $requestId = $validatedInputs['requestId'];
+            $partnerCode = $validatedInputs['partnerCode'];
+            $requestTime = $validatedInputs['requestTime'];
 
             // Checking if the meter exists in the database.
-            $meterExists = $this->meterDao->checkIfMeterOfUtilityProviderExists($meter_num, $utilityProvider);
+            $meterExists = $this->meterDao->checkIfMeterOfUtilityProviderExists($meterNumber, $utilityProvider);
 
-            if (!empty($meterExists)) {
+            if ($meterExists) {
                 // Fetching the customer for meter validity.
                 $customer = $this->customerDao->getCustomerById($meterExists->getCustomerId());
                 $debtAmount = $this->debts->getDebtByMeterId($meterExists->getMeterId());
                 $utilityProvider = $this->utilityProviderDao->getUtilityProviderById($meterExists->getUtilityProviderId());
 
                 // Using the DTO to get and set object data properties.
-                $validMeterArray = $this->meterDto->meterInfo(
-                    $meterExists->getMeterId(),
+                $validMeterArray = $this->meterDto->responseDto(
                     $meterExists->getMeterNumber(),
                     $debtAmount,
                     $meterExists->getMeterStatus(),
                     $customer['full_name'],
                     $customer['phone'],
                     $utilityProvider->getUtilityProviderName(),
-                    $utilityProvider->getUtilityProviderId(),
-                    $requestId
+                    $requestId,
+                    $partnerCode,
+                    $requestTime,
+                    ErrorCode::INVALID_INPUT['code'],
+                    ErrorCode::INVALID_INPUT['description']
                 );
 
                 // Now setting the provider categories array attributes.
                 $this->meterDto->setAttributes($validMeterArray);
 
-                Log::channel('custom_daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is successfully processed');
+                //Log send Response information
+             Log::channel('meter_validation')->info("\nMeter Validation Response for the request with the requestId :".$requestId. "\nSuccessful send the user following information : ".json_encode($this->meterDto->getAttributes()));
+
 
 
                 return response()->json(["error" => false, "Meter Information" => $this->meterDto->getAttributes()], Response::HTTP_OK);
 
 
         }
-            Log::channel('custom_daily')->info('This request with id: ' . json_encode(['request_id' => $requestId]) . ' is Failed to be  processed due to Invalid Meter Number');
+            $response = $this->meterDto->responseErrorDto($requestId,ErrorCode::INVALID_INPUT['code'], ErrorCode::INVALID_INPUT['description']);
+                //Log Response Error
+            Log::channel('meter_validation')->info("\nMeter Validation Response for the request with the requestId :".$requestId. "\nSuccessful send the user following information : ".json_encode($response));
 
-            return response()->json(["error" => true, "message" => "Invalid Meter Number"]);
+            return response()->json(["error" => true, "message" => $response], Response::HTTP_OK);
 
 
 
-        } catch (\Exception $exception) {
-            Log::channel('custom_daily')->error("System  failed to serach for the meter number:  Exceptional Message: " . $exception->getMessage());
+        }//Handles Validatioin Errors
+        catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, Laravel throws a ValidationException.
+            // You can retrieve validation errors like this:
+            $validationErrors = $e->validator->errors()->all();
+
+            // Log the validation errors if needed
+            Log::channel('meter_validation')->error("Validation Errors: " . json_encode($validationErrors));
+
+            // Return the errors as a response
+            return response()->json(["error" => true, "message" => $validationErrors], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }catch (\Exception $exception) { // require to include error code and its description
+            Log::channel('meter_validation')->error("System  failed to serach for the meter number:  Exceptional Message: " . $exception->getMessage());
 
             return response()->json(["error" => true, "message" => "An error occurred"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

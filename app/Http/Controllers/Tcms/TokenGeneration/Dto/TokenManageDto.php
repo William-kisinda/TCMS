@@ -18,41 +18,31 @@ class TokenManageDto
 
     use HasAttributes;
 
-    /**
-     * @param int
-     * @return mixed
-     */
-    public function setManageInfo($tokenId, $token, $meterId, $generationDate, $utility_provider_id,$requestId)
-    {
-        $this->attributes = [];
-        $this->attributes['id'] = $tokenId;
-        $this->attributes['token'] = $token;
-        $this->attributes['meter_id'] = $meterId;
-        $this->attributes['generation_date'] = $generationDate;
-        $this->attributes['utility_provider_id'] = $utility_provider_id;
-        $this->attributes['requestId'] = $requestId;
-        return $this->attributes;
-    }
 
-    public function setCreateInfo( $token, $meterId, $generationDate, $utility_provider_id, $requestId)
+
+    public function newTokenInfo($token, $meterId, $generationTime, $providerId, $requestId, $requestTime, $partnersId)
     {
         $this->attributes = [];
         $this->attributes['token'] = $token;
         $this->attributes['meter_id'] = $meterId;
-        $this->attributes['generation_date'] = $generationDate;
-        $this->attributes['utility_provider_id'] = $utility_provider_id;
-        $this->attributes['requestId'] = $requestId;
+        $this->attributes['generation_time'] = $generationTime;
+        $this->attributes['provider_id'] = $providerId;
+        $this->attributes['request_time'] = $requestTime;
+        $this->attributes['request_id'] = $requestId;
+        $this->attributes['partners_id'] = $partnersId;
         return $this->attributes;
     }
 
-    public function notificatiobInformation($token, $meterNumber, $generationDate, $provider_name, $requestId)
+    public function notificationInformation($token, $meterNumber, $generationTime, $providerName, $requestId, $requestTime, $partnersCode)
     {
         $this->attributes = [];
         $this->attributes['token'] = $token;
-        $this->attributes['meterNumber'] = $meterNumber;
-        $this->attributes['generation_date'] = $generationDate;
-        $this->attributes['provider_name'] = $provider_name;
-        $this->attributes['requestId'] = $requestId;
+        $this->attributes['meter_number'] = $meterNumber;
+        $this->attributes['generation_time'] = $generationTime;
+        $this->attributes['provider_name'] = $providerName;
+        $this->attributes['request_time'] = $requestTime;
+        $this->attributes['request_id'] = $requestId;
+        $this->attributes['partners_code'] = $partnersCode;
         return $this->attributes;
     }
 

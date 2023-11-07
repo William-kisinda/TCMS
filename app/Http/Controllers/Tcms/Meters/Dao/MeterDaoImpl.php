@@ -45,6 +45,7 @@ use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
                  $this->meters->setAttributes($meterInfoArray);
 
              }
+             $this->meters= null;
          } catch (\Exception $exception) {
              Log::error("MeterId Get Exception", [$exception->getMessage()]);
          }
@@ -117,7 +118,8 @@ use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
             $meter->setAttributes($meterInfoArray);
             }
          } catch (\Exception $exception) {
-             Log::error("Meter Number Check Exception", [$exception->getMessage()]);
+            $this->meters= null;
+            Log::error("Meter Number Check Exception", [$exception->getMessage()]);
          }
          return $meter;
      }

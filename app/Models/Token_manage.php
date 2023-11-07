@@ -64,17 +64,33 @@ class Token_manage extends Model
     /**
      * @return mixed
      */
-    public function getGenerationDate()
+    public function getGenerationTime()
     {
-        return $this->attributes['generation_date'];
+        return $this->attributes['generation_time'];
     }
 
     /**
-     * @param mixed $generationDate
+     * @param mixed $generationTime
      */
-    public function setGenerationDate($generation_date): void
+    public function setGenerationTime($generation_time): void
     {
-        $this->attributes['generation_date'] = $generation_date;
+        $this->attributes['generation_time'] = $generation_time;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRequestTime()
+    {
+        return $this->attributes['request_time'];
+    }
+
+    /**
+     * @param mixed request_time
+     */
+    public function setRequestTime($request_time): void
+    {
+        $this->attributes['request_time'] = $request_time;
     }
 
     /**
@@ -93,12 +109,13 @@ class Token_manage extends Model
         $this->attributes['utility_provider_id'] = $utilityProviderId;
     }
 
-    /**
+
+     /**
      * @return mixed
      */
     public function getRequestId()
     {
-        return $this->attributes['requestId'];
+        return $this->attributes['request_id'];
     }
 
     /**
@@ -106,9 +123,25 @@ class Token_manage extends Model
      */
     public function setRequestId($requestId): void
     {
-        $this->attributes['requestId'] = $requestId;
+        $this->attributes['request_id'] = $requestId;
     }
 
+
+     /**
+     * @return mixed
+     */
+    public function getPartnersId()
+    {
+        return $this->attributes['partners_id'];
+    }
+
+    /**
+     * @param mixed $partnersId
+     */
+    public function setPartnersId($partnersId): void
+    {
+        $this->attributes['partners_id'] = $partnersId;
+    }
 
 
     /**
