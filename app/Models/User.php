@@ -6,6 +6,7 @@ namespace App\Models;
 
 // use Laravel\Passport\HasApiTokens;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -57,4 +58,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(UtilityProviderModel::class);
     }
+
+    // /**
+    //  * Get the role of this user.
+    //  */
+    // public function getRoleNames()
+    // {
+    //     return $this->hasMany(Role::class);
+    // }
 }
