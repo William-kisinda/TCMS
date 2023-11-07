@@ -106,7 +106,6 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
 
     public function createProviderCategory(ProviderCategoryDto $providerCategoryDto)
     {
-        $providerCategoryModel = null;
         try {
 
             $this->providerCategory->setProviderCategoryCode($providerCategoryDto->getProv_categ_code());
@@ -116,6 +115,6 @@ class ProviderCategoryDaoImpl implements ProviderCategoryDao
         } catch (\Exception $e) {
             Log::error("ProviderCategoryException", [$e->getMessage()]);
         }
-        return $providerCategoryModel;
+        return $this->providerCategory;
     }
 }

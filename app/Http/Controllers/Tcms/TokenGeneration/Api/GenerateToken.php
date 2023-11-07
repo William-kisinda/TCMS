@@ -71,7 +71,7 @@ class GenerateToken
 
                 // Generate a unique token for each specific meter
                 $helpers = app(Helpers::class);
-                $token = $helpers->generateMeterToken($amount, $this->meterNumber, $this->requestId);
+                $token = $helpers->generateMeterToken($amount, $this->meterNumber, $this->requestId); 
 
                 //store created token Info to the database
                 $tokenDto = app(TokenManageDto::class);

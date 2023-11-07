@@ -1,0 +1,36 @@
+To include in requests, additional things in payload
+{reqId: xxxx, partnerCode: xxxx, requestTime: xxxx, }
+
+Payload Validation
+-Validate fields first.(If empty, if does not match any pattern(length, type))
+-Define error codes, error descriptions
+
+Logs
+Group logs in "contexts/topic" eg(Application context, token request context,)
+
+Logs(Meter Nuber validation) -{request, response}
+log(Token purchase) {request, acknowlegement}{nofication, ackowledgemet}
+Log token-check-  {request, response}
+
+Consistent api parameter, example, meternumber, meterNumber
+
+Token Generation Step By Step include the following :
+    1. Receive Request
+    2. Log Request
+    3. Validate Payload Format (No DataBase included)
+    4. If valid(push to queue)
+    5. Return Acknoledgement : the payload Must Include the following:-
+                                    1. Request_Id , that came with the Rquest from the user
+                                    2. Meter Number 
+                                    3. Acknowledgement Id (which is generated on the server side)
+                                    4. Ack_code : which is used to reference error
+                                    5. Ack_descrption : It gives the descrption of the code provided above.
+                                    6. Other things.
+    6. Log Acknowledgement
+    7. Return acknowledgement.
+
+Dashboard
+-Include number of debts, number of customers, Number of token generated.
+-min cdn libraries should be downloaded to load files locally.
+
+

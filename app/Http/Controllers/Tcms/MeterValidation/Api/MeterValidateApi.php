@@ -64,7 +64,7 @@ class MeterValidateApi extends Controller
             // Checking if the meter exists in the database.
             $meterExists = $this->meterDao->checkIfMeterOfUtilityProviderExists($meter_num, $utilityProvider);
 
-            if (!empty($meterExists)) {
+            if (!is_null($meterExists)) {
                 // Fetching the customer for meter validity.
                 $customer = $this->customerDao->getCustomerById($meterExists->getCustomerId());
                 $debtAmount = $this->debts->getDebtByMeterId($meterExists->getMeterId());

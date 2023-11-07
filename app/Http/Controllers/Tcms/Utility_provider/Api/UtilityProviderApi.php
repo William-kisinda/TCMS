@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Tcms\Utility_provider\Api;
 
 use App\Helpers;
@@ -35,7 +36,6 @@ class UtilityProviderApi extends Controller
 
             //Checking if the object has data
             if (!blank($providers)) {
-                Log::info("Message::" . json_encode($providers));
                 return Response()->json(["error" => false, "providers" => $providers], Response::HTTP_OK);
             }
             return Response()->json(["error" => false, "providers" => $this->utilityProviderDto->getAttributes()], Response::HTTP_BAD_REQUEST);
@@ -52,23 +52,22 @@ class UtilityProviderApi extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-     public function getAllProvidersWithNoUsers()
-     {
-         //Validate roles and request information like headers and auth tokens.
-         try {
-             $providers = $this->utilityProviderDao->getAllUtilityProvidersWithNoUsers();
+    public function getAllProvidersWithNoUsers()
+    {
+        //Validate roles and request information like headers and auth tokens.
+        try {
+            $providers = $this->utilityProviderDao->getAllUtilityProvidersWithNoUsers();
 
-             //Checking if the object has data
-             if (!blank($providers)) {
-                 Log::info("Message::" . json_encode($providers));
-                 return Response()->json(["error" => false, "providers" => $providers], Response::HTTP_OK);
-             }
-             return Response()->json(["error" => false, "providers" => $this->utilityProviderDto->getAttributes()], Response::HTTP_BAD_REQUEST);
-         } catch (\Exception $exception) {
-             Log::info("Exceptional Message::" . $exception->getMessage());
-             return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
-         }
-     }
+            //Checking if the object has data
+            if (!blank($providers)) {
+                return Response()->json(["error" => false, "providers" => $providers], Response::HTTP_OK);
+            }
+            return Response()->json(["error" => false, "providers" => $this->utilityProviderDto->getAttributes()], Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $exception) {
+            Log::info("Exceptional Message::" . $exception->getMessage());
+            return Response()->json(["error" => true, "message" => ['Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 
     /**
      * Get provider utility provider by their code.
@@ -167,7 +166,7 @@ class UtilityProviderApi extends Controller
 
             // Validate whether such a provider already exists using the name and code.
             $providerExists = $this->utilityProviderDao->getUtilityProviderByNameOrCode($this->utilityProviderDto->getProvider_name(), $this->utilityProviderDto->getProvider_code());
-            if (blank($providerExists)) {
+            if (empty($providerExists->getAttributes())) {
                 $provider = $this->utilityProviderDao->createutilityProvider($this->utilityProviderDto);
                 if (!blank($provider)) {
                     return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);

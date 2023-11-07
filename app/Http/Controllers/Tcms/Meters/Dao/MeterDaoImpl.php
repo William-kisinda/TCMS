@@ -10,7 +10,6 @@ use App\Http\Controllers\Tcms\Meters\Dao\MeterDao;
 use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
 use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
 
-use function PHPUnit\Framework\isNull;
 
 /**
  * This Class Controls Meters Datastore
@@ -49,6 +48,7 @@ use function PHPUnit\Framework\isNull;
          } catch (\Exception $exception) {
              Log::error("MeterId Get Exception", [$exception->getMessage()]);
          }
+
          return $this->meters;
      }
 
@@ -104,18 +104,22 @@ use function PHPUnit\Framework\isNull;
       */
      public function checkIfMeterExists($meterNumber)
      {
+        $meter = null;
+
          try {
-             $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->first();
-             if (!blank($meterInfo)) {
 
-                 $meterInfoArray = json_decode(json_encode($meterInfo), true);
+            $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->first();
 
-                 $this->meters->setAttributes($meterInfoArray);
-             }
+            if (!blank($meterInfo)) {
+
+            $meterInfoArray = json_decode(json_encode($meterInfo), true);
+            $meter = new Meter();
+            $meter->setAttributes($meterInfoArray);
+            }
          } catch (\Exception $exception) {
              Log::error("Meter Number Check Exception", [$exception->getMessage()]);
          }
-         return $this->meters;
+         return $meter;
      }
 
      /**
@@ -125,18 +129,23 @@ use function PHPUnit\Framework\isNull;
       */
       public function checkIfMeterOfUtilityProviderExists($meterNumber, $utility_provider_id)
       {
-          try {
-              $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->where('utility_provider_id', $utility_provider_id)->first();
-              if (!blank($meterInfo)) {
+        $meters = null;
 
-                  $meterInfoArray = json_decode(json_encode($meterInfo), true);
+        try {
 
-                $this->meters->setAttributes($meterInfoArray);
-              }
-          } catch (\Exception $exception) {
-              Log::error("Meter Number Check Exception", [$exception->getMessage()]);
-          }
-          return $this->meters;
+            $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->where('utility_provider_id', $utility_provider_id)->first();
+            
+            if (!blank($meterInfo)) {
+
+                $meterInfoArray = json_decode(json_encode($meterInfo), true);
+
+                $meters = new Meter();
+                $meters->setAttributes($meterInfoArray);
+            }
+        } catch (\Exception $exception) {
+            Log::error("Meter Number Check Exception", [$exception->getMessage()]);
+        }
+        return $meters;
       }
 
      /**
@@ -146,6 +155,7 @@ use function PHPUnit\Framework\isNull;
       */
      public function createMeter($customerId, $utility_provider_id)
      {
+        $meter = null;
           try {
 
             //Generate Meter Number
@@ -168,7 +178,7 @@ use function PHPUnit\Framework\isNull;
                 $meter_number = $helper->generateMeterNumber($utility_provider_code);
             }
 
-            //$meter = new Meter();
+            $meter = new Meter();
 
             $meterDto = new MeterDto();
 
@@ -181,12 +191,12 @@ use function PHPUnit\Framework\isNull;
 
             Log::info("Meter Attributes:". json_encode($meterDto->getAttributes()));
 
-            $this->meters->setAttributes($meterDto->getAttributes());
-            $this->meters->save();
+            $meter->setAttributes($meterDto->getAttributes());
+            $meter->save();
 
           } catch (\Exception $e) {
             Log::info("Meter Creation Exception:". $e->getMessage());
           }
-          return $this->meters;
+          return $meter;
      }
  }

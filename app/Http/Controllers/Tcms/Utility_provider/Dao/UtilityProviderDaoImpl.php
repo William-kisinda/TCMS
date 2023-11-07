@@ -176,7 +176,7 @@ class UtilityProviderDaoImpl implements UtilityProviderDao
             $utilityProviderInfo->provider_code = $providerDto->getProvider_code();
             $utilityProviderInfo->provider_status = $providerDto->getProvider_status();
             $utilityProviderInfo->provider_categories_id = $providerDto->getProvider_categories_id();
-            $$this->utilityProviderModel->setAttributes($providerDto->getAttributes());
+            $this->utilityProviderModel->setAttributes($providerDto->getAttributes());
             $utilityProviderInfo->update();
          } catch (\Exception $e) {
              Log::info("UtilityProviderException:". $e->getMessage());
