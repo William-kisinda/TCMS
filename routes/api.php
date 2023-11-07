@@ -179,11 +179,8 @@ Route::post('/meterdebt', [DebtManageApi::class, 'getDebtByMeterId']);
  *
  */
 
-//validate Meter during payment
+//validate Meter information
 Route::post('/meter', [MeterValidateApi::class, 'getValidMeter']);
-
-//check Meter Existance
-Route::post('/metercheck', [MeterValidateApi::class, 'getMeterInfo']);
 
 
 /**
