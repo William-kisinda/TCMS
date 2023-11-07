@@ -51,7 +51,7 @@ class ValidMeterDto
         $this->attributes['partnerCode'] = $partnerCode;
         $this->attributes['requestTime'] = $requestTime;
         $this->attributes['requestId'] = $requestId;
-         $this->attributes['ackCode'] = $ackCode;
+         $this->attributes['ErrorCode'] = $ackCode;
          $this->attributes['description'] = $description;
         return $this->attributes;
     }
