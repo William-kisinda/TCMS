@@ -35,11 +35,13 @@ class DashboardDataController extends Controller
                 'providerCategoryNo'=> $this->dashboardDao->numberOfProviderCategory(),
                 'utilityProviderNo' => $this->dashboardDao->numberOfUtilityProviders(),
                 'customersList' => $this->dashboardDao->latestCustomers(),
-                'utilityProviderList' => $this->dashboardDao->latestUtilityProviders()
+                'utilityProviderList' => $this->dashboardDao->latestUtilityProviders(),
+                'numberOfTokens' => $this->dashboardDao->numberOfTokens(),
+                'totalDebtAmount' => $this->dashboardDao->totalDebtAmount()
             ];
 
             //Log Data fetching status
-            Log::channel('custom_daily')->info('\n Data was successful Fethed from the Database And returned to the frontEnd, Serving the request for accesing data in the Database');
+            Log::channel('daily')->info('\n Data was successful Fethed from the Database And returned to the frontEnd, Serving the request for accesing data in the Database');
 
             return response()->json(["error" => false, "Full Fetched data" => $fullData], Response::HTTP_OK);
          } catch (\Exception $exception) {

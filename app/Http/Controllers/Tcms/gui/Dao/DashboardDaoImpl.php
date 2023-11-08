@@ -62,10 +62,10 @@ class DashboardDaoImpl implements DashboardDao{
     public function latestCustomers()
     {
         try {
-            $customers = DB::table('customers')->orderBy('id', 'desc')->take(2)->get();
+            $customers = DB::table('customers')->orderBy('id', 'desc')->take(5)->get();
 
             return $customers;
-            
+
         } catch (\Exception $exception) {
             Log::channel('custom_daily')->error("\nError while Fetching Customer List in the Database: ". [$exception->getMessage()]);
             return $exception->getMessage();
@@ -81,6 +81,32 @@ class DashboardDaoImpl implements DashboardDao{
 
         } catch (\Exception $exception) {
             Log::channel('custom_daily')->error("\nError while Fetching Utility Providers List in the Database: ". [$exception->getMessage()]);
+            return $exception->getMessage();
+        }
+    }
+
+    public function numberOfTokens()
+    {
+        try {
+            $numberOfTokens = DB::table('debts')->sum('remainingDebtAmount');
+
+            return $numberOfTokens;
+
+        } catch (\Exception $exception) {
+            Log::channel('custom_daily')->error("\nError while Fetching number of Tokens in the Database: ". [$exception->getMessage()]);
+            return $exception->getMessage();
+        }
+    }
+
+    public function totalDebtAmount()
+    {
+        try {
+            $totalDebtAmount = DB::table('token_manage')->count();
+
+             return $totalDebtAmount;
+
+        } catch (\Exception $exception) {
+            Log::channel('custom_daily')->error("\nError while Fetching total Debt Amount in the Database: ". [$exception->getMessage()]);
             return $exception->getMessage();
         }
     }

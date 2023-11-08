@@ -18,4 +18,6 @@ namespace App\Http\Controllers\Tcms\gui\Dao;
       public function numberOfProviderCategory();
       public function latestCustomers();
       public function latestUtilityProviders();
+      public function numberOfTokens();
+      public function totalDebtAmount();
  }

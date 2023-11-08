@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Tcms\Meters\Dao;
 
-use App\Http\Controllers\Tcms\Meters\Dto\MeterDto;
+use App\Http\Controllers\Tcms\MeterValidation\Dto\ValidMeterDto;
 
 /**
  * This interface Access Meters Data
@@ -15,5 +15,5 @@ interface MeterDao
     public function getMeterById($meterId);
     public function getMeterByCustomerId($customerId);
     public function checkIfMeterExists($meterNumber);
-    public function createMeter(MeterDto $customerDto, $utility_provider_id);
+    public function createMeter(ValidMeterDto $customerDto, $utility_provider_id);
 }

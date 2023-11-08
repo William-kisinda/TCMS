@@ -7,5 +7,5 @@ use Illuminate\Http\Request;
 
 class MetersController extends Controller
 {
-    //
+    //For future Use
 }
