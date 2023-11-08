@@ -52,6 +52,7 @@ class GenerateToken
                 $debtResolved = $debtDao->resolveDebt($meter->getMeterId(), $this->amount);
                 $newAmount = $debtResolved['remainingAmount'];
                 $this->amount = $newAmount;
+                return ()
 
                         // Deduct Tariffs
                 //Get tariffs assosciated with this provider.
