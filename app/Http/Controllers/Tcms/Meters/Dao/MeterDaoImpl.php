@@ -38,7 +38,7 @@ use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
      {
          try {
              $meterInfo = DB::table('meters')->where('id', $meterId)->first();
-             if (!blank($meterInfo)) {
+             if ($meterInfo){
 
                  $meterInfoArray = json_decode(json_encode($meterInfo), true);
 
@@ -71,7 +71,6 @@ use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
 
                 $metersData = [];
                 //Resolve meter with their debts
-                $debt = 0;
                 foreach($meters as $meter) {
                     $debtInfo = DB::table('debts')->where('meters_id', $meter->id)->first();
                     if (!empty($debtInfo)) {
