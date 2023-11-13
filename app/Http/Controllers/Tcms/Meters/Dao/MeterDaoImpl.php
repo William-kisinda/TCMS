@@ -107,11 +107,9 @@ use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
      {
 
          try {
-
             $meterInfo = DB::table('meters')->where('meternumber', $meterNumber)->first();
 
             if (!blank($meterInfo)) {
-
             $meterInfoArray = json_decode(json_encode($meterInfo), true);
             $this->meters->setAttributes($meterInfoArray);
             return $this->meters;

@@ -46,7 +46,6 @@ class GenerateToken
             $meterDao = app(MeterDaoImpl::class);
             $meter = $meterDao->checkIfMeterExists($this->meterNumber);
             if ($meter) {
-
                 // Handle Debt Operations
                 $debtDao = app(DebtDaoImpl::class);
                 $debtResolved = $debtDao->resolveDebt($meter->getMeterId(), $this->amount);
@@ -75,7 +74,7 @@ class GenerateToken
 
                 // Generate a unique token for each specifrr
                 $helpers = app(Helpers::class);
-                $token = $helpers->generateMeterToken($amount, $this->meterNumber, $this->requestId); 
+                $token = $helpers->generateMeterToken($amount, $this->meterNumber, $this->requestId);
 
                 //store created token Info to the database
                 $tokenDto = app(TokenManageDto::class);

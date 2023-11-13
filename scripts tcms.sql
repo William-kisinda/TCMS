@@ -8,7 +8,6 @@ select * from tariffs
 select * from provider_categories
 select * from token_manage
 select * from utility_providers_tariffs
-select * from notifications
 select * from partners
 
 DELETE FROM token_manage;
@@ -45,3 +44,8 @@ CREATE TABLE partners (
     name TEXT NOT NULL,
     code VARCHAR(255) NOT NULL
 );
+
+
+SELECT id FROM permissions
+WHERE 
+te) = WEEK( current_date ) - 1 AND YEAR( date) = YEAR( current_date );

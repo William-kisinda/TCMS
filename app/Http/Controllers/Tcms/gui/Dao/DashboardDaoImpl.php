@@ -85,7 +85,7 @@ class DashboardDaoImpl implements DashboardDao{
         }
     }
 
-    public function numberOfTokens()
+    public function totalDebtAmount()
     {
         try {
             $numberOfTokens = DB::table('debts')->sum('remainingDebtAmount');
@@ -98,7 +98,7 @@ class DashboardDaoImpl implements DashboardDao{
         }
     }
 
-    public function totalDebtAmount()
+    public function numberOfTokens()
     {
         try {
             $totalDebtAmount = DB::table('token_manage')->count();
@@ -111,4 +111,17 @@ class DashboardDaoImpl implements DashboardDao{
         }
     }
 
+    // public function weeklyData()
+    // {
+    //     try {
+    //         $fourWeeksAgo = now()->subWeeks(4);
+    //         $weeklyData = DB::table('debts')->select(DB::raw('WEEK(created_at) as week'), DB::raw('SUM(debtAmount) as total_debt'))->where('created_at', '>', $fourWeeksAgo)->groupBy('week')->orderBy('week')->get();
+    //        // Log::info([$weeklyData]);
+    //          return json_encode($weeklyData);
+
+    //     } catch (\Exception $exception) {
+    //         Log::info("\nError while Fetching total Debt Amount in the Database: ". [$exception->getMessage()]);
+    //         return $exception->getMessage();
+    //     }
+    // }
 }

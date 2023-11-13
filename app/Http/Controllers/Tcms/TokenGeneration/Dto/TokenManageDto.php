@@ -26,7 +26,7 @@ class TokenManageDto
         $this->attributes['token'] = $token;
         $this->attributes['meter_id'] = $meterId;
         $this->attributes['generation_time'] = $generationTime;
-        $this->attributes['provider_id'] = $providerId;
+        $this->attributes['utility_provider_id'] = $providerId;
         $this->attributes['request_time'] = $requestTime;
         $this->attributes['request_id'] = $requestId;
         $this->attributes['partners_id'] = $partnersId;
@@ -37,106 +37,37 @@ class TokenManageDto
     {
         $this->attributes = [];
         $this->attributes['token'] = $token;
-        $this->attributes['meter_number'] = $meterNumber;
-        $this->attributes['generation_time'] = $generationTime;
-        $this->attributes['provider_name'] = $providerName;
-        $this->attributes['request_time'] = $requestTime;
-        $this->attributes['request_id'] = $requestId;
-        $this->attributes['partners_code'] = $partnersCode;
+        $this->attributes['meterNumber'] = $meterNumber;
+        $this->attributes['generationTime'] = $generationTime;
+        $this->attributes['providerName'] = $providerName;
+        $this->attributes['requestTime'] = $requestTime;
+        $this->attributes['requestId'] = $requestId;
+        $this->attributes['partnersCode'] = $partnersCode;
         return $this->attributes;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTokenId()
-    {
-        return $this->attributes['id'];
-    }
-
-    /**
-     * @param int $tokenId
-     */
-    public function setTokenId($tokenId)
-    {
-        $this->attributes['id'] = $tokenId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getToken()
-    {
-        return $this->attributes['token'];
-    }
-
-    /**
-     * @param mixed $token
-     */
-    public function setToken($token)
-    {
-        $this->attributes['token'] = $token;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMeterId()
-    {
-        return $this->attributes['meter_id'];
-    }
-
-    /**
-     * @param mixed $meterId
-     */
-    public function setMeterId($meterId)
-    {
-        $this->attributes['meter_id'] = $meterId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getGenerationDate()
-    {
-        return $this->attributes['generation_date'];
-    }
-    /**
-     * @param mixed $generatiotariff_id
-     */
-    public function setGenerationDate($generationDate)
-    {
-        $this->attributes['generation_date'] = $generationDate;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getUtilityProviderId()
-    {
-        return $this->attributes['utility_provider_id'];
-    }
-    /**
-     * @param mixed $generatiotariff_id
-     */
-    public function setUtilityProviderId($utility_provider_id)
-    {
-        $this->attributes['utility_provider_id'] = $utility_provider_id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRequestId()
-    {
-        return $this->attributes['requestId'];
-    }
-    /**
-     * @param mixed $generatiotariff_id
-     */
-    public function setRequestId($requestId)
-    {
+    public function ackResponse($meterNumber, $providerName, $requestId, $requestTime, $partnersCode, $responseTime, $message){
+        $this->attributes = [];
+        $this->attributes['meterNumber'] = $meterNumber;
+        $this->attributes['responseTime'] = $responseTime;
+        $this->attributes['providerName'] = $providerName;
+        $this->attributes['requestTime'] = $requestTime;
         $this->attributes['requestId'] = $requestId;
+        $this->attributes['partnersCode'] = $partnersCode;
+        $this->attributes['message'] = $message;
+        return $this->attributes;
+    }
+
+    public function responseErrorDto($requestId, $ackCode, $description, $errorMessage,$requestTime, $responseTime)
+    {
+        $this->attributes = [];
+        $this->attributes['requestId'] = $requestId;
+        $this->attributes['ErrorCode'] = $ackCode;
+        $this->attributes['description'] = $description;
+        $this->attributes['errorMessage'] = $errorMessage;
+        $this->attributes['requestTime'] = $requestTime;
+        $this->attributes['responseTime'] = $responseTime;
+        return $this->attributes;
     }
 
     /**

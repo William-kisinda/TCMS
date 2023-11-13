@@ -44,7 +44,7 @@ class ValidMeterDto
     public function responseDto($meterNumber, $debtAmount, $status, $customerName, $customerPhone, $utilityProvider, $requestId,$partnerCode,$requestTime,$ackCode,$description) //Error Management(error code , and description) is still not implemented
     {
         $this->attributes = [];
-        $this->attributes['meternumber'] = $meterNumber;
+        $this->attributes['meterNumber'] = $meterNumber;
         $this->attributes['debt'] = $debtAmount;
         $this->attributes['status'] = $status;
         $this->attributes['customerName'] = $customerName;
@@ -62,13 +62,15 @@ class ValidMeterDto
     /**method used to create attribute list for returning response Error to the client
      * @return mixed
      */
-    public function responseErrorDto($requestId, $ackCode, $description, $errorMessage)
+    public function responseErrorDto($requestId, $ackCode, $description, $errorMessage,$requestTime, $responseTime)
     {
         $this->attributes = [];
         $this->attributes['requestId'] = $requestId;
         $this->attributes['ErrorCode'] = $ackCode;
         $this->attributes['description'] = $description;
         $this->attributes['errorMessage'] = $errorMessage;
+        $this->attributes['requestTime'] = $requestTime;
+        $this->attributes['responseTime'] = $responseTime;
         return $this->attributes;
     }
     /**
@@ -77,6 +79,14 @@ class ValidMeterDto
     public function setAttributes($attributes)
     {
         $this->attributes = $attributes;
+    }
+
+     /**
+     *
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
     }
 
 }

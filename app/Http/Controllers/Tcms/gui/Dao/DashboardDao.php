@@ -20,4 +20,5 @@ namespace App\Http\Controllers\Tcms\gui\Dao;
       public function latestUtilityProviders();
       public function numberOfTokens();
       public function totalDebtAmount();
+     // public function weeklyData();
  }

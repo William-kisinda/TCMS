@@ -26,10 +26,10 @@ class DashboardDataController extends Controller
     public function dashboardData()
     {
           //Received request for data fetching information
-          Log::channel('custom_daily')->info("\n Retrieving data from the database for display it on the dashboard: ");
+        //  Log::channel('custom_daily')->info("\n Retrieving data from the database for display it on the dashboard: ");
 
          try {
-             //fetch Data in the Database
+           //  fetch Data in the Database
             $fullData = [
                 'customersNo' => $this->dashboardDao->numberOfCustomers(),
                 'providerCategoryNo'=> $this->dashboardDao->numberOfProviderCategory(),
@@ -38,15 +38,16 @@ class DashboardDataController extends Controller
                 'utilityProviderList' => $this->dashboardDao->latestUtilityProviders(),
                 'numberOfTokens' => $this->dashboardDao->numberOfTokens(),
                 'totalDebtAmount' => $this->dashboardDao->totalDebtAmount()
+                //'weekyldata' => json_encode($this->dashboardDao->weeklyData())
             ];
 
             //Log Data fetching status
-            Log::channel('daily')->info('\n Data was successful Fethed from the Database And returned to the frontEnd, Serving the request for accesing data in the Database');
+            Log::info('\n Data was successful Fethed from the Database And returned to the frontEnd, Serving the request for accesing data in the Database');
 
-            return response()->json(["error" => false, "Full Fetched data" => $fullData], Response::HTTP_OK);
+            return response()->json(["error" => false, "Full Fetched data" =>$fullData], Response::HTTP_OK);
          } catch (\Exception $exception) {
-            Log::channel('custom_daily')->error('\n Fetching Data Failed due to  :'. $exception->getMessage());
-            return Response()->json(["error" => true, "message" => ['Fetching Data Failed']], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('\n Fetching Data Failed due to  :'. $exception->getMessage());
+            return Response()->json(["error" => true, "message" => [ $exception->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
          }
     }
 

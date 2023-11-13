@@ -24,6 +24,7 @@ class TokenManageDaoImp implements TokenManageDao
     public function __construct(Token_manage $tokenManage) {
         $this->tokenManage = $tokenManage;
     }
+    
     /**
      * @param null
      * @return array|null
@@ -33,16 +34,14 @@ class TokenManageDaoImp implements TokenManageDao
     {
         try {
             $tokenData = DB::table('token_manage')->get();
-            if (!blank($tokenData)) {
-
-                $tokenDataArray = json_decode(json_encode($tokenData), true);
-
-                $$this->tokenManage->setAttributes($tokenDataArray);
+            if ($tokenData) {
+                return $tokenData;
             }
+            return null;
         } catch (\Exception $exception) {
-            Log::info("Token Information Exception:" . $exception->getMessage());
+            Log::error("Token Information Exception:" . $exception->getMessage());
+            return null;
         }
-        return $this->tokenManage;
     }
 
     /**
@@ -57,19 +56,19 @@ class TokenManageDaoImp implements TokenManageDao
         try {
             $tokenData = DB::table('token_manage')->where('id', $tokenId)->first();
 
-            if (!empty($tokenData)) {
-                // If the token info is found, you can directly create a Token_manage object.
-                $this->tokenManage->setAttributes((array) $tokenData);
+            if ($tokenData) {
+                $this->tokenManage->setAttributes($tokenData);
+                return $this->tokenManage;
             }
+            return null;
         } catch (\Exception $e) {
-            // Log the exception for debugging purposes.
             Log::info("Token Information Exception: " . $e->getMessage());
+            return null;
         }
-
-        return $this->tokenManage;
     }
 
      /**
+      * Return List of tokens for a certain meter
      * @param $meterId
      * @return Token_manage|null
      * @author Julius
@@ -77,22 +76,17 @@ class TokenManageDaoImp implements TokenManageDao
 
      public function getInfoByMeterId($meterId)
      {
-
          try {
              $tokenData = DB::table('token_manage')->where('meter_id', $meterId)->get();
 
-             if (!empty($tokenData)) {
-                 // If the token info is found, you can directly create a Token_manage object.
-                 $tokenDataArray = json_decode(json_encode($tokenData), true);
-
-                 $this->tokenManage->setAttributes($tokenDataArray);
+             if ($tokenData) {
+                return $tokenData;
              }
+             return null;
          } catch (\Exception $e) {
-             // Log the exception for debugging purposes.
-             Log::info("Token Information Exception: " . $e->getMessage());
+             Log::error("Token Information Exception: " . $e->getMessage());
+             return null;
          }
-
-         return $this->tokenManage;
      }
 
 
@@ -104,22 +98,18 @@ class TokenManageDaoImp implements TokenManageDao
 
     public function getInfoByToken($token)
     {
-        $tokenInfo = null;
-
         try {
             $tokenData = DB::table('token_manage')->where('token', $token)->first();
 
-            if (!empty($tokenData)) {
-                // If the token info is found, you can directly create a Token_manage object.
-                $tokenInfo = new Tariffs();
-                $tokenInfo->setAttributes((array) $tokenData);
+            if ($tokenData) {
+                $this->tokenManage->setAttributes($tokenData);
+                return $this->tokenManage;
             }
+            return null;
         } catch (\Exception $e) {
-            // Log the exception for debugging purposes.
-            Log::info("Token Get Info Exception: " . $e->getMessage());
+            Log::error("Token Get Info Exception: " . $e->getMessage());
+            return null;
         }
-
-        return $tokenInfo;
     }
 
     /**
@@ -130,21 +120,18 @@ class TokenManageDaoImp implements TokenManageDao
 
      public function createManageInfo(TokenManageDto $tokenManageInfo)
      {
-        $tokenManage = null;
          try {
-            $tokenManage = new Token_manage();
-            $tokenManage->setAttributes($tokenManageInfo->getAttributes());
-
-            $tokenManage->save();
+            $this->tokenManage->setAttributes($tokenManageInfo->getAttributes());
+            $this->tokenManage->save();
+            return $this->tokenManage;
          } catch (\Exception $e) {
-            $tokenInfo = null;
-            Log::info("Token create Exception:". $e->getMessage());
+           Log::error( "Token create Exception:". $e->getMessage());
+           return null;
          }
-         return $tokenManage;
      }
 
      /**
-     * @param $meterId
+     * @param $meterId,requestId
      * @return Token_manage|null
      * @author Julius
      */
@@ -155,17 +142,14 @@ class TokenManageDaoImp implements TokenManageDao
          try {
              $tokenData = DB::table('token_manage')->where('meter_id', $meterId)->where('requestId', $requestId)->get()->first();
 
-             if (!empty($tokenData)) {
-                 // If the token info is found, you can directly create a Token_manage object.
-                 $tokenDataArray = json_decode(json_encode($tokenData), true);
-
-                 $this->tokenManage->setAttributes($tokenDataArray);
+             if ($tokenData) {
+                 $this->tokenManage->setAttributes($tokenData);
+                 return $this->tokenManage;
              }
+             return null;
          } catch (\Exception $e) {
-             // Log the exception for debugging purposes.
-             Log::info("Token Information Exception: " . $e->getMessage());
+             Log::error("Token Information Exception: " . $e->getMessage());
+             return null;
          }
-
-         return $this->tokenManage;
      }
 }

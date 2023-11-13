@@ -64,21 +64,28 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/meter_validation.log'),
             'level' => 'debug',
-            'days' => 7,
+            'days' => 30,
+        ],
+
+        'partner_management' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/partner_management.log'),
+            'level' => 'debug',
+            'days' => 30,
         ],
 
         'token_purchase' => [
             'driver' => 'daily',
             'path' => storage_path('logs/token_purchase.log'),
             'level' => 'debug',
-            'days' => 7,
+            'days' => 30,
         ],
 
         'token_check' => [
             'driver' => 'daily',
             'path' => storage_path('logs/token_check.log'),
             'level' => 'debug',
-            'days' => 7,
+            'days' => 30,
         ],
 
 

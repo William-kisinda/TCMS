@@ -53,7 +53,7 @@ class MeterValidateApi extends Controller
              //Log received Request information
              Log::channel('meter_validation')->info("\nThe request for Validating Meter Number with the requestId :".$request->input('requestId'). "\nSuccessful received with the following information :\n Request Header Information : ".json_encode($request->header()). "\nRequest body Information: ".json_encode($request->input()));
 
-             //Validate Inputs
+             //Validate received Inputs
              $validatedInputs = $request->validate([
                 'meterNumber' => ['required','numeric','digits:12'],
                 'utilityProvider' => ['required','numeric'],
@@ -62,7 +62,7 @@ class MeterValidateApi extends Controller
                 'requestTime' => ['required', 'date_format:Y-m-d H:i:s', 'before_or_equal:' . Date::now()],
              ]);
 
-              // Retrieve the meter number from the validated request payload
+              // Retrieve the meter information from the validated request payload
             $meterNumber = $validatedInputs['meterNumber'];
             $utilityProvider = $validatedInputs['utilityProvider'];
             $requestId = $validatedInputs['requestId'];
@@ -99,31 +99,31 @@ class MeterValidateApi extends Controller
 
 
 
-            return response()->json(["error" => false, "Meter Information" => $this->meterDto->getAttributes()], Response::HTTP_OK);
+            return response()->json(['data'=>$this->meterDto->getAttributes()], Response::HTTP_OK);
 
 
         }else{
-            $response = $this->meterDto->responseErrorDto($requestId,ErrorCode::METERNUMBER_ERROR['code'], ErrorCode::METERNUMBER_ERROR['description'],"Meter does Not exist");
+            $response = $this->meterDto->responseErrorDto($requestId,ErrorCode::METERNUMBER_ERROR['code'], ErrorCode::METERNUMBER_ERROR['description'],"Meter does Not exist", $requestTime, Date::now());
                 //Log Response Error
             Log::channel('meter_validation')->info("\nMeter Validation Response for the request with the requestId :".$requestId. "\nSuccessful send the user following information : ".json_encode($response));
 
-            return response()->json(["error" => true, "message" => $response], Response::HTTP_NOT_FOUND);
+            return response()->json(['data'=>$this->meterDto->getAttributes()], Response::HTTP_NOT_FOUND);
         }
         }
         catch (\Illuminate\Validation\ValidationException $e) {
             $requestId = $request->input('requestId');
             // If validation fails, Laravel throws a ValidationException. Errors can be retrieved as follows
             $validationErrors = $e->validator->errors()->all();
-            $response = $this->meterDto->responseErrorDto($requestId,ErrorCode::INVALID_INPUT['code'], ErrorCode::INVALID_INPUT['description'], $validationErrors);
+            $response = $this->meterDto->responseErrorDto($requestId,ErrorCode::INVALID_INPUT['code'], ErrorCode::INVALID_INPUT['description'], $validationErrors,$requestTime,Date::now());
                 //Log Response Error
             Log::channel('meter_validation')->error("\nMeter Validation Response for the request with the requestId :".$requestId. "\nSuccessful send the user following information : ".json_encode($response));
-            return response()->json(["error" => true, "message" => $response], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['data'=>$this->meterDto->getAttributes()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }catch (\Exception $exception) {
             $requestId = $request->input('requestId');
-            $response = $this->meterDto->responseErrorDto($requestId,ErrorCode::SERVER_ERROR['code'], ErrorCode::SERVER_ERROR['description'],$exception->getMessage());
+            $response = $this->meterDto->responseErrorDto($requestId,ErrorCode::SERVER_ERROR['code'], ErrorCode::SERVER_ERROR['description'],$exception->getMessage(),$requestTime,Date::now());
             //Log Response Error
             Log::channel('meter_validation')->error("\nMeter Validation Response for the request with the requestId :".$requestId. "\nSuccessful send the user following information : ".json_encode($response));
-            return response()->json(["error" => true, "message" =>  $response], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['data'=>$this->meterDto->getAttributes()] , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
