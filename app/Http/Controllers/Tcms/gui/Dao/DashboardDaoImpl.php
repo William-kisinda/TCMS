@@ -85,7 +85,7 @@ class DashboardDaoImpl implements DashboardDao{
         }
     }
 
-    public function numberOfTokens()
+    public function totalDebtAmount()
     {
         try {
             $numberOfTokens = DB::table('debts')->sum('remainingDebtAmount');
@@ -98,7 +98,7 @@ class DashboardDaoImpl implements DashboardDao{
         }
     }
 
-    public function totalDebtAmount()
+    public function numberOfTokens()
     {
         try {
             $totalDebtAmount = DB::table('token_manage')->count();
