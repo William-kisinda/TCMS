@@ -20,12 +20,12 @@ Token Generation Step By Step include the following :
     3. Validate Payload Format (No DataBase included)
     4. If valid(push to queue)
     5. Return Acknoledgement : the payload Must Include the following:-
-                                    1. Request_Id , that came with the Rquest from the user
-                                    2. Meter Number 
-                                    3. Acknowledgement Id (which is generated on the server side)
-                                    4. Ack_code : which is used to reference error
-                                    5. Ack_descrption : It gives the descrption of the code provided above.
-                                    6. Other things.
+                            1. Request_Id , that came with the Rquest from the user
+                            2. Meter Number 
+                            3. Acknowledgement Id (which is generated on the server side)
+                            4. Ack_code : which is used to reference error
+                            5. Ack_descrption : It gives the descrption of the code provided above.
+                            6. Other things.
     6. Log Acknowledgement
     7. Return acknowledgement.
 

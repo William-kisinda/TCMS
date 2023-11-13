@@ -58,12 +58,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(UtilityProviderModel::class);
     }
-
-    // /**
-    //  * Get the role of this user.
-    //  */
-    // public function getRoleNames()
-    // {
-    //     return $this->hasMany(Role::class);
-    // }
 }
