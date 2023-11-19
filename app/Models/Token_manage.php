@@ -77,6 +77,22 @@ class Token_manage extends Model
         $this->attributes['generation_time'] = $generation_time;
     }
 
+     /**
+     * @return mixed
+     */
+    public function getGenerationDate()
+    {
+        return $this->attributes['date'];
+    }
+
+    /**
+     * @param mixed $generationDate
+     */
+    public function setGenerationDate($generationDate): void
+    {
+        $this->attributes['date'] = $generationDate;
+    }
+
     /**
      * @return mixed
      */

@@ -15,7 +15,7 @@ use App\Http\Controllers\Tcms\TokenGeneration\Dto\PartnersDto;
  *
  */
 
-class PartnersDaoImp implements PartnersDao
+class PartnersDaoImpl implements PartnersDao
 {
     protected $partner;
 
@@ -80,7 +80,7 @@ class PartnersDaoImp implements PartnersDao
             $partnerData = DB::table('partners')->where('code', $partnerCode)->first();
 
             if ($partnerData) {
-                $this->partner->setAttributes($partnerData);
+                $this->partner->setAttributes(json_decode(json_encode($partnerData), true));
                 return $this->partner;
             }
             return null;

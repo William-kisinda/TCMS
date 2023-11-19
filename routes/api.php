@@ -190,7 +190,7 @@ Route::post('/meter', [MeterValidateApi::class, 'getValidMeter']);
  */
 
 //Notification API
-Route::post('/notification', [NotificationApi::class, 'sendNotification']);
+Route::post('/notification', [NotificationApi::class, 'todayTokens']);
 
 //Dashboard Data collection API
 Route::post('/dashboardData', [DashboardDataController::class,'dashboardData']);

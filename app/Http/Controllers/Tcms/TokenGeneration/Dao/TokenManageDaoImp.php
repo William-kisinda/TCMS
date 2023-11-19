@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Tcms\TokenGeneration\Dao;
 
 use App\Models\Tariffs;
+use App\Job\TokenManage;
 use App\Models\Token_manage;
-use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Tcms\Partners\Dao\PartnersDaoImpl;
 use App\Http\Controllers\Tcms\TokenGeneration\Dao\TokenManageDao;
 use App\Http\Controllers\Tcms\TokenGeneration\Dto\TokenManageDto;
-use App\Job\TokenManage;
 
 /**
  * This Class is for Token Information data access
@@ -24,7 +25,7 @@ class TokenManageDaoImp implements TokenManageDao
     public function __construct(Token_manage $tokenManage) {
         $this->tokenManage = $tokenManage;
     }
-    
+
     /**
      * @param null
      * @return array|null
@@ -113,15 +114,15 @@ class TokenManageDaoImp implements TokenManageDao
     }
 
     /**
-     * @param TokenManageDto $tokenManageDto
+     * @param  $tokenManageDto
      * @return Token_manage|null
      * @author Julius
      */
 
-     public function createManageInfo(TokenManageDto $tokenManageInfo)
+     public function createManageInfo($tokenManageInfo)
      {
          try {
-            $this->tokenManage->setAttributes($tokenManageInfo->getAttributes());
+            $this->tokenManage->setAttributes($tokenManageInfo);
             $this->tokenManage->save();
             return $this->tokenManage;
          } catch (\Exception $e) {
@@ -147,6 +148,35 @@ class TokenManageDaoImp implements TokenManageDao
                  return $this->tokenManage;
              }
              return null;
+         } catch (\Exception $e) {
+             Log::error("Token Information Exception: " . $e->getMessage());
+             return null;
+         }
+     }
+
+      /**
+     * @param $date,$partnerCode
+     * @return Token_manage|null
+     * @author Julius
+     */
+
+     public function getNotificationByPartnerCodeTodaysDate($partnerCode)
+     {
+
+         try {
+            $partner = app(PartnersDaoImpl::class);
+            $partnerId = $partner->getPartnerByCode($partnerCode)->getPartnerId();
+            $tokenData = DB::table('token_manage')->where('date', date('Ymd'))->where('partners_id', $partnerId)->get();
+
+            if ($tokenData) {
+                $notifications = [];
+                foreach($tokenData as $data){
+                    $this->tokenManage->setAttributes(json_decode(json_encode($data), true));
+                    $notifications[] = $this->tokenManage;
+                }
+                return $notifications;
+            }
+            return null;
          } catch (\Exception $e) {
              Log::error("Token Information Exception: " . $e->getMessage());
              return null;

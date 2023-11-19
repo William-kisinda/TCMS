@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Tcms\TokenGeneration\Api;
 
 use App\Helpers;
+use App\Models\Notifications;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Tcms\Debts\Dao\DebtDaoImpl;
 use App\Http\Controllers\Tcms\Meters\Dao\MeterDaoImpl;
+use App\Http\Controllers\Tcms\Partners\Dao\PartnersDaoImpl;
 use App\Http\Controllers\Tcms\TokenGeneration\Dto\TokenManageDto;
 use App\Http\Controllers\Tcms\TariffsManagement\Dao\TariffsDaoImpl;
 use App\Http\Controllers\Tcms\TokenGeneration\Dao\TokenManageDaoImp;
-use App\Models\Notifications;
 
 /**
  *
@@ -77,9 +78,11 @@ class GenerateToken
                 $token = $helpers->generateMeterToken($amount, $this->meterNumber, $this->requestId);
 
                 //store created token Info to the database
+                $partner = app(PartnersDaoImpl::class);
+                $partnerId = $partner->getPartnerByCode($this->partnersCode);
                 $tokenDto = app(TokenManageDto::class);
                 $tokenManageDao = app(TokenManageDaoImp::class);
-                $tokenInfo = $tokenDto->newTokenInfo($token, $meter->getMeterId(), now(),$this->utilityProvider,$this->requestId,$this->requestTime,$this->partnersCode);// require to extract partner Id from partner code
+                $tokenInfo = $tokenDto->newTokenInfo($token, $meter->getMeterId(), now(),$this->utilityProvider,$this->requestId,$this->requestTime,$partnerId->getPartnerId(), date('Ymd'));// require to extract partner Id from partner code
                 $token_manage = $tokenManageDao->createManageInfo($tokenInfo);
 
                 //check if data is saved successful to the Database

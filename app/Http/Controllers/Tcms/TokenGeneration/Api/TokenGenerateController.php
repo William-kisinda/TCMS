@@ -25,13 +25,6 @@ use App\Http\Controllers\Tcms\Utility_provider\Dao\UtilityProviderDaoImpl;
 
 class TokenGenerateController extends Controller
 {
-    private $tokenDto;
-    private $utilityProviderDao;
-
-    public function __construct(TokenManageDto $tokenDto, UtilityProviderDaoImpl $utilityProviderDao) {
-        $this->tokenDto = $tokenDto;
-        $this->utilityProviderDao = $utilityProviderDao;
-    }
 
 /**
  * This is the controller that receive token purchase request and push the request data to the queue for being processed
@@ -73,28 +66,30 @@ class TokenGenerateController extends Controller
             $rabbitConnection->closeConnection();
 
             //set Data to the Response DTO
-            $utilityProvider =$this->utilityProviderDao->getUtilityProviderById($utilityProvider);
+            $utilityProviderDao = app(UtilityProviderDaoImpl::class);
+            $utilityProvider = $utilityProviderDao->getUtilityProviderById($utilityProvider);
             $message = "Your Request is Successful Received Will Receive your token shortly";
-            $response = $this->tokenDto->ackResponse($meterNumber, $utilityProvider->getUtilityProviderName(), $requestId, $requestTime, $partnerCode, Date::now(), $message);
+            $tokenDto  = app(TokenManageDto::class);
+            $response = $tokenDto->ackResponse($meterNumber, $utilityProvider->getUtilityProviderName(), $requestId, $requestTime, $partnerCode, Date::now(), $message);
 
                  //Log send Response information
             Log::channel('token_purchase')->info("\nToken Purchase Acknowledgement for the request with the requestId :".$requestId. "\nSuccessful send the user following information : ".json_encode($response));
 
                 // Return a response to the user indicating that the request has been received
-            return response()->json(['message' => 'Request accepted. you will receive your token shortly.']);
+            return response()->json(['message' => 'Request accepted']);
         }
         catch (\Illuminate\Validation\ValidationException $e) {
             $requestId = $request->input('requestId');
             // If validation fails, Laravel throws a ValidationException. Errors can be retrieved as follows
             $validationErrors = $e->validator->errors()->all();
-            $response = $this->tokenDto->responseErrorDto($requestId,ErrorCode::INVALID_INPUT['code'], ErrorCode::INVALID_INPUT['description'], $validationErrors, $requestTime, Date::now());
+            $response = $tokenDto->responseErrorDto($requestId,ErrorCode::INVALID_INPUT['code'], ErrorCode::INVALID_INPUT['description'], $validationErrors, $requestTime, Date::now());
 
                 //Log Response Error
             Log::channel('token_purchase')->error("\nToken Purchase Response for the request with the requestId :".$requestId. "\nSuccessful send to the user with the following information : ".json_encode($response));
             return response()->json(["error" => true, "message" => $response], Response::HTTP_UNPROCESSABLE_ENTITY);
         }catch (\Exception $exception) {
             $requestId = $request->input('requestId');
-            $response = $this->tokenDto->responseErrorDto($requestId,ErrorCode::SERVER_ERROR['code'], ErrorCode::SERVER_ERROR['description'],$exception->getMessage(),$requestTime,Date::now());
+            $response = $tokenDto->responseErrorDto($requestId,ErrorCode::SERVER_ERROR['code'], ErrorCode::SERVER_ERROR['description'],$exception->getMessage(),$requestTime,Date::now());
             //Log Response Error
             Log::channel('token_purchase')->error("\nMeter Validation Response for the request with the requestId :".$requestId. "\nSuccessful send the user following information : ".json_encode($response));
             return response()->json(["error" => true, "message" =>  $response], Response::HTTP_INTERNAL_SERVER_ERROR);

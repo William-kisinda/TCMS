@@ -20,7 +20,7 @@ class TokenManageDto
 
 
 
-    public function newTokenInfo($token, $meterId, $generationTime, $providerId, $requestId, $requestTime, $partnersId)
+    public function newTokenInfo($token, $meterId, $generationTime, $providerId, $requestId, $requestTime, $partnersId,$generationDate)
     {
         $this->attributes = [];
         $this->attributes['token'] = $token;
@@ -30,6 +30,7 @@ class TokenManageDto
         $this->attributes['request_time'] = $requestTime;
         $this->attributes['request_id'] = $requestId;
         $this->attributes['partners_id'] = $partnersId;
+        $this->attributes['date'] = $generationDate;
         return $this->attributes;
     }
 

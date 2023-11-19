@@ -27,7 +27,7 @@ class MQConsumerCommand extends Command
      */
     public function handle(): void
     {
-        $tokenGenerateMqService = new TokenGenerateController();
+        $tokenGenerateMqService = app(TokenGenerateController::class);
         $tokenGenerateMqService->consumeMessages();
     }
 }

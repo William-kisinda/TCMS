@@ -81,6 +81,13 @@ return [
             'days' => 30,
         ],
 
+        'token_fetch' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/token_fetch.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
         'token_check' => [
             'driver' => 'daily',
             'path' => storage_path('logs/token_check.log'),

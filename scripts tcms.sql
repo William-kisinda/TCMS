@@ -45,6 +45,8 @@ CREATE TABLE partners (
     code VARCHAR(255) NOT NULL
 );
 
+Insert into partners(name,code) values('CRDB','CRDB112')
+
 
 SELECT id FROM permissions
 WHERE 
