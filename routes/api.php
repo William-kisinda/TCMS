@@ -66,11 +66,14 @@ Route::post('user/create', [UsersController::class, 'createUPUser']);
 // get all users
 Route::post('users', [UsersController::class, 'getUPUsers']);
 
-// get all users
+// get usersById
 Route::post('user/show', [UsersController::class, 'getUPUserById']);
 
-// get all users
+// update users
 Route::post('user/update', [UsersController::class, 'updateUPUser']);
+
+// update users
+Route::patch('user/updatepassword', [UsersController::class, 'updatePassword']);
 
 
 /**

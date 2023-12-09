@@ -47,10 +47,10 @@ class UsersController extends Controller
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     /**
      * Get all users
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -78,7 +78,7 @@ class UsersController extends Controller
 
     /**
      * Get user By Id
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -91,7 +91,7 @@ class UsersController extends Controller
             $user = User::find($userId);
 
             Log::info("User::" . json_encode($user));
-            
+
             if (!blank($user)) {
                 $uprovider = $user->utility_provider;
                 $user = ['id' => $user->id, 'full_name' => $user->full_name, 'email' => $user->email, 'phone_number' => $user->phone_number, 'utility_provider_id' => $user->utility_provider_id, 'utility_provider'=> isset($uprovider->provider_name) ? $uprovider->provider_name : "None", 'roles' => $user->getRoleNames()];
@@ -106,7 +106,7 @@ class UsersController extends Controller
     }
     /**
      * Update User
-     * 
+     *
      * @param Request $request
      * @return Response
      */
@@ -131,5 +131,36 @@ class UsersController extends Controller
             return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
+   /**
+     * Update User
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function updatePassword(Request $request)
+    {
+        $this->validate($request, [
+            'email' => 'required|email'
+        ]);
+        try {
+           $affectedRow = DB::table('users')->where('email', $request->input('email'))->update(['password' => $request->input('password')]);
+
+            if ($affectedRow) {
+                return Response()->json(["error" => false, 'message' => ['OK']], Response::HTTP_OK);
+            }
+            return Response()->json(["error" => false, 'message' => ['The specified email account does not exist']], Response::HTTP_OK);
+        }
+        catch (\Illuminate\Validation\ValidationException $e) {
+            $validationErrors = $e->validator->errors()->all();
+                //Log Data before response log channel must be specific for each error
+           // Log::channel('meter_validation')->error("\nMeter Validation Response for the request with the requestId :".$requestId. "\nSuccessful send the user following information : ".json_encode($response));
+            return response()->json(['message'=>$validationErrors], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        catch (\Exception $e) {
+            Log::info("Update User Exceptional Message::" . $e->getMessage());
+            return Response()->json(["error" => true, "message" => ['Failed! Something went wrong on our end!']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
